@@ -1,0 +1,101 @@
+Combined Prompt: Evaluation & Integration of AI Billing Proxy Repositories
+
+Role: You are an expert in AI tooling, API gateways, billing proxies, open‑source ecosystem analysis, and software architecture. Your task is twofold: (1) evaluate a list of GitHub repositories, then (2) propose three wildly different approaches to enhance, combine, or connect the most promising ones into a target project.
+
+Target Project Definition:
+Build a unified, robust billing proxy and API gateway system that supports multiple AI services (opencode, Claude, Gemini, OpenAI, Hermes, Kiro, and similar platforms). The system should handle authentication patching, request relay, usage billing, and rate‑limiting across services, while being maintainable and secure.
+
+---
+
+Phase 1 – Repository Evaluation (based on PromptA)
+
+You are given a list of GitHub repository URLs (below). Ignore any non‑repository URLs (e.g., markdown files, static pages). Evaluate all repositories against the following criteria:
+
+1. Functionality – What does the repo do? (billing proxy, auth fix, API gateway, relay, patch, backdoor, MCP server, etc.)
+2. Compatibility – Which AI services or clients does it support? (opencode, Claude, Gemini, OpenAI, Hermes, Kiro, etc.)
+3. Billing proxy capability – Does it include or enable a billing proxy mechanism? If yes, describe how.
+4. Active maintenance – Last commit date, open issues, pull requests, forks, stars.
+5. Code quality & documentation – Clear README, setup instructions, examples.
+6. Security & risk – Potential backdoors, unmaintained dependencies, obfuscated code.
+
+Output for Phase 1:
+
+· Select the 15 best repositories (most useful, reliable, and relevant for the target project).
+· Present them in a table with these columns:
+    Rank | Repo Name | Primary Use | AI Services Supported | Billing Proxy? | Maintenance Status | Key Strength | Risk Level
+· Below the table, provide a prognosis for the top‑5 repositories. For each, explain how well it is likely to work with each service (opencode, Claude, Gemini, OpenAI, Hermes, Kiro) and note long‑term issues (detection, rate limiting, legal concerns).
+
+---
+
+Phase 2 – Three Wildly Different Integration Approaches (based on PromptB)
+
+Now, based on your Phase‑1 analysis (especially the top‑15 repositories), propose three distinct strategies to enhance, combine, or connect those repositories (or selected subsets) into the target project (unified billing proxy & API gateway).
+
+For each approach you must:
+
+· Explicitly state which repos are involved and what actions you take:
+    upgrade | synergy | merge | amplify | interconnect | integrate
+· Provide a structural hierarchy + directional path (text diagram, ASCII art, or nested list) showing components/modules, data/control flow, dependencies, and entry/exit points.
+· Explain why this approach is “wildly different” from the other two (conceptually unique – e.g., performance‑focused vs. modularity‑focused vs. business‑logic‑focused).
+
+Before presenting the three approaches, show your step‑by‑step reasoning using these five cognitive skills:
+
+1. Brainstorm – list at least 5‑10 raw ideas (no judgment yet) on how to combine/enhance the repos.
+2. Plan – define evaluation criteria (e.g., effort, maintainability, billing accuracy, security) and a high‑level roadmap.
+3. Investigate – identify technical risks, integration mismatches (auth methods, API schemas, language differences), and hidden backdoors.
+4. Analyze – compare trade‑offs (effort vs. benefit, compatibility) for the top candidate ideas.
+5. Examine – validate that each of your final three approaches is truly “wildly different” and aligns with the target project’s goals.
+
+Output Format for Phase 2:
+
+· A concise summary of your step‑by‑step thought process (the five skills applied).
+· Then, for each of the three approaches:
+  · Name (short, descriptive)
+  · Actions taken (list repos + action verbs)
+  · Structural hierarchy + path (text diagram)
+  · Why this is wildly different
+
+---
+
+Repository List (unique URLs – use only these)
+
+https://github.com/avaclaw1/hermes-billing-proxy
+https://github.com/o-shabashov/hermes-anthropic-patch
+https://github.com/enochosbot-bot/hermes-backdoor
+https://github.com/zacdcook/openclaw-billing-proxy
+https://github.com/alexandephilia/kiro-claude-proxy
+https://github.com/sontakey/openclaw-billing-proxy
+https://github.com/nmarijane/claude-max-proxy
+https://github.com/Kazuki-0147/openclaw-billing-proxy
+https://github.com/vitalemazo/openclaw-billing-proxy
+https://github.com/openclaw-mcp-vps/subscription-billing-dunning
+https://github.com/clawfleet/ClawFleet
+https://github.com/iamtheavoc1/opencode-anthropic-auth-fix
+https://github.com/vinzabe/opencode-anthropic-max-fix
+https://github.com/rynfar/meridian
+https://github.com/jwadow/kiro-gateway
+https://github.com/Createya-ai/Createya-mcp
+https://github.com/romgX/openrelay
+https://github.com/zhongruan0522/AntiHub-ALL
+https://github.com/aliom-v/KiroGate
+https://github.com/ssmDo/CodeFreeMax
+https://github.com/hnewcity/KiroaaS
+https://github.com/kkddytd/claude-api
+https://github.com/justlovemaki/AIClient2API
+https://github.com/bigdata2211it-web/kiro-proxy
+https://github.com/Arui08/kiro-api-proxy
+https://github.com/simkeke/kiro_proxy_gateway
+https://github.com/hoazgazh/aigate
+https://github.com/meitianwang/kiro-gateway-swift
+https://github.com/cornelcroi/ask-james
+https://github.com/mub7865/kiro-openai-gateway
+https://github.com/ryangui1983/uniplug
+https://github.com/petehsu/KiroProxy
+https://github.com/marktantongco/kiro-proxy-ecosystem
+https://github.com/huey1in/KiroX
+https://github.com/mxyhi/token_proxy
+https://github.com/marktantongco/ruflo
+
+---
+
+Proceed with Phase 1, then Phase 2. Ensure your final answer includes both the evaluation table/prognosis and the three integration approaches with their diagrams and reasoning.

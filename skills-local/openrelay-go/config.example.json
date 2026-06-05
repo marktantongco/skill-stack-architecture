@@ -1,0 +1,117 @@
+{
+  "port": 18765,
+  "log_level": "info",
+  "credentials_path": "~/.claude/.credentials.json",
+  "providers": [
+    {
+      "name": "openai",
+      "type": "openai",
+      "base_url": "https://api.openai.com/v1",
+      "api_key": "${OPENAI_API_KEY}",
+      "auth_type": "bearer",
+      "priority": 1,
+      "enabled": true,
+      "models": [
+        {"id": "gpt-4o", "context_window": 128000, "max_tokens": 4096},
+        {"id": "gpt-4o-mini", "context_window": 128000, "max_tokens": 16384},
+        {"id": "gpt-4-turbo", "context_window": 128000, "max_tokens": 4096}
+      ],
+      "rate_limit": {
+        "requests_per_minute": 500,
+        "tokens_per_minute": 150000
+      }
+    },
+    {
+      "name": "anthropic",
+      "type": "anthropic",
+      "base_url": "https://api.anthropic.com/v1",
+      "api_key": "${ANTHROPIC_API_KEY}",
+      "auth_type": "bearer",
+      "priority": 2,
+      "enabled": true,
+      "headers": {
+        "anthropic-version": "2023-06-01"
+      },
+      "models": [
+        {"id": "claude-3-5-sonnet-20241022", "context_window": 200000, "max_tokens": 8192},
+        {"id": "claude-3-opus-20240229", "context_window": 200000, "max_tokens": 4096}
+      ]
+    },
+    {
+      "name": "ollama",
+      "type": "openai-compatible",
+      "base_url": "http://localhost:11434/v1",
+      "auth_type": "none",
+      "priority": 10,
+      "enabled": false,
+      "models": [
+        {"id": "llama3.1", "context_window": 128000, "max_tokens": 4096}
+      ]
+    }
+  ],
+  "model_groups": {
+    "smart": {
+      "name": "smart",
+      "providers": ["anthropic", "openai"],
+      "strategy": "failover"
+    },
+    "fast": {
+      "name": "fast",
+      "providers": ["openai", "anthropic"],
+      "strategy": "round_robin"
+    }
+  },
+  "billing_proxy": {
+    "enabled": true,
+    "port": 18801,
+    "credentials_path": "~/.claude/.credentials.json",
+    "billing_header": "x-anthropic-billing-header",
+    "trigger_phrases": [
+      "OpenClaw", "openclaw", "sessions_spawn", "sessions_list",
+      "sessions_history", "sessions_send", "sessions_yield", "sessions_store",
+      "HEARTBEAT_OK", "HEARTBEAT", "clawhub", "clawd", "hermes.md",
+      "Hermes", "hermes", "running inside", "running on", "ocplatform",
+      ".openclaw/", ".hermes/", "claw_platform", "hermes_platform"
+    ],
+    "tool_renames": {
+      "exec": "Bash",
+      "lcm_grep": "ContextGrep",
+      "lcm_read": "ReadFile",
+      "lcm_write": "WriteFile",
+      "lcm_edit": "EditFile",
+      "lcm_ls": "ListDir",
+      "message": "SendMessage",
+      "sessions_spawn": "CreateTask",
+      "sessions_list": "ListTasks",
+      "sessions_history": "GetHistory",
+      "sessions_send": "SendToTask",
+      "sessions_yield": "YieldTask",
+      "sessions_store": "StoreTask"
+    },
+    "property_renames": {
+      "session_id": "thread_id",
+      "claw_id": "agent_id",
+      "hermes_id": "agent_id",
+      "platform": "environment",
+      "workspace": "project"
+    },
+    "strip_descriptions": true,
+    "system_template_bypass": true,
+    "hermes_mode": true,
+    "openclaw_mode": true
+  },
+  "tool_mappings": {
+    "Bash": "exec",
+    "ReadFile": "lcm_read",
+    "WriteFile": "lcm_write",
+    "EditFile": "lcm_edit",
+    "ListDir": "lcm_ls"
+  },
+  "reverse_mappings": {
+    "Bash": "exec",
+    "ReadFile": "lcm_read",
+    "WriteFile": "lcm_write",
+    "EditFile": "lcm_edit",
+    "ListDir": "lcm_ls"
+  }
+}
