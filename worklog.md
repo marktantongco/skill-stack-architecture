@@ -349,3 +349,40 @@ Stage Summary:
 - 2 instruction-based skills received integration analysis and optimization recommendations
 - Skill synergy map created showing HIGH/MEDIUM integration strengths between all 5 skills
 - Short-term and long-term roadmap updated: most items DONE, 2 remaining (integration tests, Docker profiles)
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: AI Stack Ecosystem Guide - Research, Installer Script, and PDF Generation
+
+Work Log:
+- Researched 15 AI development tools via web search subagent
+- Verified tool existence, GitHub repos, install commands, memory usage, ports, pricing, and ToS risks
+- Identified key findings: "Owl-Agent" is fictional (real project is OWL by CAMEL-AI); "GoProxy+cpa" is conflated (two separate tools); free-claude-code has known supply chain attacks
+- Created enhanced installer script install-ai-stack-v2.sh with all 6 audit fixes applied:
+  1. [HIGH] Single-hop Python billing proxy (eliminated 2-hop chain)
+  2. [HIGH] Health-check middleware prevents silent billing bypass
+  3. [MEDIUM] Consolidated OAuth secrets to single file (0600)
+  4. [MEDIUM] Unified Docker/bare-metal config paths via env vars
+  5. [MEDIUM] Version-pinned Kiro-CLI with SHA256 verification
+  6. [LOW] Billing proxy health check in diagnostics script
+- Added 3 new features: Prometheus /metrics, Redis TTL bloom dedup, integration test suite
+- Generated comprehensive 19-page PDF guide (AI_Stack_Ecosystem_Guide.pdf) covering:
+  - Executive Summary
+  - AI Stack Ecosystem Overview with tier classification
+  - Deep dives on 15 tools across Free Unlimited and Paid Limited stacks
+  - Compatibility Matrix
+  - Contradictions and Conflicts (including port allocation map)
+  - 4-tier Fallback Strategy
+  - Architecture Diagrams (Free, Paid v2.0, Legacy deprecated)
+  - Installation Guide with Quick Start
+  - Audit Fix Summary table
+  - 5 Skill Optimizations (api-gateway, browser-use, deployment-manager, persistent-memory, mcp-builder)
+  - Security and ToS Risk Assessment
+  - Final Recommendations (3 tiers)
+
+Stage Summary:
+- install-ai-stack-v2.sh: /home/z/my-project/download/install-ai-stack-v2.sh
+- AI_Stack_Ecosystem_Guide.pdf: /home/z/my-project/download/AI_Stack_Ecosystem_Guide.pdf (19 pages, 90KB)
+- All 6 audit fixes applied and verified in installer script
+- All 5 skill optimizations analyzed with specific recommendations
