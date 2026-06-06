@@ -8,6 +8,10 @@ import { ComparativeAnalysis } from "@/components/ComparativeAnalysis";
 import { HeatmapViz } from "@/components/HeatmapViz";
 import { ImplementationBlueprint } from "@/components/ImplementationBlueprint";
 import { AIPortalGateway } from "@/components/AIPortalGateway";
+import { TierArchitecture } from "@/components/TierArchitecture";
+import { DecisionTree } from "@/components/DecisionTree";
+import { SectionMapping } from "@/components/SectionMapping";
+import { VisualGallery } from "@/components/VisualGallery";
 import { useState } from "react";
 
 const navItems = [
@@ -18,6 +22,10 @@ const navItems = [
   { id: "heatmap", label: "Heatmap", num: "05" },
   { id: "implementation", label: "Install", num: "06" },
   { id: "portal", label: "AI Portal", num: "07" },
+  { id: "tier-architecture", label: "Architecture", num: "08" },
+  { id: "decision-tree", label: "Decision", num: "09" },
+  { id: "section-mapping", label: "Mapping", num: "10" },
+  { id: "visual-gallery", label: "Gallery", num: "11" },
 ];
 
 export default function Home() {
@@ -43,14 +51,14 @@ export default function Home() {
           </div>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-5">
             {navItems.map(item => (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors font-medium"
+                className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
-                <span className="text-primary/60 mr-1">{item.num}</span>
+                <span className="text-primary/50 mr-0.5">{item.num}</span>
                 {item.label}
               </button>
             ))}
@@ -59,7 +67,7 @@ export default function Home() {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-8 h-8 flex flex-col items-center justify-center gap-1.5"
+            className="lg:hidden w-8 h-8 flex flex-col items-center justify-center gap-1.5"
           >
             <span className={`block w-5 h-0.5 bg-foreground transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
             <span className={`block w-5 h-0.5 bg-foreground transition-opacity ${mobileMenuOpen ? 'opacity-0' : ''}`} />
@@ -69,7 +77,7 @@ export default function Home() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border bg-background">
+          <div className="lg:hidden border-t border-border bg-background">
             <div className="max-w-[1200px] mx-auto px-6 py-4 space-y-3">
               {navItems.map(item => (
                 <button
@@ -148,58 +156,53 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section Divider */}
-      <div className="max-w-[1200px] mx-auto px-6">
-        <hr className="editorial-rule" />
-      </div>
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* Skill Reference */}
+      {/* 01 — Skill Reference */}
       <SkillReference />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      <div className="max-w-[1200px] mx-auto px-6">
-        <hr className="editorial-rule" />
-      </div>
-
-      {/* Design Algorithm */}
+      {/* 02 — Design Algorithm */}
       <DesignAlgorithm />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      <div className="max-w-[1200px] mx-auto px-6">
-        <hr className="editorial-rule" />
-      </div>
-
-      {/* Options Showcase */}
+      {/* 03 — Options Showcase */}
       <OptionsShowcase />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      <div className="max-w-[1200px] mx-auto px-6">
-        <hr className="editorial-rule" />
-      </div>
-
-      {/* Comparative Analysis */}
+      {/* 04 — Comparative Analysis */}
       <ComparativeAnalysis />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      <div className="max-w-[1200px] mx-auto px-6">
-        <hr className="editorial-rule" />
-      </div>
-
-      {/* Heatmap */}
+      {/* 05 — Heatmap */}
       <HeatmapViz />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      <div className="max-w-[1200px] mx-auto px-6">
-        <hr className="editorial-rule" />
-      </div>
-
-      {/* Implementation Blueprint */}
+      {/* 06 — Implementation Blueprint */}
       <ImplementationBlueprint />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      <div className="max-w-[1200px] mx-auto px-6">
-        <hr className="editorial-rule" />
-      </div>
-
-      {/* AI Portal Gateway */}
+      {/* 07 — AI Portal Gateway */}
       <AIPortalGateway />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+
+      {/* 08 — Tier Architecture */}
+      <TierArchitecture />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+
+      {/* 09 — Decision Tree */}
+      <DecisionTree />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+
+      {/* 10 — Section-to-Skill Mapping */}
+      <SectionMapping />
+      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+
+      {/* 11 — Visual Asset Gallery */}
+      <VisualGallery />
 
       {/* Editorial Footer — Colophon */}
-      <footer className="border-t-3 border-foreground py-12 px-6 bg-background">
+      <footer className="border-t-2 border-foreground py-12 px-6 bg-background">
         <div className="max-w-[1200px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             <div className="md:col-span-4">
@@ -213,7 +216,7 @@ export default function Home() {
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 A design algorithm for interactive web skill stack architecture.
-                16 Skills &middot; 4 Tiers &middot; 5 Options &middot; SP-7 Dimensions.
+                16 Skills &middot; 4 Tiers &middot; 5 Options &middot; SP-7 Dimensions &middot; 11 Sections.
               </p>
             </div>
             <div className="md:col-span-4">
