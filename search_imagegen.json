@@ -1,0 +1,74 @@
+[
+  {
+    "url": "https://github.com/vercel-labs/skills",
+    "name": "vercel-labs/skills: The open agent skills tool - npx skills - GitHub",
+    "snippet": "Use a Skill Without Installing. Generate a prompt for one skill, or start a supported coding agent interactively: npx skills use vercel-labs ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/@unicodeveloper/10-must-have-skills-for-claude-and-any-coding-agent-in-2026-b5451b013051",
+    "name": "10 Must-Have Skills for Claude (and Any Coding Agent) in 2026",
+    "snippet": "The definitive guide to agent skills that change how Claude Code, Cursor, Gemini CLI, and other AI coding assistants perform in production.",
+    "host_name": "medium.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://claudemarketplaces.com/skills/skillsh/skills/ai-image-generation",
+    "name": "Ai Image Generation - Skills - Claude Code Marketplaces",
+    "snippet": "Generates images through 50+ AI models via the inference.sh CLI, including FLUX Dev LoRA, Gemini 3 Pro, Grok Imagine, and Seedream 4.5.",
+    "host_name": "claudemarketplaces.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://inference.sh/blog/skills/agent-skills-overview",
+    "name": "Agent Skills: The Open Standard for AI Capabilities | blog",
+    "snippet": "The inference.sh skills work by teaching agents how to use the infsh CLI tool. When an agent needs to generate an image, create a video, transcribe audio, or ...",
+    "host_name": "inference.sh",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=XCOkCwgKwAA",
+    "name": "The best way to create agent skills in 2026 - YouTube",
+    "snippet": "AGENTIC CODING CLUB [ ⚡ my official community ] ▻ https://www.skool.com/zazencodes-agentic-coding-club-7823 ⚡ Weekly code-with-me sessions ...",
+    "host_name": "www.youtube.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/MotionDesign/comments/1qkqxwm/complete_guide_how_to_setup_remotion_agent_skills",
+    "name": "How to Setup Remotion Agent Skills with Claude Code (AI  - Reddit",
+    "snippet": "Step 2: Install Remotion Agent Skills. This is the key step. Run this command in your project directory: bash npx skills add remotion-dev/skills.",
+    "host_name": "www.reddit.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://llmbase.ai/skills/skills-shell/ai-image-generation",
+    "name": "ai-image-generation AI Agent Skill - Free Download | LLMBase",
+    "snippet": "Install ai-image-generation by running npx skills add skills-shell/skills --skill ai-image-generation in your project directory. Run the install ...",
+    "host_name": "llmbase.ai",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/lightningdev123/understanding-skills-in-ai-agents-essential-skills-developers-should-know-in-2026-49hd",
+    "name": "Understanding Skills in AI Agents - DEV Community",
+    "snippet": "This article explores the meaning of AI agent skills, how they operate internally, and the top skills developers should explore in 2026.",
+    "host_name": "dev.to",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  }
+]

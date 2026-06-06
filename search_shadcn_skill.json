@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://ui.shadcn.com/docs/skills",
+    "name": "Skills - shadcn/ui",
+    "snippet": "Give your AI assistant deep knowledge of shadcn/ui components, patterns, and best practices. Skills give AI assistants like Claude Code project-aware context ...\nThis installs the shadcn skill into your project. Once installed, your AI assistant automatically loads it when working with shadcn/ui components.",
+    "host_name": "ui.shadcn.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/shadcn-ui/ui/blob/main/skills/shadcn/SKILL.md",
+    "name": "ui/skills/shadcn/SKILL.md at main - GitHub",
+    "snippet": "Manages shadcn components and projects — adding, searching, fixing, debugging, styling, and composing UI. Provides project context, component ...\nUse existing components first. Use npx shadcn@latest search to check registries before writing custom UI. Check community registries too.",
+    "host_name": "github.com",
+    "rank": 1,
+    "date": "Jun 1, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://ui.shadcn.com/docs/changelog/2026-03-cli-v4",
+    "name": "March 2026 - shadcn/cli v4",
+    "snippet": "shadcn/skills gives coding agents the context they need to work with your components and registry correctly. It covers both Radix and Base UI primitives, ...",
+    "host_name": "ui.shadcn.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://smithery.ai/skills/acejou27/shadcn-ui",
+    "name": "shadcn-ui - Skill - Smithery",
+    "snippet": "This skill should be triggered when: Installing or configuring shadcn/ui in any supported framework; Adding shadcn/ui components (Button, Dialog, Form, Table, ...\nExpert assistance with shadcn/ui - a collection of beautifully-designed, accessible components built with TypeScript, Tailwind CSS, and Radix UI primitives.",
+    "host_name": "smithery.ai",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://mcpservers.org/agent-skills/vercel/vercel-plugin/shadcn-2",
+    "name": "shadcn | Agent Skills Library - Awesome MCP Servers",
+    "snippet": "shadcn/skills gives coding agents the context they need to work with components and registries correctly. It covers both Radix and Base UI primitives, updated ...",
+    "host_name": "mcpservers.org",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

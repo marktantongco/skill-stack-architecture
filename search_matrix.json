@@ -1,0 +1,74 @@
+[
+  {
+    "url": "https://github.com/vercel-labs/skills",
+    "name": "vercel-labs/skills: The open agent skills tool - npx skills - GitHub",
+    "snippet": "Generate a prompt for one skill, or start a supported coding agent interactively: it starts one supported agent interactively with the generated prompt.",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://blog.serghei.pl/posts/agent-skills-101",
+    "name": "Agent Skills 101: a practical guide for engineers - Serghei's Blog",
+    "snippet": "A practical guide for engineers on how to build, design, and deploy Agent Skills — the open standard for teaching AI agents your team's ...",
+    "host_name": "blog.serghei.pl",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/PowerBI/comments/1sfsqwy/agent_plugins_with_skills_and_tools_for_power_bi",
+    "name": "Agent plugins with skills and tools for Power BI (free resource for",
+    "snippet": "The repo has plugins to help agents do useful things in Power BI with reports, semantic models, notebooks, and more.",
+    "host_name": "www.reddit.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=fabAI1OKKww",
+    "name": "The complete guide to Agent Skills - YouTube",
+    "snippet": "... Skills 01:39 - Your First Skill 09:11 - How skills actually work 16:28 - Using pdf skill 15:02 - Prompts vs Instructions vs Custom Agents vs",
+    "host_name": "www.youtube.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://learn.microsoft.com/en-us/agent-framework/agents/skills",
+    "name": "Agent Skills | Microsoft Learn",
+    "snippet": "Agent Skills are portable packages of instructions, scripts, and resources that give agents specialized capabilities and domain expertise.",
+    "host_name": "learn.microsoft.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://addozhang.medium.com/agent-skills-deep-dive-building-a-reusable-skills-ecosystem-for-ai-agents-ccb1507b2c0f",
+    "name": "Building a Reusable Skills Ecosystem for AI Agents - Addo Zhang",
+    "snippet": "This article will explore the design philosophy, technical implementation, and practical applications of Agent Skills.",
+    "host_name": "addozhang.medium.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://arxiv.org/html/2602.12670v1",
+    "name": "Benchmarking How Well Agent Skills Work Across Diverse Tasks",
+    "snippet": "Reviewers run benchmark experiments with and without Skills across multiple agents to confirm each task provides meaningful signal about Skill efficacy. Figure ...",
+    "host_name": "arxiv.org",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.getdbt.com/blog/dbt-agent-skills",
+    "name": "Make your AI better at data work with dbt's agent skills",
+    "snippet": "npx skills add dbt-labs/dbt-agent-skills --global or just manually copy the files you want into the correct path for your agent.",
+    "host_name": "docs.getdbt.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  }
+]

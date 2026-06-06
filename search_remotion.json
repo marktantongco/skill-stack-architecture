@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://www.remotion.dev/docs/ai/skills",
+    "name": "Agent Skills | Remotion | Make videos programmatically",
+    "snippet": "These skills are useful for AI agents like Claude Code, Codex or Cursor. You can install them by running: npx skills add remotion-dev/skills",
+    "host_name": "www.remotion.dev",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/MotionDesign/comments/1qkqxwm/complete_guide_how_to_setup_remotion_agent_skills",
+    "name": "How to Setup Remotion Agent Skills with Claude Code (AI  - Reddit",
+    "snippet": "Remotion Agent Skills + Claude Code is the new way to generate motion graphics and animated videos using just natural language prompts.",
+    "host_name": "www.reddit.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://alexmcfarland.substack.com/p/claude-code-can-make-videos-now-full",
+    "name": "Claude Code Can Make Videos Now (Full Guide) - Alex McFarland",
+    "snippet": "Remotion just dropped an agent skill for Claude Code. It lets you create motion design graphics using Claude Code instead of design software. ...",
+    "host_name": "alexmcfarland.substack.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=EwKCAgt4aKI",
+    "name": "Generate Animated Videos with Claude Code (Remotion Agent Skill",
+    "snippet": "Create animated videos with Claude Code and the new Remotion Agent Skill. Remotion is a React framework for creating videos programmatically ...",
+    "host_name": "www.youtube.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/posts/charlywargnier_ace-remotion-just-added-agent-skills-and-activity-7419662426876354560-H3Sr",
+    "name": "Ace. Remotion just added Agent Skills, and now you can  - LinkedIn",
+    "snippet": "Remotion just added Agent Skills, and now you can make videos just by prompting Claude Code 🤯 `$ npx skills add remotion-dev/skills` 1. Run ...",
+    "host_name": "www.linkedin.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

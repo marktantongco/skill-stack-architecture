@@ -1,0 +1,74 @@
+[
+  {
+    "url": "https://www.youtube.com/watch?v=XCOkCwgKwAA",
+    "name": "The best way to create agent skills in 2026 - YouTube",
+    "snippet": "... Skill 11:42 - Demo 2: Dockerize a Python App 16:25 - Create a Dockerize Skill 17:29 - Test the Dockerize Skill 18:36 - Final Thoughts.",
+    "host_name": "www.youtube.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://odsc.medium.com/the-ten-best-agent-skills-to-teach-your-ai-agent-in-2026-82bca1d1ffa0",
+    "name": "The Ten Best Agent Skills to Teach Your AI Agent in 2026 | by ODSC",
+    "snippet": "It lets agents search the skills directory by domain and task, integrating with the Skills CLI (npx skills find and npx skills add) to verify ...",
+    "host_name": "odsc.medium.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/vercel-labs/skills?ref=blog.langchain.com",
+    "name": "vercel-labs/skills at blog.langchain.com - GitHub",
+    "snippet": "The open agent skills tool - npx skills. Contribute to vercel-labs/skills development by creating an account on GitHub.",
+    "host_name": "github.com",
+    "rank": 2,
+    "date": "Jun 4, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=2REiUlciObk",
+    "name": "What Are Skills? Build Your First AI Agent Skill in Minutes - YouTube",
+    "snippet": "... Skill structure: All you need is a SKILL.md file inside a skills folder (.github/skills/, .agents/skills/, or .claude/skills/). Add YAML ...",
+    "host_name": "www.youtube.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://alejandro-ao.com/agent-skills",
+    "name": "Agent Skills Explained - Full Crash Course | Alejandro AO",
+    "snippet": "Learn how to create, install, and share agent skills for Claude Code and other AI assistants. Skills are markdown files that teach agents ...",
+    "host_name": "alejandro-ao.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://pub.towardsai.net/skill-engineering-in-2026-how-to-build-ai-agent-skills-that-actually-work-26429abc6054",
+    "name": "Skill Engineering in 2026: How to Build AI Agent Skills That Actually",
+    "snippet": "A concrete example: an infographic skill. Imagine you want an agent to generate an infographic for LinkedIn. A weak approach is a one-off ...",
+    "host_name": "pub.towardsai.net",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://nordhealth.design/ai/skills",
+    "name": "Agent Skills - Nord Design System",
+    "snippet": "The npx skills CLI supports any agent that reads project-level skill files. This includes: Claude Code; Cursor; Codex CLI; GitHub Copilot; Windsurf; Cline ...",
+    "host_name": "nordhealth.design",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://explainx.ai/skills/inference-sh/skills/ai-social-media-content",
+    "name": "ai-social-media-content — AI agent skill - explainx.ai",
+    "snippet": "Create social media content for all platforms via inference.sh CLI.",
+    "host_name": "explainx.ai",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  }
+]

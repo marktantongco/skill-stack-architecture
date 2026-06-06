@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://testdino.com/blog/playwright-skill-claude-code",
+    "name": "Playwright Skill Claude Code: 82 E2E Tests for E-commerce",
+    "snippet": "Generate, run, debug & ship. It contains 70+ guides covering every Playwright testing scenario, npx skills add",
+    "host_name": "testdino.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://qaskills.sh/categories/e2e-testing",
+    "name": "E2E Testing Skills for AI Agents - QASkills.sh",
+    "snippet": "Visual regression testing with Playwright including screenshot comparison, pixel-diff thresholds, dynamic content masking, and cross-browser visual validation.",
+    "host_name": "qaskills.sh",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/testdino-hq/playwright-skill",
+    "name": "TestDino Playwright Skill: AI-powered guides for Playwright  - GitHub",
+    "snippet": "Playwright guides for E2E, API, component, visual, accessibility, and security testing, plus CLI automation. 70+ guides with TypeScript and JavaScript ...",
+    "host_name": "github.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/Playwright/comments/1qvtsr3/new_ai_skill_playwright_best_practices",
+    "name": "New AI Skill: Playwright Best Practices - Reddit",
+    "snippet": "today we are releasing a brand new AI skill to help AI agents be really smart when writing tests, debugging them, or anything Playwright-related ...",
+    "host_name": "www.reddit.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=_MpbmD_unnU",
+    "name": "How to Use Playwright CLI Skill for Agentic Testing - YouTube",
+    "snippet": "In this video, you'll learn how to set up the Playwright CLI Skill to enable an agent to browse the web, perform real user actions, ...",
+    "host_name": "www.youtube.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

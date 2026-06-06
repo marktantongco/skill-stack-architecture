@@ -1,0 +1,74 @@
+[
+  {
+    "url": "https://github.com/greensock/gsap-skills",
+    "name": "greensock/gsap-skills: Official AI skills for GSAP. These  - GitHub",
+    "snippet": "Official AI skills for GSAP (GreenSock Animation Platform). They teach agents correct GSAP usage: core API, timelines, ScrollTrigger, plugins, ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://allclaw.org/entry/gsap-skills",
+    "name": "GSAP Skills - Official AI Skills for GreenSock Animation Platform",
+    "snippet": "Structured skill modules that teach AI coding agents (Claude, Cursor, Copilot, etc.) how to use GSAP correctly, including best practices, core API, timelines, ...",
+    "host_name": "allclaw.org",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.instagram.com/reel/DXKJ4NxDekW",
+    "name": "GSAP skills finally made my Claude Code stop writing  - Instagram",
+    "snippet": "ScrollTrigger handles the scroll magic, easing makes things feel alive, timelines sequence the whole flow, React helpers keep it clean, and ...",
+    "host_name": "www.instagram.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://claudemarketplaces.com/skills/greensock/gsap-skills/gsap-scrolltrigger",
+    "name": "Gsap Scrolltrigger | Claude Code Skills",
+    "snippet": "This is the official GSAP ScrollTrigger implementation that handles scroll-driven animations, element pinning, and scrub effects.",
+    "host_name": "claudemarketplaces.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.facebook.com/leadgenman/videos/gsap-skills-finally-made-my-claude-code-stop-writing-ugly-animationsscrolltrigge/1699251144404178",
+    "name": "GSAP skills finally made my Claude Code stop writing ugly",
+    "snippet": "ScrollTrigger handles the scroll magic, easing makes things feel alive, timelines sequence the whole flow, React helpers keep it clean, and ...",
+    "host_name": "www.facebook.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/LovingOpenSourceAI/comments/1tr29t6/official_ai_skills_for_gsap_greensock_animation",
+    "name": "\"Official AI skills for GSAP (GreenSock Animation Platform). Teach",
+    "snippet": "Teach agents correct GSAP usage: core API, timelines, ScrollTrigger, plugins, React/Vue/Svelte, vanilla JS and performance. Agent Skills format; ...",
+    "host_name": "www.reddit.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://smithery.ai/skills/martinholovsky/gsap",
+    "name": "gsap - Skill | Smithery",
+    "snippet": "Overview. This skill provides GSAP (GreenSock Animation Platform) expertise for creating smooth, professional animations in the JARVIS AI Assistant HUD.",
+    "host_name": "smithery.ai",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://explainx.ai/skills/bbeierle12/skill-mcp-claude/gsap-scrolltrigger",
+    "name": "gsap-scrolltrigger — AI agent skill - explainx.ai",
+    "snippet": "Scroll-driven animations with pinning, scrubbing, snap points, and parallax effects. ›Supports scrubbed animations tied directly to scroll ...",
+    "host_name": "explainx.ai",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  }
+]

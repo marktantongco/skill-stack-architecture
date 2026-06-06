@@ -1,0 +1,74 @@
+[
+  {
+    "url": "https://github.com/softaworks/agent-toolkit/blob/main/skills/mermaid-diagrams//SKILL.md?plain=1",
+    "name": "agent-toolkit/skills/mermaid-diagrams/SKILL.md at main - GitHub",
+    "snippet": "Comprehensive guide for creating software diagrams using Mermaid syntax. Use when users need to create, visualize, or document software through diagrams s 3. * ...\nCreate professional software diagrams using Mermaid's text-based syntax. Mermaid renders diagrams from simple text definitions, making diagrams version- ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://claudemarketplaces.com/skills/product-on-purpose/pm-skills/utility-mermaid-diagrams",
+    "name": "Utility Mermaid Diagrams | Claude Code Skills",
+    "snippet": "This teaches you to pick the right mermaid diagram type. Covers all 15 diagram types with a selection guide organized by PM tasks like showing ...",
+    "host_name": "claudemarketplaces.com",
+    "rank": 1,
+    "date": "Jun 3, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://explainx.ai/skills/intellectronica/agent-skills/beautiful-mermaid",
+    "name": "beautiful-mermaid — AI agent skill | explainx.ai",
+    "snippet": "Render Mermaid diagrams as SVG and PNG images with theme customization. ›Supports five diagram types: flowchart, sequence, state, class, ...",
+    "host_name": "explainx.ai",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.mindstudio.ai/blog/mermaid-diagrams-claude-code-skills-context-compression",
+    "name": "How to Use Mermaid Diagrams in Claude Code Skills to Compress",
+    "snippet": "This guide covers how to embed Mermaid diagrams into Claude Code skill files for meaningful context compression—without\nMermaid diagrams convey complex processes in hundreds of tokens instead of thousands. Learn how to use them in skill.md files for better AI ...",
+    "host_name": "www.mindstudio.ai",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://lobehub.com/skills/diegocanepa-agent-skills-mermaid-diagrams",
+    "name": "mermaid-diagrams | Skills Marketplace - LobeHub",
+    "snippet": "This Skill converts text-based Mermaid syntax into professional software diagrams, include support for Mermaid diagram types (flowcharts, npx ...\nThis Skill converts text-based Mermaid syntax into professional software diagrams, enabling developers, technical writers, and architects to ...",
+    "host_name": "lobehub.com",
+    "rank": 4,
+    "date": "Jun 1, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=pmjk5tPSCH0",
+    "name": "Claude Code Tasks + Mermaid = The AI Agent Dashboard - YouTube",
+    "snippet": "Claude Code's new Tasks feature just leveled up agentic coding—with persistent JSON tasks, dependency blocking, and automatic sequencing.",
+    "host_name": "www.youtube.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://smithery.ai/skills/rysweet/mermaid-diagram-generator",
+    "name": "mermaid-diagram-generator - Skill | Smithery",
+    "snippet": "Converts architecture descriptions, module specs, or workflow docs into Mermaid diagrams. Use when visualizing brick module relationships, workflows (DDD, ...",
+    "host_name": "smithery.ai",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://mcp.directory/skills/mermaid-gen",
+    "name": "mermaid-gen — Agent Skill - MCP.Directory",
+    "snippet": "The mermaid-gen skill provides AI assistants with expert guidance for creating syntactically correct Mermaid diagrams common parsing errors\nThe mermaid-gen skill provides AI assistants with expert guidance for creating syntactically correct Mermaid diagrams while avoiding common parsing errors that ...",
+    "host_name": "mcp.directory",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  }
+]
