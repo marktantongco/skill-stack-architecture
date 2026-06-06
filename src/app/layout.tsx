@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Interactive Web Skill Stack Architecture | SP-7 Design Algorithm",
+  title: "Skill Stack Architecture | Editorial",
   description: "16 skills, 4 tiers, 5 design options, SP-7 algorithm — every item installable via npx skills add. AI portal gateway for design guidance.",
   keywords: ["skill stack", "design algorithm", "npx skills add", "UI/UX", "Framer Motion", "Stitch Loop", "SP-7"],
   authors: [{ name: "Design Portal Skills" }],

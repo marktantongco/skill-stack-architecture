@@ -2,14 +2,20 @@
 
 import { motion } from "framer-motion";
 import { skills } from "@/lib/skill-data";
-import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 
-const tierColors: Record<number, string> = {
-  0: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-  1: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  2: "bg-sky-500/15 text-sky-400 border-sky-500/30",
-  3: "bg-fuchsia-500/15 text-fuchsia-400 border-fuchsia-500/30",
+const tierAccents: Record<number, string> = {
+  0: "text-primary",
+  1: "text-accent",
+  2: "text-chart-4",
+  3: "text-chart-3",
+};
+
+const tierDots: Record<number, string> = {
+  0: "bg-primary",
+  1: "bg-accent",
+  2: "bg-chart-4",
+  3: "bg-chart-3",
 };
 
 const tierNames: Record<number, string> = {
@@ -31,63 +37,97 @@ export function SkillReference() {
   };
 
   return (
-    <section id="skill-reference" className="py-20 px-4 bg-muted/5">
-      <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Master Skill Registry</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            16 skills across 4 tiers — every item installable via <code className="text-sm bg-muted px-2 py-0.5 rounded">npx skills add</code>
-          </p>
-        </motion.div>
+    <section id="skill-reference" className="py-20 md:py-28 px-6">
+      <div className="max-w-[1200px] mx-auto">
+        {/* Section Header — 2-column editorial */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14">
+          <div className="md:col-span-8">
+            <div className="flex items-baseline gap-4 mb-3">
+              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none">01</span>
+              <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                Master Skill Registry
+              </h2>
+            </div>
+            <div className="editorial-pullquote ml-0 md:ml-20">
+              16 skills across 4 tiers — every item installable via{" "}
+              <code className="text-xs font-mono text-primary bg-muted px-1.5 py-0.5 not-italic">npx skills add</code>.
+              The foundation of the entire architecture.
+            </div>
+          </div>
+          <div className="md:col-span-4 flex items-end justify-end">
+            <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">
+              16 Items &middot; 4 Tiers &middot; Dependency-Ordered
+            </p>
+          </div>
+        </div>
 
-        {/* Tier filters */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        <hr className="editorial-rule-thick mb-8" />
+
+        {/* Tier Filter Tabs — Underline editorial style */}
+        <div className="flex flex-wrap gap-0 mb-10 border-b border-border">
           <button
             onClick={() => setSelectedTier(null)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${selectedTier === null ? "bg-foreground text-background" : "bg-muted/50 text-muted-foreground hover:bg-muted"}`}
+            className={`px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase font-medium transition-all border-b-2 -mb-px ${
+              selectedTier === null
+                ? "border-primary text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
           >
-            All ({skills.length})
+            All <span className="ml-1 opacity-40">{skills.length}</span>
           </button>
           {[0, 1, 2, 3].map(t => (
             <button
               key={t}
               onClick={() => setSelectedTier(t)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${selectedTier === t ? "bg-foreground text-background" : "bg-muted/50 text-muted-foreground hover:bg-muted"}`}
+              className={`px-4 py-2.5 text-[11px] tracking-[0.15em] uppercase font-medium transition-all border-b-2 -mb-px ${
+                selectedTier === t
+                  ? "border-primary text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
             >
-              Tier {t}: {tierNames[t]} ({skills.filter(s => s.tier === t).length})
+              <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${tierDots[t]}`} />
+              T{t} {tierNames[t]} <span className="ml-1 opacity-40">{skills.filter(s => s.tier === t).length}</span>
             </button>
           ))}
         </div>
 
-        {/* Skill cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Skill Rows — Editorial table */}
+        <div className="divide-y divide-border/60">
           {filtered.map((skill, i) => (
             <motion.div
               key={skill.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.04 }}
-              className="border border-border rounded-xl p-5 bg-card hover:border-foreground/20 transition-colors"
+              transition={{ delay: i * 0.02 }}
+              className="group py-4 hover:bg-muted/20 transition-colors -mx-2 px-2"
             >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-muted-foreground">{skill.id}</span>
-                  <h3 className="font-semibold text-foreground">{skill.name}</h3>
-                  {skill.isCustom && <Badge variant="outline" className="text-[10px] bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/30">CUSTOM</Badge>}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-2 items-center">
+                {/* ID + Tier dot + Name */}
+                <div className="md:col-span-4 flex items-center gap-2.5">
+                  <span className={`text-[10px] font-mono ${tierAccents[skill.tier]} font-bold`}>{skill.id}</span>
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${tierDots[skill.tier]}`} />
+                  <h3 className="text-sm font-semibold text-foreground">{skill.name}</h3>
                 </div>
-                <Badge variant="outline" className={tierColors[skill.tier]}>Tier {skill.tier}</Badge>
+
+                {/* Description */}
+                <div className="md:col-span-4">
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">{skill.primaryRole}</p>
+                </div>
+
+                {/* Install Command */}
+                <div className="md:col-span-4">
+                  <button
+                    onClick={() => handleCopy(skill.id, skill.installCommand)}
+                    className="w-full text-left bg-muted/40 border border-transparent hover:border-border rounded px-3 py-1.5 font-mono text-[11px] text-muted-foreground hover:bg-muted transition-colors flex items-center justify-between group/cmd"
+                  >
+                    <span className="truncate mr-2">{skill.installCommand}</span>
+                    <span className="shrink-0 text-[10px] opacity-0 group-hover/cmd:opacity-100 transition-opacity text-primary">
+                      {copiedId === skill.id ? "Copied" : "Copy"}
+                    </span>
+                  </button>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-3">{skill.primaryRole}</p>
-              <button
-                onClick={() => handleCopy(skill.id, skill.installCommand)}
-                className="w-full text-left bg-muted/40 rounded-lg px-3 py-2 font-mono text-xs text-muted-foreground hover:bg-muted transition-colors flex items-center justify-between group"
-              >
-                <span className="truncate mr-2">{skill.installCommand}</span>
-                <span className="shrink-0 text-[10px] opacity-50 group-hover:opacity-100 transition-opacity">
-                  {copiedId === skill.id ? "✓ Copied" : "Copy"}
-                </span>
-              </button>
             </motion.div>
           ))}
         </div>

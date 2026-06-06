@@ -4,58 +4,78 @@ import { motion } from "framer-motion";
 import { skills } from "@/lib/skill-data";
 
 const tierNames: Record<number, string> = { 0: "Foundation", 1: "Interactive", 2: "Visual Asset", 3: "Portal" };
-const tierColors: Record<number, string> = {
-  0: "border-amber-500/40 bg-amber-500/5",
-  1: "border-emerald-500/40 bg-emerald-500/5",
-  2: "border-sky-500/40 bg-sky-500/5",
-  3: "border-fuchsia-500/40 bg-fuchsia-500/5",
-};
 const tierAccents: Record<number, string> = {
-  0: "text-amber-400",
-  1: "text-emerald-400",
-  2: "text-sky-400",
-  3: "text-fuchsia-400",
+  0: "text-primary",
+  1: "text-accent",
+  2: "text-chart-4",
+  3: "text-chart-3",
 };
 
 export function ImplementationBlueprint() {
   return (
-    <section id="implementation" className="py-20 px-4 bg-muted/5">
-      <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Implementation Blueprint</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Install all 16 skills in dependency order — Tier 0 through Tier 3
-          </p>
-        </motion.div>
+    <section id="implementation" className="py-20 md:py-28 px-6 bg-muted/15">
+      <div className="max-w-[1200px] mx-auto">
+        {/* Section Header */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14">
+          <div className="md:col-span-8">
+            <div className="flex items-baseline gap-4 mb-3">
+              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none">06</span>
+              <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                Implementation Blueprint
+              </h2>
+            </div>
+            <div className="editorial-pullquote ml-0 md:ml-20">
+              Install all 16 skills in dependency order — Tier 0 through Tier 3. Each tier builds on the previous layer.
+            </div>
+          </div>
+        </div>
 
-        {/* Installation Sequence */}
-        <div className="space-y-6 mb-12">
+        <hr className="editorial-rule-thick mb-10" />
+
+        {/* Installation Sequence — Editorial Tiers */}
+        <div className="space-y-0 mb-14">
           {[0, 1, 2, 3].map(tier => (
             <motion.div
               key={tier}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: tier * 0.1 }}
-              className={`border rounded-2xl p-6 ${tierColors[tier]}`}
+              transition={{ delay: tier * 0.06 }}
+              className="border-t border-foreground/80 last:border-b last:border-foreground/80"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center">
-                  <span className={`text-sm font-bold ${tierAccents[tier]}`}>T{tier}</span>
+              {/* Tier Header */}
+              <div className="flex items-baseline justify-between py-4 px-1">
+                <div className="flex items-baseline gap-3">
+                  <span className={`font-['Georgia',_serif] text-2xl font-bold ${tierAccents[tier]} opacity-50`}>
+                    T{tier}
+                  </span>
+                  <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">
+                    {tierNames[tier]}
+                  </h3>
                 </div>
-                <div>
-                  <h3 className={`font-semibold ${tierAccents[tier]}`}>Tier {tier}: {tierNames[tier]}</h3>
-                  <p className="text-sm text-muted-foreground">{skills.filter(s => s.tier === tier).length} skills</p>
-                </div>
+                <span className="text-xs font-mono text-muted-foreground">
+                  {skills.filter(s => s.tier === tier).length} skills
+                </span>
               </div>
-              <div className="space-y-2">
+
+              {/* Skills in Tier */}
+              <div className="divide-y divide-border/40">
                 {skills.filter(s => s.tier === tier).map(skill => (
-                  <div key={skill.id} className="flex items-center gap-3 bg-card/50 rounded-lg px-4 py-2">
-                    <span className="text-xs font-mono text-muted-foreground w-8">{skill.id}</span>
-                    <span className="text-sm text-foreground flex-1">{skill.name}</span>
-                    <code className="text-[11px] text-muted-foreground font-mono hidden md:block max-w-md truncate">
-                      {skill.installCommand}
-                    </code>
+                  <div
+                    key={skill.id}
+                    className="grid grid-cols-1 md:grid-cols-12 gap-2 items-center py-3 px-1 hover:bg-muted/20 transition-colors"
+                  >
+                    <div className="md:col-span-1">
+                      <span className="text-xs font-mono text-muted-foreground">{skill.id}</span>
+                    </div>
+                    <div className="md:col-span-3">
+                      <span className="text-sm font-medium text-foreground">{skill.name}</span>
+                    </div>
+                    <div className="md:col-span-8">
+                      <code className="text-[11px] text-muted-foreground font-mono block truncate">
+                        {skill.installCommand}
+                      </code>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -63,26 +83,23 @@ export function ImplementationBlueprint() {
           ))}
         </div>
 
-        {/* Full Install Script */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="border border-border rounded-2xl overflow-hidden bg-card"
-        >
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/20">
-            <span className="text-sm font-medium text-foreground">install-all-skills.sh</span>
+        {/* Full Install Script — Code Block */}
+        <div className="border border-border rounded overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b-2 border-foreground bg-muted/10">
+            <span className="text-[11px] tracking-[0.15em] uppercase font-semibold text-foreground">
+              install-all-skills.sh
+            </span>
             <button
               onClick={() => {
                 const script = skills.map(s => s.installCommand).join("\n");
                 navigator.clipboard.writeText(script);
               }}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="text-[10px] tracking-[0.15em] uppercase text-primary hover:text-foreground transition-colors font-medium"
             >
               Copy All
             </button>
           </div>
-          <pre className="p-4 text-xs font-mono text-muted-foreground overflow-x-auto leading-relaxed">
+          <pre className="p-5 text-xs font-mono text-muted-foreground overflow-x-auto leading-relaxed bg-card">
             <code>{`#!/bin/bash
 # design-portal-skills installer — Complete 16-skill stack
 # Usage: bash install-all-skills.sh
@@ -114,7 +131,7 @@ npx skills add $ORG_URL --skill design-algorithm
 
 echo "=== All 16 skills installed ==="`}</code>
           </pre>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
