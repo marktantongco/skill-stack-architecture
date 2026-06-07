@@ -1,0 +1,50 @@
+{
+  "name": "design-portal-skills",
+  "version": "0.2.0",
+  "description": "16-skill, 4-tier, 5-option interactive web architecture with SP-7 scoring algorithm, AI portal gateway, and editorial design system",
+  "main": "SKILL.md",
+  "skills": [
+    {
+      "name": "ai-portal-redirect",
+      "path": "skills/ai-portal-redirect/SKILL.md",
+      "tier": 3,
+      "description": "AI agent intent classification and skill routing gateway"
+    },
+    {
+      "name": "stack-prioritizer",
+      "path": "skills/stack-prioritizer/SKILL.md",
+      "tier": 3,
+      "description": "7-dimension scoring algorithm (SP-7) with interactive weight sliders"
+    },
+    {
+      "name": "matrix-engine",
+      "path": "skills/matrix-engine/SKILL.md",
+      "tier": 3,
+      "description": "Comparative matrix rendering with radar chart and table views"
+    },
+    {
+      "name": "design-algorithm",
+      "path": "skills/design-algorithm/SKILL.md",
+      "tier": 3,
+      "description": "3-question decision tree with SP-7 scoring and skill-to-section mapping"
+    }
+  ],
+  "keywords": [
+    "skill-stack",
+    "design-algorithm",
+    "npx-skills-add",
+    "ui-ux",
+    "framer-motion",
+    "stitch-loop",
+    "sp7",
+    "ai-portal",
+    "editorial-design"
+  ],
+  "author": "skill-stack-arch",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skill-stack-arch/design-portal-skills.git"
+  },
+  "install": "npx skills add skill-stack-arch/design-portal-skills --skill design-portal-skills"
+}
