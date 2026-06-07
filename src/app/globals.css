@@ -41,6 +41,16 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* ─── Container Query Breakpoints (UI/UX Pro Max v8) ─── */
+  --container-sm: 480px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+
+  /* ─── Shadow Tokens (UI/UX Pro Max v8) ─── */
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.1);
+  --shadow-elevated: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }
 
 /* ─── Layer Organization ─── */
@@ -79,6 +89,11 @@
     --sidebar-accent-foreground: #1A1A1A;
     --sidebar-border: #E0DDD5;
     --sidebar-ring: #C23616;
+
+    /* ─── Dark Mode Elevation Tokens (UI/UX Pro Max v8) ─── */
+    --elevation-base: #FAFAF5;
+    --elevation-raised: #FFFFFF;
+    --elevation-overlay: #F3F1EB;
   }
 
   .dark {
@@ -113,6 +128,11 @@
     --sidebar-accent-foreground: #E8E6DF;
     --sidebar-border: #333330;
     --sidebar-ring: #E74C3C;
+
+    /* ─── Dark Mode Elevation — lighter = higher (UI/UX Pro Max v8) ─── */
+    --elevation-base: #0F0F0E;
+    --elevation-raised: #1A1A18;
+    --elevation-overlay: #252523;
   }
 
   * {
@@ -134,6 +154,9 @@
       --destructive: oklch(0.5 0.18 25);
       --chart-1: oklch(0.5 0.18 25);
       --chart-2: oklch(0.4 0.06 250);
+      --chart-3: oklch(0.6 0.08 70);
+      --chart-4: oklch(0.55 0.1 160);
+      --chart-5: oklch(0.7 0.1 70);
     }
 
     .dark {
@@ -145,6 +168,9 @@
       --destructive: oklch(0.6 0.22 20);
       --chart-1: oklch(0.6 0.22 20);
       --chart-2: oklch(0.65 0.1 230);
+      --chart-3: oklch(0.75 0.08 70);
+      --chart-4: oklch(0.65 0.12 145);
+      --chart-5: oklch(0.72 0.1 85);
     }
   }
 
@@ -276,6 +302,13 @@
       scroll-behavior: auto !important;
     }
   }
+
+  /* ─── @scope for Section Isolation (UI/UX Pro Max v8) ─── */
+  @scope (.editorial-pullquote) {
+    * {
+      max-width: 70ch;
+    }
+  }
 }
 
 @layer utilities {
@@ -283,7 +316,7 @@
   h1, h2, h3, .editorial-heading {
     text-wrap: balance;
   }
-  
+
   p, .editorial-body {
     text-wrap: pretty;
   }
@@ -312,7 +345,7 @@
     }
   }
 
-  /* ─── Dialog/Modal @starting-style ─── */
+  /* ─── Dialog/Modal @starting-style (UI/UX Pro Max v8) ─── */
   dialog[open] {
     opacity: 1;
     transform: scaleY(1);
@@ -332,15 +365,54 @@
       overlay 0.2s allow-discrete, display 0.2s allow-discrete;
   }
 
+  /* ─── @property for Animatable Gradient (UI/UX Pro Max v8) ─── */
+  @property --gradient-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @property --mesh-hue-1 {
+    syntax: '<number>';
+    initial-value: 25;
+    inherits: false;
+  }
+
   /* ─── Selection Styling ─── */
   ::selection {
     background: var(--primary);
     color: var(--primary-foreground);
   }
 
-  /* ─── Dark Mode Image Adjustment ─── */
+  /* ─── Dark Mode Image Adjustment (UI/UX Pro Max v8) ─── */
   .dark img:not([data-no-dark]) {
     filter: brightness(0.92);
+  }
+
+  /* ─── Dark Mode Code Blocks (UI/UX Pro Max v8) ─── */
+  .dark pre,
+  .dark code:not([class*="font-mono"]) {
+    background: oklch(0.15 0.01 60);
+    border-color: oklch(0.25 0.01 60);
+  }
+
+  /* ─── Dark Mode Tables (UI/UX Pro Max v8) ─── */
+  .dark table {
+    border-color: oklch(0.25 0.01 60);
+  }
+  .dark thead {
+    background: oklch(0.15 0.01 60);
+  }
+  .dark tbody tr:hover {
+    background: oklch(0.20 0.01 60);
+  }
+
+  /* ─── Dark Mode Charts (UI/UX Pro Max v8) ─── */
+  .dark .recharts-cartesian-grid line {
+    stroke: oklch(0.30 0.01 60);
+  }
+  .dark .recharts-text {
+    fill: oklch(0.70 0.02 60);
   }
 
   /* ─── Theme Transition ─── */
@@ -364,5 +436,37 @@
     html.theme-transition *::after {
       transition: none !important;
     }
+  }
+
+  /* ─── Scroll-Driven Animation Keyframes (UI/UX Pro Max v8) ─── */
+  @keyframes editorial-reveal {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes editorial-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ─── interpolate-size for Accordion Animations (UI/UX Pro Max v8) ─── */
+  @supports (interpolate-size: allow-keywords) {
+    .editorial-expand {
+      interpolate-size: allow-keywords;
+      overflow: hidden;
+      height: 0;
+      transition: height 0.25s ease-out;
+    }
+    .editorial-expand.open {
+      height: auto;
+    }
+  }
+
+  /* ─── Reading Line Constraint (UI/UX Pro Max v8) ─── */
+  .reading-line {
+    max-width: 70ch;
+  }
+  .editorial-heading-constraint {
+    max-width: 30ch;
   }
 }

@@ -173,3 +173,126 @@ Added `@layer utilities` block with:
 - ✅ `bun run lint` passes with zero errors
 - ✅ `npx next build` completes successfully
 - ✅ Dev server running correctly on port 3000
+
+---
+
+## Session 2 — Skills-Driven Redesign v2 (2026-06-08)
+
+**Skills Mapped:**
+- `stitch-loop` → `audit-analyzer` (error detection)
+- `framer-motion-animator` → `motion-animator` (animation enhancement)
+- `ui-ux-pro-max` → `ui-ux-pro-max-v8-infra` (visual consistency)
+- `skill-auditor` → `animation-auditor` + `agent-auditor` (security audit)
+
+---
+
+### Phase 1 v2 — Error Detection (Round 2)
+
+**Finding 3 — Dual OAuth: FIXED**
+- Removed `next-auth@^4.24.11` from `package.json` — no auth configuration existed, latent security risk eliminated
+
+**Finding 4 — Config Path Divergence: FIXED**
+- Deleted `tailwind.config.ts` — was a dead v3-style config with `hsl(var(--))` references while the app uses Tailwind v4 CSS-first via `globals.css`
+
+**Finding: `<your-org>` Placeholder: FIXED**
+- Changed `ORG_URL=https://github.com/<your-org>/design-portal-skills` → `skill-stack-arch/design-portal-skills` in `ImplementationBlueprint.tsx`
+
+**Finding: Recharts SSR Warning: FIXED**
+- Extracted `RadarChartWidget` component for dynamic import with `ssr: false`
+- Eliminates `width(-1) and height(-1)` SSR warning from ResponsiveContainer
+
+**Finding: Missing AnimatePresence: FIXED**
+- Added `AnimatePresence` wrapper to `DesignAlgorithm.tsx` expanded detail panels
+
+**Finding: Bundle Bloat: FIXED**
+- Removed 18 unused dependencies: `@dnd-kit/*`, `@hookform/resolvers`, `@mdxeditor/editor`, `@prisma/client`, `prisma`, `@reactuses/core`, `@tanstack/react-query`, `@tanstack/react-table`, `next-auth`, `next-intl`, `react-hook-form`, `react-markdown`, `react-syntax-highlighter`, `sharp`, `uuid`, `z-ai-web-dev-sdk`, `zustand`, `tailwindcss-animate`
+- Removed `db:*` scripts (Prisma no longer used)
+
+---
+
+### Phase 2 v2 — Animation Enhancement (Round 2)
+
+**Enhanced animation-variants.ts:**
+- Added `staggerContainerEditorial` — slower, more dramatic stagger for hero sections
+- Added `dividerVariant` — editorial divider entrance animation (fade + scaleX)
+- Added `expandVariant` — card expand/collapse for detail panels
+- Added `hoverNavItem` — underline-style nav hover with subtle Y shift
+- Added `hoverButtonPress` — satisfying scale-down with spring
+- Added `springs` presets — snappy, gentle, bouncy, editorial
+- Added `viewportRepeat` — for elements that should re-animate on re-entry
+- Added `layoutTransition` — shared layout transition for FLIP animations
+
+**Enhanced page.tsx:**
+- Added `EditorialDivider` component with animated `<motion.hr>` using `dividerVariant`
+- Replaced all static `<hr>` dividers with animated `EditorialDivider`
+- Added `layoutId="activeNav"` for smooth active nav indicator transition
+- Enhanced nav items with `motion.a` + `hoverNavItem` whileHover
+- Enhanced mobile menu with staggered item entrance animation (0.03s delay per item)
+- Added spring micro-interactions to logo, theme toggle, hamburger, and back-to-top button
+- Added `useReducedMotion` to page-level animations
+
+---
+
+### Phase 3 v2 — Visual Consistency (Round 2)
+
+**Enhanced globals.css with UI/UX Pro Max v8 patterns:**
+
+- Added `@theme inline` container query breakpoints (`--container-sm/md/lg/xl`)
+- Added `@theme inline` shadow tokens (`--shadow-card`, `--shadow-elevated`)
+- Added dark mode elevation tokens (`--elevation-base/raised/overlay`) — lighter = higher
+- Added `@property --gradient-angle` and `--mesh-hue-1` for animatable custom properties
+- Added `@scope (.editorial-pullquote)` for component isolation
+- Added OKLCH progressive enhancement for `--chart-3`, `--chart-4`, `--chart-5` in light mode
+- Added dark mode code block styling (`oklch(0.15 0.01 60)`)
+- Added dark mode table styling (hover, border, thead)
+- Added dark mode chart styling (recharts grid, text)
+- Added `interpolate-size: allow-keywords` for accordion animations (with `@supports` guard)
+- Added `editorial-reveal` and `editorial-fade-in` keyframes for scroll-driven animations
+- Added `.reading-line` (max-width: 70ch) and `.editorial-heading-constraint` (max-width: 30ch) utilities
+- Enhanced `@starting-style` for dialog/modal animations
+
+---
+
+### Phase 4 v2 — Security Audit (Round 2)
+
+**All 6 Known Findings: PASS**
+1. ✅ 2-hop latency — No redirect chains in app
+2. ✅ Silent billing bypass — No billing/proxy routes in app source
+3. ✅ Dual OAuth — `next-auth` removed from package.json
+4. ✅ Config path divergence — `tailwind.config.ts` deleted
+5. ✅ kiro-cli unversioned — No references in src/, scripts are version-pinned
+6. ✅ Missing health check — `/api/health` endpoint exists with cache-control
+
+**Additional Checks: PASS (13/14)**
+- ✅ XSS in AIPortalGateway — sanitizeInput + controlled inputs
+- ✅ Memory leaks — All useEffect cleanup verified
+- ✅ Reduced motion — All 13 components + CSS fallback
+- ✅ `<your-org>` placeholders — Resolved (bash variable, not placeholder)
+- ✅ animation-variants imports — All 13 components import shared variants
+- ✅ Tailwind transition-* conflicts — None on Motion elements
+- ✅ AnimatePresence exit animations — All properly wrapped
+- ⚠️ Bundle advisory — 18 unused deps removed in this session
+
+---
+
+### New Files Created
+- `src/components/RadarChartWidget.tsx` — Extracted Recharts radar chart for dynamic import
+
+### Files Modified
+- `src/app/page.tsx` — Animated dividers, nav layoutId, spring micro-interactions
+- `src/app/globals.css` — UI/UX Pro Max v8 CSS primitives, dark mode tokens, @property, @scope
+- `src/lib/animation-variants.ts` — Editorial variants, spring presets, layout transitions
+- `src/components/ImplementationBlueprint.tsx` — Fixed `<your-org>` placeholder
+- `src/components/DesignAlgorithm.tsx` — Added AnimatePresence for expand/collapse
+- `src/components/ComparativeAnalysis.tsx` — Dynamic import for Recharts SSR fix
+- `package.json` — Removed 20 unused dependencies
+
+### Files Deleted
+- `tailwind.config.ts` — Dead Tailwind v3 config (config path divergence)
+
+---
+
+### Build Verification (Session 2)
+- ✅ `bun install` — Removed 18 packages, 2 packages installed
+- ✅ `bun run lint` — Zero errors
+- ✅ `npx next build` — Compiled successfully in 6.1s, all 5 pages generated

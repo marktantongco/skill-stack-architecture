@@ -1,10 +1,10 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { comparisonMatrix, options } from "@/lib/skill-data";
 import { useState } from "react";
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from "recharts";
 
 const radarData = options.map(opt => {
   const entry: { name: string; [key: string]: string | number } = { name: opt.name };
@@ -14,6 +14,12 @@ const radarData = options.map(opt => {
 });
 
 const optColors = ["#C23616", "#2C3E50", "#6B6B6B", "#5B7B6F", "#8B7355"];
+
+/* ─── Dynamic import for Recharts — avoids SSR width/height warning ─── */
+const RadarChartWidget = dynamic(
+  () => import("./RadarChartWidget"),
+  { ssr: false, loading: () => <div className="h-[400px] md:h-[500px] w-full flex items-center justify-center text-muted-foreground text-sm">Loading chart…</div> }
+);
 
 export function ComparativeAnalysis() {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(options.map(o => o.id));
@@ -91,7 +97,7 @@ export function ComparativeAnalysis() {
             onClick={() => setView("radar")}
             role="tab"
             aria-selected={view === "radar"}
-            className={`min-h-[44px] px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px transition-all cursor-pointer ${
+            className={`min-h-[44px] px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px cursor-pointer ${
               view === "radar" ? "border-primary text-foreground" : "border-transparent text-muted-foreground"
             }`}
           >
@@ -101,7 +107,7 @@ export function ComparativeAnalysis() {
             onClick={() => setView("matrix")}
             role="tab"
             aria-selected={view === "matrix"}
-            className={`min-h-[44px] px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px transition-all cursor-pointer ${
+            className={`min-h-[44px] px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px cursor-pointer ${
               view === "matrix" ? "border-primary text-foreground" : "border-transparent text-muted-foreground"
             }`}
           >
@@ -117,35 +123,7 @@ export function ComparativeAnalysis() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="h-[400px] md:h-[500px] w-full">
-              <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                <RadarChart data={[
-                  { dim: "Visual Density", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["VD"]])) },
-                  { dim: "Interactivity", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["IR"]])) },
-                  { dim: "Data Complexity", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["DC"]])) },
-                  { dim: "Motion Need", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["MN"]])) },
-                  { dim: "Accessibility", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["AW"]])) },
-                  { dim: "AI Redirect", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["AR"]])) },
-                  { dim: "Reusability", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["CR"]])) },
-                ]}>
-                  <PolarGrid stroke="var(--border)" />
-                  <PolarAngleAxis dataKey="dim" tick={{ fill: "var(--muted-foreground)", fontSize: 11 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} />
-                  {radarFiltered.map((d) => (
-                    <Radar
-                      key={d.name}
-                      name={d.name}
-                      dataKey={d.name}
-                      stroke={optColors[options.findIndex(o => o.name === d.name)]}
-                      fill={optColors[options.findIndex(o => o.name === d.name)]}
-                      fillOpacity={0.06}
-                      strokeWidth={2}
-                    />
-                  ))}
-                  <Legend wrapperStyle={{ fontSize: 11 }} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
+            <RadarChartWidget radarFiltered={radarFiltered} options={options} optColors={optColors} />
           </motion.div>
         ) : (
           <motion.div
