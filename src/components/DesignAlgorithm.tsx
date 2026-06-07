@@ -1,26 +1,16 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { dimensions, options, weightProfiles } from "@/lib/skill-data";
 import { useState } from "react";
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.05 },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
 
 export function DesignAlgorithm() {
   const [activeProfile, setActiveProfile] = useState(0);
   const [customWeights, setCustomWeights] = useState(weightProfiles[0].weights);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
 
   const computeScore = (vector: number[], weights: number[]) => {
     return vector.reduce((sum, v, i) => sum + v * weights[i], 0);
@@ -89,13 +79,13 @@ export function DesignAlgorithm() {
             {/* Dimension Controls */}
             <motion.div
               className="space-y-5"
-              variants={staggerContainer}
+              variants={noMotion || staggerContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
             >
               {dimensions.map((dim, i) => (
-                <motion.div key={dim.id} variants={fadeInUp} className="group/dim">
+                <motion.div key={dim.id} variants={noMotion || fadeInUp} className="group/dim">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-sm text-foreground">
                       <span className="font-mono text-primary text-xs mr-2 font-bold">{dim.shortName}</span>
@@ -142,7 +132,7 @@ export function DesignAlgorithm() {
 
             <motion.div
               className="space-y-5"
-              variants={staggerContainer}
+              variants={noMotion || staggerContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
@@ -150,9 +140,9 @@ export function DesignAlgorithm() {
               {scoredOptions.map((opt, i) => (
                 <motion.div
                   key={opt.id}
-                  variants={fadeInUp}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
+                  variants={noMotion || fadeInUp}
+                  whileHover={shouldReduce ? undefined : { scale: 1.01 }}
+                  whileTap={shouldReduce ? undefined : { scale: 0.99 }}
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   onClick={() => setSelectedOption(selectedOption === opt.id ? null : opt.id)}
                   className="cursor-pointer group/res"
@@ -190,6 +180,7 @@ export function DesignAlgorithm() {
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
                       className="ml-9 mt-3 overflow-hidden"
                     >
                       <div className="grid grid-cols-7 gap-2 mb-3">

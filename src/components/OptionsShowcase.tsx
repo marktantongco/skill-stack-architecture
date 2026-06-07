@@ -1,31 +1,22 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { options, type DesignOption } from "@/lib/skill-data";
 import { useState, useEffect } from "react";
 
 const dimLabels = ["VD", "IR", "DC", "MN", "AW", "AR", "CR"];
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export function OptionCard({ option, index, onExpand }: { option: DesignOption; index: number; onExpand: (id: string) => void }) {
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
+
   return (
     <motion.div
       layout
-      variants={fadeInUp}
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
+      variants={noMotion || fadeInUp}
+      whileHover={shouldReduce ? undefined : { scale: 1.01 }}
+      whileTap={shouldReduce ? undefined : { scale: 0.99 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       onClick={() => onExpand(option.id)}
       className="cursor-pointer group"
@@ -225,6 +216,8 @@ export function OptionsShowcase() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const expandedOption = expandedId ? options.find(o => o.id === expandedId) : null;
   const expandedIndex = expandedId ? options.findIndex(o => o.id === expandedId) : 0;
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
 
   return (
     <section id="options" className="py-20 md:py-28 px-6" aria-label="Five Design Options">
@@ -256,7 +249,7 @@ export function OptionsShowcase() {
         {/* Options as editorial list */}
         <motion.div
           className="divide-y divide-border"
-          variants={staggerContainer}
+          variants={noMotion || staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}

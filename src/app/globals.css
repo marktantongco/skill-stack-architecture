@@ -94,17 +94,17 @@
     --secondary-foreground: #E8E6DF;
     --muted: #252523;
     --muted-foreground: #8A8880;
-    --accent: #5DADE2;
+    --accent: oklch(0.7 0.12 230);
     --accent-foreground: #0F0F0E;
     --destructive: #E74C3C;
     --border: #333330;
     --input: #333330;
     --ring: #E74C3C;
     --chart-1: #E74C3C;
-    --chart-2: #5DADE2;
+    --chart-2: oklch(0.65 0.1 230);
     --chart-3: #C9B896;
-    --chart-4: #7DCEA0;
-    --chart-5: #E8B960;
+    --chart-4: oklch(0.65 0.12 145);
+    --chart-5: oklch(0.72 0.1 85);
     --sidebar: #1A1A18;
     --sidebar-foreground: #E8E6DF;
     --sidebar-primary: #E74C3C;
@@ -139,18 +139,19 @@
     .dark {
       --primary: oklch(0.6 0.22 20);
       --primary-foreground: oklch(1 0 0);
-      --accent: oklch(0.7 0.14 230);
+      --accent: oklch(0.7 0.12 230);
       --accent-foreground: oklch(0.15 0 0);
       --ring: oklch(0.6 0.22 20);
       --destructive: oklch(0.6 0.22 20);
       --chart-1: oklch(0.6 0.22 20);
-      --chart-2: oklch(0.7 0.14 230);
+      --chart-2: oklch(0.65 0.1 230);
     }
   }
 
   /* ─── Focus Visible ─── */
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    outline-offset: 2px;
   }
 
   /* ─── Skip Link ─── */
@@ -273,6 +274,95 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* ─── 2026 Modern Typography ─── */
+  h1, h2, h3, .editorial-heading {
+    text-wrap: balance;
+  }
+  
+  p, .editorial-body {
+    text-wrap: pretty;
+  }
+
+  /* ─── Content Visibility for Below-Fold Sections ─── */
+  .section-below-fold {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 800px;
+  }
+
+  /* ─── Modern Focus Ring ─── */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    outline-offset: 2px;
+  }
+
+  /* ─── Anchor Scroll Padding ─── */
+  html {
+    scroll-padding-top: 3.5rem;
+  }
+
+  /* ─── Smooth Scrolling (respects reduced motion) ─── */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* ─── Dialog/Modal @starting-style ─── */
+  dialog[open] {
+    opacity: 1;
+    transform: scaleY(1);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out,
+      overlay 0.3s allow-discrete, display 0.3s allow-discrete;
+
+    @starting-style {
+      opacity: 0;
+      transform: scaleY(0.95);
+    }
+  }
+
+  dialog {
+    opacity: 0;
+    transform: scaleY(0.95);
+    transition: opacity 0.2s ease-in, transform 0.2s ease-in,
+      overlay 0.2s allow-discrete, display 0.2s allow-discrete;
+  }
+
+  /* ─── Selection Styling ─── */
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  /* ─── Dark Mode Image Adjustment ─── */
+  .dark img:not([data-no-dark]) {
+    filter: brightness(0.92);
+  }
+
+  /* ─── Theme Transition ─── */
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease,
+      fill 0.3s ease,
+      stroke 0.3s ease !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.theme-transition,
+    html.theme-transition *,
+    html.theme-transition *::before,
+    html.theme-transition *::after {
+      transition: none !important;
     }
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { options } from "@/lib/skill-data";
 import { useState, useEffect } from "react";
 import Image from "next/image";
@@ -13,24 +14,13 @@ const optionImages = [
   { id: "opt5", src: "/option-industrial.png", alt: "Neo-Industrial — raw structural power" },
 ];
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export function VisualGallery() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const selected = selectedImage
     ? optionImages.find(img => img.id === selectedImage) || { id: "editorial", src: "/option-editorial.png", alt: "Editorial layout — the chosen design direction" }
     : null;
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
 
   // Close lightbox on Escape
   useEffect(() => {
@@ -75,7 +65,7 @@ export function VisualGallery() {
         {/* Gallery Grid */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          variants={staggerContainer}
+          variants={noMotion || staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -85,9 +75,9 @@ export function VisualGallery() {
             return (
               <motion.div
                 key={img.id}
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                variants={noMotion || fadeInUp}
+                whileHover={shouldReduce ? undefined : { scale: 1.02 }}
+                whileTap={shouldReduce ? undefined : { scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 onClick={() => setSelectedImage(img.id)}
                 className="cursor-pointer group card-container"
@@ -131,9 +121,9 @@ export function VisualGallery() {
 
           {/* Editorial Hero Image — spans full width */}
           <motion.div
-            variants={fadeInUp}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
+            variants={noMotion || fadeInUp}
+            whileHover={shouldReduce ? undefined : { scale: 1.01 }}
+            whileTap={shouldReduce ? undefined : { scale: 0.99 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
             className="md:col-span-2 cursor-pointer group"
             onClick={() => setSelectedImage("editorial")}

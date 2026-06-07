@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { skills } from "@/lib/skill-data";
 
 const tierData = [
@@ -50,20 +51,10 @@ const tierData = [
   },
 ];
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export function TierArchitecture() {
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
+
   return (
     <section id="tier-architecture" className="py-20 md:py-28 px-6 bg-muted/15" aria-label="Tier Architecture">
       <div className="max-w-[1200px] mx-auto">
@@ -96,7 +87,7 @@ export function TierArchitecture() {
           <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-border hidden md:block" aria-hidden="true" />
 
           <motion.div
-            variants={staggerContainer}
+            variants={noMotion || staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -106,8 +97,8 @@ export function TierArchitecture() {
               return (
                 <motion.div
                   key={tier.tier}
-                  variants={fadeInUp}
-                  whileHover={{ scale: 1.005 }}
+                  variants={noMotion || fadeInUp}
+                  whileHover={shouldReduce ? undefined : { scale: 1.005 }}
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   className="mb-8 last:mb-0"
                 >
@@ -142,8 +133,8 @@ export function TierArchitecture() {
                         {tierSkills.map(skill => (
                           <motion.div
                             key={skill.id}
-                            className="flex items-center gap-2 px-3 py-2.5 hover:bg-muted/20 transition-colors"
-                            whileHover={{ x: 2 }}
+                            className="flex items-center gap-2 px-3 py-2.5 hover:bg-muted/20"
+                            whileHover={shouldReduce ? undefined : { x: 2 }}
                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                           >
                             <span className={`text-[10px] font-mono ${tier.textColor} font-bold w-7`}>{skill.id}</span>
@@ -171,15 +162,15 @@ export function TierArchitecture() {
           transition={{ duration: 0.5 }}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+            <motion.div whileHover={shouldReduce ? undefined : { scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <p className="font-['Georgia',_serif] text-2xl font-bold text-primary">4</p>
               <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mt-1">Dependency Layers</p>
             </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+            <motion.div whileHover={shouldReduce ? undefined : { scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <p className="font-['Georgia',_serif] text-2xl font-bold text-foreground">16</p>
               <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mt-1">Installable Skills</p>
             </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+            <motion.div whileHover={shouldReduce ? undefined : { scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <p className="font-['Georgia',_serif] text-2xl font-bold text-chart-3">T0→T3</p>
               <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mt-1">Strict Install Order</p>
             </motion.div>

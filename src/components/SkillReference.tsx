@@ -1,8 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { skills } from "@/lib/skill-data";
 import { useState, useCallback } from "react";
+import { copyToClipboard } from "@/lib/clipboard";
 
 const tierAccents: Record<number, string> = {
   0: "text-primary",
@@ -25,45 +27,13 @@ const tierNames: Record<number, string> = {
   3: "Portal",
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.03 },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
-
-/* ─── Clipboard Fallback ─── */
-const copyToClipboard = async (text: string): Promise<boolean> => {
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.appendChild(textarea);
-    textarea.select();
-    const success = document.execCommand("copy");
-    document.body.removeChild(textarea);
-    return success;
-  } catch {
-    return false;
-  }
-};
-
 export function SkillReference() {
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copyError, setCopyError] = useState<string | null>(null);
   const filtered = selectedTier !== null ? skills.filter(s => s.tier === selectedTier) : skills;
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
 
   const handleCopy = useCallback(async (id: string, cmd: string) => {
     setCopyError(null);
@@ -152,7 +122,7 @@ export function SkillReference() {
         {/* Skill Rows — Editorial table */}
         <motion.div
           className="divide-y divide-border/60"
-          variants={staggerContainer}
+          variants={noMotion || staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -160,8 +130,8 @@ export function SkillReference() {
           {filtered.map((skill) => (
             <motion.div
               key={skill.id}
-              variants={fadeInUp}
-              whileHover={{ scale: 1.005, backgroundColor: "var(--muted)" }}
+              variants={noMotion || fadeInUp}
+              whileHover={shouldReduce ? undefined : { scale: 1.005, backgroundColor: "var(--muted)" }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
               className="group py-4 -mx-2 px-2 rounded"
             >

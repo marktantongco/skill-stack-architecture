@@ -36,30 +36,23 @@ function useScrollSpy(sectionIds: string[]) {
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-20% 0px -70% 0px" }
+    );
 
     sectionIds.forEach((id) => {
       const element = document.getElementById(id);
-      if (!element) return;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveId(id);
-            }
-          });
-        },
-        { rootMargin: "-20% 0px -70% 0px" }
-      );
-
-      observer.observe(element);
-      observers.push(observer);
+      if (element) observer.observe(element);
     });
 
-    return () => {
-      observers.forEach((obs) => obs.disconnect());
-    };
+    return () => observer.disconnect();
   }, [sectionIds]);
 
   return activeId;
@@ -115,8 +108,20 @@ export default function Home() {
   }, []);
 
   const toggleTheme = useCallback(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced) {
+      document.documentElement.classList.add('theme-transition');
+    }
     const currentTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
     setTheme(currentTheme === "dark" ? "light" : "dark");
+    if (!prefersReduced) {
+      const cleanup = () => {
+        document.documentElement.classList.remove('theme-transition');
+        document.documentElement.removeEventListener('transitionend', cleanup);
+      };
+      document.documentElement.addEventListener('transitionend', cleanup);
+      setTimeout(cleanup, 400);
+    }
   }, [setTheme]);
 
   return (
@@ -143,23 +148,25 @@ export default function Home() {
           </div>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-5" role="tablist" aria-label="Section navigation">
+          <div className="hidden lg:flex items-center gap-5" aria-label="Section navigation">
             {navItems.map((item) => (
-              <button
+              <a
                 key={item.id}
-                onClick={() => scrollTo(item.id)}
-                role="tab"
-                aria-selected={activeSection === item.id}
-                aria-controls={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollTo(item.id);
+                }}
                 className={`text-[10px] tracking-[0.12em] uppercase font-medium cursor-pointer transition-colors min-h-[44px] flex items-center ${
                   activeSection === item.id
                     ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
+                aria-current={activeSection === item.id ? "true" : undefined}
               >
                 <span className="text-primary/50 mr-0.5">{item.num}</span>
                 {item.label}
-              </button>
+              </a>
             ))}
           </div>
 
@@ -224,7 +231,7 @@ export default function Home() {
       </nav>
 
       {/* Main Content */}
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="flex-1 section-below-fold">
         {/* Hero / Masthead */}
         <HeroSection />
 

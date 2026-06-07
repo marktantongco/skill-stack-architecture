@@ -1,23 +1,16 @@
 "use client";
 
-import { motion } from "framer-motion";
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 
 export function HeroSection() {
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
+
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
+  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
+
   return (
     <section className="relative py-20 md:py-32 px-6 bg-foreground overflow-hidden" aria-label="Hero masthead">
       {/* Subtle cross-hatch texture */}
@@ -25,17 +18,17 @@ export function HeroSection() {
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
       }} aria-hidden="true" />
 
-      <div className="relative z-10 max-w-[1200px] mx-auto">
+      <motion.div style={shouldReduce ? {} : { y, opacity }} className="relative z-10 max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
           {/* Left Column — Masthead */}
           <div className="md:col-span-8">
             <motion.div
-              variants={staggerContainer}
+              variants={noMotion || staggerContainer}
               initial="hidden"
               animate="visible"
             >
               <motion.p
-                variants={fadeInUp}
+                variants={noMotion || fadeInUp}
                 transition={{ duration: 0.6 }}
                 className="text-[10px] tracking-[0.4em] uppercase text-primary font-semibold mb-8"
               >
@@ -43,7 +36,7 @@ export function HeroSection() {
               </motion.p>
 
               <motion.h1
-                variants={fadeInUp}
+                variants={noMotion || fadeInUp}
                 transition={{ duration: 0.6 }}
                 className="font-['Georgia',_serif] text-4xl md:text-6xl lg:text-[5.5rem] font-bold text-background leading-[1.05] mb-8"
               >
@@ -55,20 +48,20 @@ export function HeroSection() {
               </motion.h1>
 
               <motion.div
-                variants={fadeInUp}
+                variants={noMotion || fadeInUp}
                 transition={{ duration: 0.6 }}
                 className="h-px bg-background/15 mb-8 max-w-sm"
               />
 
               <motion.p
-                variants={fadeInUp}
+                variants={noMotion || fadeInUp}
                 transition={{ duration: 0.6 }}
                 className="text-base md:text-lg text-background/50 max-w-md leading-relaxed mb-2"
               >
                 16 skills. 4 tiers. 5 design options. 1 design algorithm.
               </motion.p>
               <motion.p
-                variants={fadeInUp}
+                variants={noMotion || fadeInUp}
                 transition={{ duration: 0.6 }}
                 className="text-sm text-background/35 font-mono"
               >
@@ -80,13 +73,13 @@ export function HeroSection() {
           {/* Right Column — Stats */}
           <div className="md:col-span-4">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={shouldReduce ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
               className="md:border-l md:border-background/10 md:pl-8"
             >
               <motion.div
-                variants={staggerContainer}
+                variants={noMotion || staggerContainer}
                 initial="hidden"
                 animate="visible"
                 className="grid grid-cols-2 gap-x-8 gap-y-8"
@@ -99,8 +92,8 @@ export function HeroSection() {
                 ].map((stat) => (
                   <motion.div
                     key={stat.label}
-                    variants={fadeInUp}
-                    whileHover={{ scale: 1.05 }}
+                    variants={noMotion || fadeInUp}
+                    whileHover={shouldReduce ? undefined : { scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   >
                     <div className="font-['Georgia',_serif] text-3xl md:text-4xl font-bold text-primary">
@@ -115,7 +108,7 @@ export function HeroSection() {
             </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

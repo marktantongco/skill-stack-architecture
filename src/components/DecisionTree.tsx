@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { useState } from "react";
 
 interface DecisionNode {
@@ -82,6 +83,7 @@ export function DecisionTree() {
   const [currentNode, setCurrentNode] = useState("start");
   const [path, setPath] = useState<string[]>(["start"]);
   const [result, setResult] = useState<DecisionResult | null>(null);
+  const shouldReduce = useReducedMotion();
 
   const handleChoice = (next: string) => {
     if (next.startsWith("result-")) {
@@ -165,15 +167,15 @@ export function DecisionTree() {
               <div className="md:col-span-7 md:border-l md:border-border md:pl-8">
                 <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground font-semibold mb-3">Why This Option</p>
                 <p className="text-base text-muted-foreground leading-relaxed mb-6">{result.reason}</p>
-                <button
+                <motion.button
                   onClick={reset}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="min-h-[44px] text-[11px] tracking-[0.15em] uppercase text-primary border border-primary/30 px-4 py-2 rounded hover:bg-primary/5 transition-colors font-medium cursor-pointer"
+                  whileHover={shouldReduce ? undefined : { scale: 1.02 }}
+                  whileTap={shouldReduce ? undefined : { scale: 0.98 }}
+                  className="min-h-[44px] text-[11px] tracking-[0.15em] uppercase text-primary border border-primary/30 px-4 py-2 rounded hover:bg-primary/5 font-medium cursor-pointer"
                   aria-label="Start decision tree over"
                 >
                   Start Over
-                </button>
+                </motion.button>
               </div>
             </div>
           </motion.div>
@@ -198,10 +200,10 @@ export function DecisionTree() {
                   <motion.button
                     key={i}
                     onClick={() => handleChoice(opt.next)}
-                    whileHover={{ scale: 1.005, x: 4 }}
-                    whileTap={{ scale: 0.995 }}
+                    whileHover={shouldReduce ? undefined : { scale: 1.005, x: 4 }}
+                    whileTap={shouldReduce ? undefined : { scale: 0.995 }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="w-full text-left min-h-[44px] py-5 group flex items-start gap-4 hover:bg-muted/10 transition-colors -mx-2 px-2 cursor-pointer"
+                    className="w-full text-left min-h-[44px] py-5 group flex items-start gap-4 hover:bg-muted/10 -mx-2 px-2 cursor-pointer"
                     role="radio"
                     aria-checked={false}
                     aria-label={opt.label}
@@ -221,13 +223,15 @@ export function DecisionTree() {
             </div>
 
             {path.length > 1 && (
-              <button
+              <motion.button
                 onClick={goBack}
-                className="mt-6 min-h-[44px] text-[11px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
+                whileHover={shouldReduce ? undefined : { x: -2 }}
+                whileTap={shouldReduce ? undefined : { scale: 0.98 }}
+                className="mt-6 min-h-[44px] text-[11px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground font-medium cursor-pointer"
                 aria-label="Go back to previous question"
               >
                 &larr; Go Back
-              </button>
+              </motion.button>
             )}
           </motion.div>
         )}

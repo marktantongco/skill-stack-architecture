@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { intentRoutes } from "@/lib/skill-data";
 import { useState, useCallback } from "react";
 
@@ -16,6 +17,8 @@ export function AIPortalGateway() {
   const [searchQuery, setSearchQuery] = useState("");
   const [matchedRoute, setMatchedRoute] = useState<typeof intentRoutes[0] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
 
   const handleSearch = useCallback((rawQuery: string) => {
     const query = sanitizeInput(rawQuery);

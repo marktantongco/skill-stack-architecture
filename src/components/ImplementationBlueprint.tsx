@@ -1,8 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { skills } from "@/lib/skill-data";
 import { useState, useCallback } from "react";
+import { copyToClipboard } from "@/lib/clipboard";
 
 const tierNames: Record<number, string> = { 0: "Foundation", 1: "Interactive", 2: "Visual Asset", 3: "Portal" };
 const tierAccents: Record<number, string> = {
@@ -12,43 +14,11 @@ const tierAccents: Record<number, string> = {
   3: "text-chart-3",
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
-
-/* ─── Clipboard Fallback ─── */
-const copyToClipboard = async (text: string): Promise<boolean> => {
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.appendChild(textarea);
-    textarea.select();
-    const success = document.execCommand("copy");
-    document.body.removeChild(textarea);
-    return success;
-  } catch {
-    return false;
-  }
-};
-
 export function ImplementationBlueprint() {
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
 
   const handleCopyAll = useCallback(async () => {
     const script = skills.map(s => s.installCommand).join("\n");
@@ -91,7 +61,7 @@ export function ImplementationBlueprint() {
         {/* Installation Sequence — Editorial Tiers */}
         <motion.div
           className="space-y-0 mb-14"
-          variants={staggerContainer}
+          variants={noMotion || staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -99,7 +69,7 @@ export function ImplementationBlueprint() {
           {[0, 1, 2, 3].map(tier => (
             <motion.div
               key={tier}
-              variants={fadeInUp}
+              variants={noMotion || fadeInUp}
               className="border-t border-foreground/80 last:border-b last:border-foreground/80"
             >
               {/* Tier Header */}
@@ -123,7 +93,7 @@ export function ImplementationBlueprint() {
                   <motion.div
                     key={skill.id}
                     className="grid grid-cols-1 md:grid-cols-12 gap-2 items-center py-3 px-1 hover:bg-muted/20 transition-colors"
-                    whileHover={{ x: 4 }}
+                    whileHover={shouldReduce ? undefined : { x: 4 }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   >
                     <div className="md:col-span-1">

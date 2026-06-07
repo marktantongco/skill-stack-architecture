@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { useState } from "react";
 
 interface SectionMap {
@@ -31,21 +32,10 @@ const sectionMappings: SectionMap[] = [
 
 const dimShort = ["VD", "IR", "DC", "MN", "AW", "AR", "CR"];
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.03 },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 5 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export function SectionMapping() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
 
   return (
     <section id="section-mapping" className="py-20 md:py-28 px-6 bg-muted/15" aria-label="Section-to-Skill Mapping">
@@ -76,7 +66,7 @@ export function SectionMapping() {
         {/* Section Mapping Table */}
         <motion.div
           className="space-y-0 divide-y divide-border"
-          variants={staggerContainer}
+          variants={noMotion || staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -86,7 +76,7 @@ export function SectionMapping() {
             return (
               <motion.div
                 key={sec.id}
-                variants={fadeInUp}
+                variants={noMotion || fadeInUp}
                 className="group"
               >
                 <button
@@ -128,37 +118,40 @@ export function SectionMapping() {
                 </button>
 
                 {/* Expanded Detail */}
-                {isExpanded && (
-                  <motion.div
-                    id={`mapping-${sec.id}`}
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    className="overflow-hidden pb-5 ml-0 md:ml-8"
-                    role="region"
-                    aria-label={`${sec.name} details`}
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-l-2 border-primary pl-5">
-                      <div>
-                        <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-2">Description</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{sec.description}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-2">Visual Assets</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{sec.visualAsset}</p>
-                        <div className="mt-3 grid grid-cols-7 gap-1.5">
-                          {sec.sp7Vector.map((v, j) => (
-                            <div key={j} className="text-center">
-                              <div className="h-8 bg-muted border border-border rounded flex items-center justify-center">
-                                <span className="text-xs font-bold text-foreground">{v}</span>
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      id={`mapping-${sec.id}`}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden pb-5 ml-0 md:ml-8"
+                      role="region"
+                      aria-label={`${sec.name} details`}
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-l-2 border-primary pl-5">
+                        <div>
+                          <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-2">Description</p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{sec.description}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-2">Visual Assets</p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{sec.visualAsset}</p>
+                          <div className="mt-3 grid grid-cols-7 gap-1.5">
+                            {sec.sp7Vector.map((v, j) => (
+                              <div key={j} className="text-center">
+                                <div className="h-8 bg-muted border border-border rounded flex items-center justify-center">
+                                  <span className="text-xs font-bold text-foreground">{v}</span>
+                                </div>
+                                <span className="text-[8px] text-muted-foreground mt-0.5 block">{dimShort[j]}</span>
                               </div>
-                              <span className="text-[8px] text-muted-foreground mt-0.5 block">{dimShort[j]}</span>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             );
           })}

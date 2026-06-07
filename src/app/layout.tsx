@@ -32,16 +32,14 @@ export const metadata: Metadata = {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "Skill Stack Architecture | Editorial",
+    description: "16 skills, 4 tiers, 5 design options, SP-7 algorithm — every item installable via npx skills add.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "Skill Stack Architecture | Editorial",
+    description: "16 skills, 4 tiers, 5 design options, SP-7 algorithm — every item installable via npx skills add.",
   },
 };
 
@@ -59,7 +57,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
-          disableTransitionOnChange
+          disableTransitionOnChange={false}
         >
           {/* Skip Link — First Focusable Element */}
           <a href="#main-content" className="skip-link">

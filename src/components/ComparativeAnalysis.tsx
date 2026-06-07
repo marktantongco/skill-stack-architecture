@@ -1,12 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { comparisonMatrix, options } from "@/lib/skill-data";
 import { useState } from "react";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from "recharts";
 
 const radarData = options.map(opt => {
-  const entry: Record<string, string | number> = { name: opt.name };
+  const entry: { name: string; [key: string]: string | number } = { name: opt.name };
   const labels = ["VD", "IR", "DC", "MN", "AW", "AR", "CR"];
   opt.sp7Vector.forEach((v, i) => { entry[labels[i]] = v; });
   return entry;
@@ -14,22 +15,11 @@ const radarData = options.map(opt => {
 
 const optColors = ["#C23616", "#2C3E50", "#6B6B6B", "#5B7B6F", "#8B7355"];
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.05 },
-  },
-};
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export function ComparativeAnalysis() {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(options.map(o => o.id));
   const [view, setView] = useState<"matrix" | "radar">("radar");
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
 
   const toggleOption = (id: string) => {
     setSelectedOptions(prev =>
@@ -68,7 +58,7 @@ export function ComparativeAnalysis() {
         {/* Option Toggles — Editorial Tags */}
         <motion.div
           className="flex flex-wrap gap-2 mb-8"
-          variants={staggerContainer}
+          variants={noMotion || staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -76,12 +66,12 @@ export function ComparativeAnalysis() {
           {options.map((opt, i) => (
             <motion.button
               key={opt.id}
-              variants={fadeInUp}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              variants={noMotion || fadeInUp}
+              whileHover={shouldReduce ? undefined : { scale: 1.05 }}
+              whileTap={shouldReduce ? undefined : { scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               onClick={() => toggleOption(opt.id)}
-              className={`min-h-[44px] px-3 py-1.5 text-[11px] tracking-[0.1em] uppercase font-medium border transition-all cursor-pointer ${
+              className={`min-h-[44px] px-3 py-1.5 text-[11px] tracking-[0.1em] uppercase font-medium border cursor-pointer ${
                 selectedOptions.includes(opt.id)
                   ? "border-foreground/30 bg-foreground/5 text-foreground"
                   : "border-border bg-transparent text-muted-foreground hover:border-foreground/20"

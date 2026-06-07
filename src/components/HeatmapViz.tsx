@@ -1,22 +1,25 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { heatmapData, sectionLabels } from "@/lib/skill-data";
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.02 },
-  },
+const cellColor = (v: number) => {
+  if (v === 0) return "transparent";
+  const opacity = 0.08 + (v / 5) * 0.35;
+  return `color-mix(in oklch, var(--primary) ${opacity * 100}%, transparent)`;
 };
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 5 },
-  visible: { opacity: 1, y: 0 },
+const cellTextColor = (v: number) => {
+  if (v >= 3) return "var(--primary)";
+  if (v > 0) return "var(--muted-foreground)";
+  return "transparent";
 };
 
 export function HeatmapViz() {
+  const shouldReduce = useReducedMotion();
+  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
+
   return (
     <section id="heatmap" className="py-20 md:py-28 px-6" aria-label="Skill Utilization Heatmap">
       <div className="max-w-[1200px] mx-auto">
@@ -68,7 +71,7 @@ export function HeatmapViz() {
                 </tr>
               </thead>
               <motion.tbody
-                variants={staggerContainer}
+                variants={noMotion || staggerContainer}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
@@ -78,7 +81,7 @@ export function HeatmapViz() {
                   return (
                     <motion.tr
                       key={row.skill}
-                      variants={fadeInUp}
+                      variants={noMotion || fadeInUp}
                       className="border-b border-border/30 hover:bg-muted/10 transition-colors"
                     >
                       <td className="p-2.5 font-mono text-muted-foreground text-[11px] sticky left-0 bg-card">
@@ -87,13 +90,13 @@ export function HeatmapViz() {
                       {row.values.map((v, j) => (
                         <td key={j} className="p-1.5 text-center">
                           <motion.div
-                            className="w-6 h-6 rounded mx-auto flex items-center justify-center text-[10px] font-bold transition-colors"
+                            className="w-6 h-6 rounded mx-auto flex items-center justify-center text-[10px] font-bold"
                             style={{
-                              backgroundColor: v === 0 ? "transparent" : `rgba(194, 54, 22, ${0.05 + (v / 5) * 0.3})`,
-                              color: v >= 3 ? "#C23616" : v > 0 ? "#6B6B6B" : "transparent",
+                              backgroundColor: cellColor(v),
+                              color: cellTextColor(v),
                             }}
-                            initial={{ scale: 0 }}
-                            whileInView={{ scale: 1 }}
+                            initial={shouldReduce ? false : { scale: 0 }}
+                            whileInView={shouldReduce ? undefined : { scale: 1 }}
                             viewport={{ once: true }}
                             transition={{ delay: j * 0.01, type: "spring", stiffness: 300, damping: 20 }}
                           >
@@ -116,7 +119,7 @@ export function HeatmapViz() {
                 <div
                   className="w-4 h-4 rounded"
                   style={{
-                    backgroundColor: v === 0 ? "transparent" : `rgba(194, 54, 22, ${0.05 + (v / 5) * 0.3})`,
+                    backgroundColor: cellColor(v),
                     border: "1px solid var(--border)",
                   }}
                   aria-hidden="true"

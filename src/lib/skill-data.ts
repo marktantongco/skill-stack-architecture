@@ -63,10 +63,10 @@ export const skills: Skill[] = [
   { id: 'S10', name: 'shadcn/ui Skill', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add shadcn-ui/ui --skill shadcn', primaryRole: 'Interactive table, data table, component scaffolding', isCustom: false },
   { id: 'S11', name: 'Playwright Visual', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add testdino-hq/playwright-skill', primaryRole: 'Screenshot capture, visual regression, cross-browser testing', isCustom: false },
   { id: 'S12', name: 'D3.js Visualization', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add antvis/chart-visualization-skills --skill d3-viz', primaryRole: 'Custom interactive visualizations, force graphs, heatmaps', isCustom: false },
-  { id: 'S13', name: 'AI Portal Redirect', tier: 3, tierName: 'Portal', installCommand: 'npx skills add <your-org>/design-portal-skills --skill ai-portal-redirect', primaryRole: 'AI agent intent classification, skill routing, guided navigation', isCustom: true },
-  { id: 'S14', name: 'Stack Prioritizer', tier: 3, tierName: 'Portal', installCommand: 'npx skills add <your-org>/design-portal-skills --skill stack-prioritizer', primaryRole: '7-dimension scoring algorithm, dependency resolver', isCustom: true },
-  { id: 'S15', name: 'Matrix Engine', tier: 3, tierName: 'Portal', installCommand: 'npx skills add <your-org>/design-portal-skills --skill matrix-engine', primaryRole: 'Comparative matrix rendering, interactive filters, radar viz', isCustom: true },
-  { id: 'S16', name: 'Design Algorithm', tier: 3, tierName: 'Portal', installCommand: 'npx skills add <your-org>/design-portal-skills --skill design-algorithm', primaryRole: 'Stack prioritization computation, result visualization, decision tree', isCustom: true },
+  { id: 'S13', name: 'AI Portal Redirect', tier: 3, tierName: 'Portal', installCommand: 'npx skills add skill-stack-arch/design-portal-skills --skill ai-portal-redirect', primaryRole: 'AI agent intent classification, skill routing, guided navigation', isCustom: true },
+  { id: 'S14', name: 'Stack Prioritizer', tier: 3, tierName: 'Portal', installCommand: 'npx skills add skill-stack-arch/design-portal-skills --skill stack-prioritizer', primaryRole: '7-dimension scoring algorithm, dependency resolver', isCustom: true },
+  { id: 'S15', name: 'Matrix Engine', tier: 3, tierName: 'Portal', installCommand: 'npx skills add skill-stack-arch/design-portal-skills --skill matrix-engine', primaryRole: 'Comparative matrix rendering, interactive filters, radar viz', isCustom: true },
+  { id: 'S16', name: 'Design Algorithm', tier: 3, tierName: 'Portal', installCommand: 'npx skills add skill-stack-arch/design-portal-skills --skill design-algorithm', primaryRole: 'Stack prioritization computation, result visualization, decision tree', isCustom: true },
 ];
 
 // ─── 5 Design Options ───
@@ -194,11 +194,11 @@ export const intentRoutes: IntentRoute[] = [
   { category: 'Algorithm Logic', keywords: ['algorithm', 'scoring', 'prioritization', 'SP-7', 'dimension'], targetSection: 'algorithm', confidence: 0.9, fallback: 'skill-reference' },
   { category: 'Comparison', keywords: ['compare', 'versus', 'difference', 'matrix', 'which option'], targetSection: 'comparative', confidence: 0.85, fallback: 'skill-reference' },
   { category: 'Build Instructions', keywords: ['build', 'implement', 'deploy', 'sequence', 'QA'], targetSection: 'implementation', confidence: 0.8, fallback: 'skill-reference' },
-  { category: 'Motion/Animation', keywords: ['animation', 'motion', 'scroll', 'parallax', 'spring'], targetSection: 'opt2', confidence: 0.8, fallback: 'algorithm' },
-  { category: 'Minimalist Design', keywords: ['minimal', 'clean', 'restraint', 'Swiss', 'luxury'], targetSection: 'opt3', confidence: 0.8, fallback: 'comparative' },
-  { category: 'Glassmorphism', keywords: ['glass', 'depth', 'blur', 'translucent', 'frosted'], targetSection: 'opt4', confidence: 0.8, fallback: 'comparative' },
-  { category: 'Industrial/Brutalist', keywords: ['industrial', 'brutalist', 'monospace', 'mechanical'], targetSection: 'opt5', confidence: 0.8, fallback: 'comparative' },
-  { category: 'Iterative Design', keywords: ['iterate', 'loop', 'evolve', 'generation', 'baton'], targetSection: 'opt1', confidence: 0.8, fallback: 'algorithm' },
+  { category: 'Motion/Animation', keywords: ['animation', 'motion', 'scroll', 'parallax', 'spring'], targetSection: 'options', confidence: 0.8, fallback: 'algorithm' },
+  { category: 'Minimalist Design', keywords: ['minimal', 'clean', 'restraint', 'Swiss', 'luxury'], targetSection: 'options', confidence: 0.8, fallback: 'comparative' },
+  { category: 'Glassmorphism', keywords: ['glass', 'depth', 'blur', 'translucent', 'frosted'], targetSection: 'options', confidence: 0.8, fallback: 'comparative' },
+  { category: 'Industrial/Brutalist', keywords: ['industrial', 'brutalist', 'monospace', 'mechanical'], targetSection: 'options', confidence: 0.8, fallback: 'comparative' },
+  { category: 'Iterative Design', keywords: ['iterate', 'loop', 'evolve', 'generation', 'baton'], targetSection: 'options', confidence: 0.8, fallback: 'algorithm' },
 ];
 
 // ─── Comparison matrix data ───
