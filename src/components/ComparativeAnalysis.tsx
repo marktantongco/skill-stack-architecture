@@ -14,6 +14,19 @@ const radarData = options.map(opt => {
 
 const optColors = ["#C23616", "#2C3E50", "#6B6B6B", "#5B7B6F", "#8B7355"];
 
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+};
+
 export function ComparativeAnalysis() {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(options.map(o => o.id));
   const [view, setView] = useState<"matrix" | "radar">("radar");
@@ -27,13 +40,19 @@ export function ComparativeAnalysis() {
   const radarFiltered = radarData.filter((_, i) => selectedOptions.includes(options[i].id));
 
   return (
-    <section id="comparative" className="py-20 md:py-28 px-6 bg-muted/15">
+    <section id="comparative" className="py-20 md:py-28 px-6 bg-muted/15" aria-label="Comparative Analysis">
       <div className="max-w-[1200px] mx-auto">
         {/* Section Header */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="md:col-span-8">
             <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none">04</span>
+              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">04</span>
               <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
                 Comparative Analysis
               </h2>
@@ -42,33 +61,47 @@ export function ComparativeAnalysis() {
               Interactive comparison across 7 dimensions. Select options to overlay their profiles and reveal tradeoffs.
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <hr className="editorial-rule-thick mb-8" />
 
         {/* Option Toggles — Editorial Tags */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <motion.div
+          className="flex flex-wrap gap-2 mb-8"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
           {options.map((opt, i) => (
-            <button
+            <motion.button
               key={opt.id}
+              variants={fadeInUp}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
               onClick={() => toggleOption(opt.id)}
-              className={`px-3 py-1.5 text-[11px] tracking-[0.1em] uppercase font-medium border transition-all ${
+              className={`min-h-[44px] px-3 py-1.5 text-[11px] tracking-[0.1em] uppercase font-medium border transition-all cursor-pointer ${
                 selectedOptions.includes(opt.id)
                   ? "border-foreground/30 bg-foreground/5 text-foreground"
                   : "border-border bg-transparent text-muted-foreground hover:border-foreground/20"
               }`}
+              aria-pressed={selectedOptions.includes(opt.id)}
+              aria-label={`Toggle ${opt.name} in comparison`}
             >
-              <span className="inline-block w-2 h-2 mr-1.5" style={{ backgroundColor: optColors[i] }} />
+              <span className="inline-block w-2 h-2 mr-1.5" style={{ backgroundColor: optColors[i] }} aria-hidden="true" />
               {opt.name.replace("The ", "")}
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
 
         {/* View Toggle */}
-        <div className="flex gap-0 mb-8 border-b border-border">
+        <div className="flex gap-0 mb-8 border-b border-border" role="tablist" aria-label="View mode">
           <button
             onClick={() => setView("radar")}
-            className={`px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px transition-all ${
+            role="tab"
+            aria-selected={view === "radar"}
+            className={`min-h-[44px] px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px transition-all cursor-pointer ${
               view === "radar" ? "border-primary text-foreground" : "border-transparent text-muted-foreground"
             }`}
           >
@@ -76,7 +109,9 @@ export function ComparativeAnalysis() {
           </button>
           <button
             onClick={() => setView("matrix")}
-            className={`px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px transition-all ${
+            role="tab"
+            aria-selected={view === "matrix"}
+            className={`min-h-[44px] px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px transition-all cursor-pointer ${
               view === "matrix" ? "border-primary text-foreground" : "border-transparent text-muted-foreground"
             }`}
           >
@@ -85,22 +120,28 @@ export function ComparativeAnalysis() {
         </div>
 
         {view === "radar" ? (
-          <div className="bg-card border border-border rounded p-6">
+          <motion.div
+            className="bg-card border border-border rounded p-6"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
             <div className="h-[400px] md:h-[500px] w-full">
               <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                 <RadarChart data={[
-                  { dim: "Visual Density", ...Object.fromEntries(radarFiltered.map((d, i) => [d.name, d["VD"]])) },
-                  { dim: "Interactivity", ...Object.fromEntries(radarFiltered.map((d, i) => [d.name, d["IR"]])) },
-                  { dim: "Data Complexity", ...Object.fromEntries(radarFiltered.map((d, i) => [d.name, d["DC"]])) },
-                  { dim: "Motion Need", ...Object.fromEntries(radarFiltered.map((d, i) => [d.name, d["MN"]])) },
-                  { dim: "Accessibility", ...Object.fromEntries(radarFiltered.map((d, i) => [d.name, d["AW"]])) },
-                  { dim: "AI Redirect", ...Object.fromEntries(radarFiltered.map((d, i) => [d.name, d["AR"]])) },
-                  { dim: "Reusability", ...Object.fromEntries(radarFiltered.map((d, i) => [d.name, d["CR"]])) },
+                  { dim: "Visual Density", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["VD"]])) },
+                  { dim: "Interactivity", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["IR"]])) },
+                  { dim: "Data Complexity", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["DC"]])) },
+                  { dim: "Motion Need", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["MN"]])) },
+                  { dim: "Accessibility", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["AW"]])) },
+                  { dim: "AI Redirect", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["AR"]])) },
+                  { dim: "Reusability", ...Object.fromEntries(radarFiltered.map((d) => [d.name, d["CR"]])) },
                 ]}>
-                  <PolarGrid stroke="#E0DDD5" />
-                  <PolarAngleAxis dataKey="dim" tick={{ fill: "#6B6B6B", fontSize: 11 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: "#6B6B6B", fontSize: 10 }} />
-                  {radarFiltered.map((d, i) => (
+                  <PolarGrid stroke="var(--border)" />
+                  <PolarAngleAxis dataKey="dim" tick={{ fill: "var(--muted-foreground)", fontSize: 11 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} />
+                  {radarFiltered.map((d) => (
                     <Radar
                       key={d.name}
                       name={d.name}
@@ -115,11 +156,17 @@ export function ComparativeAnalysis() {
                 </RadarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </motion.div>
         ) : (
-          <div className="bg-card border border-border rounded overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+          <motion.div
+            className="bg-card border border-border rounded overflow-hidden"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-sm" role="table">
                 <thead>
                   <tr className="border-b-2 border-foreground bg-muted/10">
                     <th className="text-left p-3 text-[10px] tracking-[0.2em] uppercase font-semibold text-muted-foreground sticky left-0 bg-muted/10">
@@ -146,7 +193,7 @@ export function ComparativeAnalysis() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

@@ -12,7 +12,10 @@ import { TierArchitecture } from "@/components/TierArchitecture";
 import { DecisionTree } from "@/components/DecisionTree";
 import { SectionMapping } from "@/components/SectionMapping";
 import { VisualGallery } from "@/components/VisualGallery";
-import { useState } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { useTheme } from "next-themes";
+import { Moon, Sun, ArrowUp, Menu, X } from "lucide-react";
 
 const navItems = [
   { id: "skill-reference", label: "Registry", num: "01" },
@@ -28,21 +31,110 @@ const navItems = [
   { id: "visual-gallery", label: "Gallery", num: "11" },
 ];
 
+/* ─── Scroll Spy Hook ─── */
+function useScrollSpy(sectionIds: string[]) {
+  const [activeId, setActiveId] = useState<string>("");
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (!element) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveId(id);
+            }
+          });
+        },
+        { rootMargin: "-20% 0px -70% 0px" }
+      );
+
+      observer.observe(element);
+      observers.push(observer);
+    });
+
+    return () => {
+      observers.forEach((obs) => obs.disconnect());
+    };
+  }, [sectionIds]);
+
+  return activeId;
+}
+
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const { setTheme } = useTheme();
 
-  const scrollTo = (id: string) => {
+  // Use useSyncExternalStore for client-only detection (avoids setState-in-effect lint)
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+
+  const activeSection = useScrollSpy(navItems.map((n) => n.id));
+
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 500);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close mobile menu on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen]);
+
+  const scrollTo = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMobileMenuOpen(false);
-  };
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    const currentTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+    setTheme(currentTheme === "dark" ? "light" : "dark");
+  }, [setTheme]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      {/* Scroll Progress Bar */}
+      <motion.div
+        className="scroll-progress"
+        style={{ scaleX }}
+      />
+
       {/* Editorial Masthead Navigation */}
-      <nav className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+      <nav
+        className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border"
+        aria-label="Main navigation"
+      >
         <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between h-12">
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-5 bg-primary flex items-center justify-center">
+          <div className="flex items-center gap-4">
+            <div className="w-5 h-5 bg-primary flex items-center justify-center" aria-hidden="true">
               <span className="text-[8px] font-bold text-primary-foreground leading-none">SP</span>
             </div>
             <span className="text-xs font-medium tracking-[0.2em] uppercase text-foreground hidden sm:block">
@@ -51,12 +143,19 @@ export default function Home() {
           </div>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-5">
-            {navItems.map(item => (
+          <div className="hidden lg:flex items-center gap-5" role="tablist" aria-label="Section navigation">
+            {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground hover:text-foreground transition-colors font-medium"
+                role="tab"
+                aria-selected={activeSection === item.id}
+                aria-controls={item.id}
+                className={`text-[10px] tracking-[0.12em] uppercase font-medium cursor-pointer transition-colors min-h-[44px] flex items-center ${
+                  activeSection === item.id
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
               >
                 <span className="text-primary/50 mr-0.5">{item.num}</span>
                 {item.label}
@@ -64,150 +163,196 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Mobile Hamburger */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden w-8 h-8 flex flex-col items-center justify-center gap-1.5"
-          >
-            <span className={`block w-5 h-0.5 bg-foreground transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-            <span className={`block w-5 h-0.5 bg-foreground transition-opacity ${mobileMenuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block w-5 h-0.5 bg-foreground transition-transform ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Dark Mode Toggle */}
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md hover:bg-muted transition-colors cursor-pointer"
+                aria-label="Toggle dark mode"
+              >
+                <Sun className="w-4 h-4 text-foreground hidden dark:block" />
+                <Moon className="w-4 h-4 text-foreground block dark:hidden" />
+              </button>
+            )}
+
+            {/* Mobile Hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-5 h-5 text-foreground" />
+              ) : (
+                <Menu className="w-5 h-5 text-foreground" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-border bg-background">
-            <div className="max-w-[1200px] mx-auto px-6 py-4 space-y-3">
-              {navItems.map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollTo(item.id)}
-                  className="block w-full text-left text-sm tracking-[0.1em] uppercase text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <span className="text-primary/60 mr-2">{item.num}</span>
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Hero / Masthead */}
-      <HeroSection />
-
-      {/* Editorial Divider */}
-      <div className="max-w-[1200px] mx-auto px-6">
-        <hr className="editorial-rule-thick" />
-      </div>
-
-      {/* Executive Summary — Editorial Lead */}
-      <section className="py-16 md:py-24 px-6">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
-            {/* Left Column — Lead Text */}
-            <div className="md:col-span-7">
-              <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-4">
-                Architecture Overview
-              </p>
-              <h2 className="font-['Georgia',_serif] text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.15] mb-6">
-                A living, navigable architecture that serves as build specification, AI guidance portal, and publishable skill repository
-              </h2>
-              <div className="editorial-pullquote mb-6">
-                Every component is also an installable skill. The architecture is the product, and the product is the architecture.
-              </div>
-              <p className="text-base text-muted-foreground leading-relaxed editorial-dropcap">
-                This interactive web experience translates the Prompt Redesign Options document into a living specification.
-                It serves three simultaneous purposes: a build specification that any AI agent can follow, a self-referencing
-                portal that AI agents can redirect to for design guidance, and a publishable GitHub repository where every
-                component is also an installable skill via the Vercel Skills ecosystem.
-              </p>
-            </div>
-
-            {/* Right Column — Tier Summary */}
-            <div className="md:col-span-5 md:border-l md:border-border md:pl-8">
-              <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground font-medium mb-6">
-                The Stack at a Glance
-              </p>
-              <div className="space-y-6">
-                {[
-                  { tier: "T0", name: "Foundation", count: 4, desc: "Design intelligence, generation, animation, components" },
-                  { tier: "T1", name: "Interactive", count: 4, desc: "Scroll animation, video, diagrams, data visualization" },
-                  { tier: "T2", name: "Visual Asset", count: 4, desc: "Image generation, component styling, testing, custom viz" },
-                  { tier: "T3", name: "Portal", count: 4, desc: "AI redirect, prioritization, matrix engine, algorithm" },
-                ].map(t => (
-                  <div key={t.tier} className="group">
-                    <div className="flex items-baseline justify-between mb-1">
-                      <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">
-                        <span className="text-primary">{t.tier}</span> {t.name}
-                      </h3>
-                      <span className="text-2xl font-['Georgia',_serif] font-bold text-border group-hover:text-primary transition-colors">
-                        {t.count}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{t.desc}</p>
-                    <hr className="editorial-rule mt-4" />
-                  </div>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden border-t border-border bg-background overflow-hidden"
+            >
+              <div className="max-w-[1200px] mx-auto px-6 py-4 space-y-1">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollTo(item.id)}
+                    className={`block w-full text-left min-h-[44px] py-2 text-sm tracking-[0.1em] uppercase font-medium cursor-pointer transition-colors ${
+                      activeSection === item.id
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <span className="text-primary/60 mr-2">{item.num}</span>
+                    {item.label}
+                  </button>
                 ))}
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+
+      {/* Main Content */}
+      <main id="main-content" className="flex-1">
+        {/* Hero / Masthead */}
+        <HeroSection />
+
+        {/* Editorial Divider */}
+        <div className="max-w-[1200px] mx-auto px-6">
+          <hr className="editorial-rule-thick" />
+        </div>
+
+        {/* Executive Summary — Editorial Lead */}
+        <motion.section
+          className="py-16 md:py-24 px-6"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          aria-label="Architecture overview"
+        >
+          <div className="max-w-[1200px] mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
+              {/* Left Column — Lead Text */}
+              <div className="md:col-span-7">
+                <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-4">
+                  Architecture Overview
+                </p>
+                <h2 className="font-['Georgia',_serif] text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.15] mb-6">
+                  A living, navigable architecture that serves as build specification, AI guidance portal, and publishable skill repository
+                </h2>
+                <div className="editorial-pullquote mb-6">
+                  Every component is also an installable skill. The architecture is the product, and the product is the architecture.
+                </div>
+                <p className="text-base text-muted-foreground leading-relaxed editorial-dropcap">
+                  This interactive web experience translates the Prompt Redesign Options document into a living specification.
+                  It serves three simultaneous purposes: a build specification that any AI agent can follow, a self-referencing
+                  portal that AI agents can redirect to for design guidance, and a publishable GitHub repository where every
+                  component is also an installable skill via the Vercel Skills ecosystem.
+                </p>
+              </div>
+
+              {/* Right Column — Tier Summary */}
+              <div className="md:col-span-5 md:border-l md:border-border md:pl-8">
+                <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground font-medium mb-6">
+                  The Stack at a Glance
+                </p>
+                <div className="space-y-6">
+                  {[
+                    { tier: "T0", name: "Foundation", count: 4, desc: "Design intelligence, generation, animation, components" },
+                    { tier: "T1", name: "Interactive", count: 4, desc: "Scroll animation, video, diagrams, data visualization" },
+                    { tier: "T2", name: "Visual Asset", count: 4, desc: "Image generation, component styling, testing, custom viz" },
+                    { tier: "T3", name: "Portal", count: 4, desc: "AI redirect, prioritization, matrix engine, algorithm" },
+                  ].map((t) => (
+                    <motion.div
+                      key={t.tier}
+                      className="group"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    >
+                      <div className="flex items-baseline justify-between mb-1">
+                        <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">
+                          <span className="text-primary">{t.tier}</span> {t.name}
+                        </h3>
+                        <span className="text-2xl font-['Georgia',_serif] font-bold text-border group-hover:text-primary transition-colors">
+                          {t.count}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{t.desc}</p>
+                      <hr className="editorial-rule mt-4" />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </motion.section>
 
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 01 — Skill Reference */}
-      <SkillReference />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 01 — Skill Reference */}
+        <SkillReference />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 02 — Design Algorithm */}
-      <DesignAlgorithm />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 02 — Design Algorithm */}
+        <DesignAlgorithm />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 03 — Options Showcase */}
-      <OptionsShowcase />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 03 — Options Showcase */}
+        <OptionsShowcase />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 04 — Comparative Analysis */}
-      <ComparativeAnalysis />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 04 — Comparative Analysis */}
+        <ComparativeAnalysis />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 05 — Heatmap */}
-      <HeatmapViz />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 05 — Heatmap */}
+        <HeatmapViz />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 06 — Implementation Blueprint */}
-      <ImplementationBlueprint />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 06 — Implementation Blueprint */}
+        <ImplementationBlueprint />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 07 — AI Portal Gateway */}
-      <AIPortalGateway />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 07 — AI Portal Gateway */}
+        <AIPortalGateway />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 08 — Tier Architecture */}
-      <TierArchitecture />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 08 — Tier Architecture */}
+        <TierArchitecture />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 09 — Decision Tree */}
-      <DecisionTree />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 09 — Decision Tree */}
+        <DecisionTree />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 10 — Section-to-Skill Mapping */}
-      <SectionMapping />
-      <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        {/* 10 — Section-to-Skill Mapping */}
+        <SectionMapping />
+        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
 
-      {/* 11 — Visual Asset Gallery */}
-      <VisualGallery />
+        {/* 11 — Visual Asset Gallery */}
+        <VisualGallery />
+      </main>
 
       {/* Editorial Footer — Colophon */}
-      <footer className="border-t-2 border-foreground py-12 px-6 bg-background">
+      <footer className="border-t-2 border-foreground py-12 px-6 bg-background mt-auto" role="contentinfo">
         <div className="max-w-[1200px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             <div className="md:col-span-4">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-5 h-5 bg-primary flex items-center justify-center">
+                <div className="w-5 h-5 bg-primary flex items-center justify-center" aria-hidden="true">
                   <span className="text-[8px] font-bold text-primary-foreground leading-none">SP</span>
                 </div>
                 <span className="text-xs font-medium tracking-[0.2em] uppercase text-foreground">
@@ -248,6 +393,24 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      {/* Back to Top Button */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 z-50 min-w-[44px] min-h-[44px] bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors cursor-pointer"
+            aria-label="Scroll back to top"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ArrowUp className="w-5 h-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

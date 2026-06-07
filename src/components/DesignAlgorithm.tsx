@@ -4,6 +4,19 @@ import { motion } from "framer-motion";
 import { dimensions, options, weightProfiles } from "@/lib/skill-data";
 import { useState } from "react";
 
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+};
+
 export function DesignAlgorithm() {
   const [activeProfile, setActiveProfile] = useState(0);
   const [customWeights, setCustomWeights] = useState(weightProfiles[0].weights);
@@ -21,13 +34,19 @@ export function DesignAlgorithm() {
   const maxScore = Math.max(...scoredOptions.map(o => o.score));
 
   return (
-    <section id="algorithm" className="py-20 md:py-28 px-6">
+    <section id="algorithm" className="py-20 md:py-28 px-6" aria-label="SP-7 Design Algorithm">
       <div className="max-w-[1200px] mx-auto">
         {/* Section Header */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="md:col-span-8">
             <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none">02</span>
+              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">02</span>
               <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
                 SP-7 Design Algorithm
               </h2>
@@ -37,7 +56,7 @@ export function DesignAlgorithm() {
               skill-to-section mapping. Adjust weights to see how priority shifts.
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <hr className="editorial-rule-thick mb-10" />
 
@@ -49,12 +68,14 @@ export function DesignAlgorithm() {
             </h3>
 
             {/* Profile Tabs */}
-            <div className="flex flex-wrap gap-0 mb-8 border-b border-border">
+            <div className="flex flex-wrap gap-0 mb-8 border-b border-border" role="tablist" aria-label="Weight profiles">
               {weightProfiles.map((p, i) => (
                 <button
                   key={p.name}
                   onClick={() => { setActiveProfile(i); setCustomWeights(p.weights); }}
-                  className={`px-3 py-2 text-[11px] tracking-[0.12em] uppercase font-medium transition-all border-b-2 -mb-px ${
+                  role="tab"
+                  aria-selected={activeProfile === i}
+                  className={`min-h-[44px] px-3 py-2 text-[11px] tracking-[0.12em] uppercase font-medium transition-all border-b-2 -mb-px cursor-pointer ${
                     activeProfile === i
                       ? "border-primary text-foreground"
                       : "border-transparent text-muted-foreground hover:text-foreground"
@@ -66,9 +87,15 @@ export function DesignAlgorithm() {
             </div>
 
             {/* Dimension Controls */}
-            <div className="space-y-5">
+            <motion.div
+              className="space-y-5"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {dimensions.map((dim, i) => (
-                <div key={dim.id} className="group/dim">
+                <motion.div key={dim.id} variants={fadeInUp} className="group/dim">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-sm text-foreground">
                       <span className="font-mono text-primary text-xs mr-2 font-bold">{dim.shortName}</span>
@@ -98,12 +125,13 @@ export function DesignAlgorithm() {
                         setCustomWeights(newW);
                       }}
                       className="w-full accent-primary absolute top-[-6px] left-0 h-5 cursor-pointer opacity-0"
+                      aria-label={`Weight for ${dim.name}`}
                     />
                   </div>
                   <p className="text-[11px] text-muted-foreground/70 mt-1 leading-relaxed">{dim.description}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* Scored Results — Right */}
@@ -112,12 +140,32 @@ export function DesignAlgorithm() {
               Prioritized Results
             </h3>
 
-            <div className="space-y-5">
+            <motion.div
+              className="space-y-5"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {scoredOptions.map((opt, i) => (
-                <div
+                <motion.div
                   key={opt.id}
+                  variants={fadeInUp}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   onClick={() => setSelectedOption(selectedOption === opt.id ? null : opt.id)}
                   className="cursor-pointer group/res"
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={selectedOption === opt.id}
+                  aria-label={`${opt.name} — score ${opt.score.toFixed(1)}`}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedOption(selectedOption === opt.id ? null : opt.id);
+                    }
+                  }}
                 >
                   <div className="flex items-baseline gap-4 mb-1.5">
                     <span className="font-['Georgia',_serif] text-xl font-bold text-border group-hover/res:text-primary transition-colors">
@@ -161,9 +209,9 @@ export function DesignAlgorithm() {
                       </p>
                     </motion.div>
                   )}
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -50,15 +50,34 @@ const tierData = [
   },
 ];
 
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
 export function TierArchitecture() {
   return (
-    <section id="tier-architecture" className="py-20 md:py-28 px-6 bg-muted/15">
+    <section id="tier-architecture" className="py-20 md:py-28 px-6 bg-muted/15" aria-label="Tier Architecture">
       <div className="max-w-[1200px] mx-auto">
         {/* Section Header */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="md:col-span-8">
             <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none">08</span>
+              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">08</span>
               <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
                 Tier Architecture
               </h2>
@@ -67,88 +86,105 @@ export function TierArchitecture() {
               Four dependency layers, each building on the previous. Install in strict T0→T3 order — no tier can function without its predecessors.
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <hr className="editorial-rule-thick mb-10" />
 
         {/* Architecture Schematic */}
         <div className="relative">
           {/* Vertical dependency line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-border hidden md:block" />
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-border hidden md:block" aria-hidden="true" />
 
-          {tierData.map((tier, i) => {
-            const tierSkills = skills.filter(s => s.tier === tier.tier);
-            return (
-              <motion.div
-                key={tier.tier}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="mb-8 last:mb-0"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
-                  {/* Left — Tier Info */}
-                  <div className="md:col-span-5 md:text-right md:pr-8">
-                    <div className={`${tier.bgColor} border ${tier.borderColor} rounded p-5`}>
-                      <div className="flex items-baseline gap-2 md:justify-end mb-2">
-                        <span className={`font-['Georgia',_serif] text-2xl font-bold ${tier.textColor}`}>T{tier.tier}</span>
-                        <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">{tier.name}</h3>
-                      </div>
-                      <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground font-medium mb-2">
-                        {tier.tagline}
-                      </p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{tier.description}</p>
-                      <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/60 mt-3 font-mono">
-                        {tier.dependency}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Center — Connector dot */}
-                  <div className="hidden md:flex md:col-span-2 items-center justify-center">
-                    <div className={`w-8 h-8 rounded-full ${tier.color} flex items-center justify-center z-10`}>
-                      <span className="text-[10px] font-bold text-white">{tier.tier}</span>
-                    </div>
-                  </div>
-
-                  {/* Right — Skills List */}
-                  <div className="md:col-span-5 md:pl-8">
-                    <div className="space-y-0 divide-y divide-border/40 border border-border rounded overflow-hidden">
-                      {tierSkills.map(skill => (
-                        <div key={skill.id} className="flex items-center gap-2 px-3 py-2.5 hover:bg-muted/20 transition-colors">
-                          <span className={`text-[10px] font-mono ${tier.textColor} font-bold w-7`}>{skill.id}</span>
-                          <span className="text-sm text-foreground font-medium flex-1">{skill.name}</span>
-                          <span className="text-[10px] text-muted-foreground font-mono hidden sm:block truncate max-w-[180px]">
-                            {skill.installCommand.split('--skill ')[1] || skill.installCommand.split('/').slice(-1)[0]}
-                          </span>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            {tierData.map((tier, i) => {
+              const tierSkills = skills.filter(s => s.tier === tier.tier);
+              return (
+                <motion.div
+                  key={tier.tier}
+                  variants={fadeInUp}
+                  whileHover={{ scale: 1.005 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  className="mb-8 last:mb-0"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+                    {/* Left — Tier Info */}
+                    <div className="md:col-span-5 md:text-right md:pr-8">
+                      <div className={`${tier.bgColor} border ${tier.borderColor} rounded p-5 card-container`}>
+                        <div className="flex items-baseline gap-2 md:justify-end mb-2">
+                          <span className={`font-['Georgia',_serif] text-2xl font-bold ${tier.textColor}`} aria-hidden="true">T{tier.tier}</span>
+                          <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">{tier.name}</h3>
                         </div>
-                      ))}
+                        <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground font-medium mb-2">
+                          {tier.tagline}
+                        </p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{tier.description}</p>
+                        <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/60 mt-3 font-mono">
+                          {tier.dependency}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Center — Connector dot */}
+                    <div className="hidden md:flex md:col-span-2 items-center justify-center">
+                      <div className={`w-8 h-8 rounded-full ${tier.color} flex items-center justify-center z-10`} aria-hidden="true">
+                        <span className="text-[10px] font-bold text-white">{tier.tier}</span>
+                      </div>
+                    </div>
+
+                    {/* Right — Skills List */}
+                    <div className="md:col-span-5 md:pl-8">
+                      <div className="space-y-0 divide-y divide-border/40 border border-border rounded overflow-hidden">
+                        {tierSkills.map(skill => (
+                          <motion.div
+                            key={skill.id}
+                            className="flex items-center gap-2 px-3 py-2.5 hover:bg-muted/20 transition-colors"
+                            whileHover={{ x: 2 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                          >
+                            <span className={`text-[10px] font-mono ${tier.textColor} font-bold w-7`}>{skill.id}</span>
+                            <span className="text-sm text-foreground font-medium flex-1">{skill.name}</span>
+                            <span className="text-[10px] text-muted-foreground font-mono hidden sm:block truncate max-w-[180px]">
+                              {skill.installCommand.split('--skill ')[1] || skill.installCommand.split('/').slice(-1)[0]}
+                            </span>
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
 
         {/* Data Flow Annotation */}
-        <div className="mt-10 border-t border-border pt-6">
+        <motion.div
+          className="mt-10 border-t border-border pt-6"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div>
+            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <p className="font-['Georgia',_serif] text-2xl font-bold text-primary">4</p>
               <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mt-1">Dependency Layers</p>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <p className="font-['Georgia',_serif] text-2xl font-bold text-foreground">16</p>
               <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mt-1">Installable Skills</p>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <p className="font-['Georgia',_serif] text-2xl font-bold text-chart-3">T0→T3</p>
               <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mt-1">Strict Install Order</p>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

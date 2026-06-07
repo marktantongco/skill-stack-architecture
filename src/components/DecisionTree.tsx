@@ -99,16 +99,30 @@ export function DecisionTree() {
     setResult(null);
   };
 
+  const goBack = () => {
+    const newPath = path.slice(0, -1);
+    setPath(newPath);
+    const prev = newPath[newPath.length - 1];
+    setCurrentNode(decisionTree[prev] ? prev : "start");
+    setResult(null);
+  };
+
   const node = decisionTree[currentNode];
 
   return (
-    <section id="decision-tree" className="py-20 md:py-28 px-6">
+    <section id="decision-tree" className="py-20 md:py-28 px-6" aria-label="Decision Tree">
       <div className="max-w-[1200px] mx-auto">
         {/* Section Header */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="md:col-span-8">
             <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none">09</span>
+              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">09</span>
               <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
                 Decision Tree
               </h2>
@@ -117,15 +131,15 @@ export function DecisionTree() {
               Answer three questions to find your optimal design option. Each path maps to one of the five architectures with a specific skill dominance hierarchy.
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <hr className="editorial-rule-thick mb-10" />
 
         {/* Path Breadcrumb */}
-        <div className="flex items-center gap-2 mb-8 text-[10px] tracking-[0.15em] uppercase text-muted-foreground font-mono">
+        <div className="flex items-center gap-2 mb-8 text-[10px] tracking-[0.15em] uppercase text-muted-foreground font-mono" aria-label="Decision path">
           {path.map((p, i) => (
             <span key={i} className="flex items-center gap-2">
-              {i > 0 && <span className="text-border">&rarr;</span>}
+              {i > 0 && <span className="text-border" aria-hidden="true">&rarr;</span>}
               <span className={i === path.length - 1 ? "text-primary font-semibold" : ""}>
                 {p === "start" ? "Start" : decisionTree[p]?.question.split("?")[0].slice(0, 20) || (results[p]?.optionName || p)}
               </span>
@@ -153,7 +167,10 @@ export function DecisionTree() {
                 <p className="text-base text-muted-foreground leading-relaxed mb-6">{result.reason}</p>
                 <button
                   onClick={reset}
-                  className="text-[11px] tracking-[0.15em] uppercase text-primary border border-primary/30 px-4 py-2 rounded hover:bg-primary/5 transition-colors font-medium"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="min-h-[44px] text-[11px] tracking-[0.15em] uppercase text-primary border border-primary/30 px-4 py-2 rounded hover:bg-primary/5 transition-colors font-medium cursor-pointer"
+                  aria-label="Start decision tree over"
                 >
                   Start Over
                 </button>
@@ -176,14 +193,20 @@ export function DecisionTree() {
                 {node.question}
               </h3>
 
-              <div className="space-y-0 divide-y divide-border">
+              <div className="space-y-0 divide-y divide-border" role="radiogroup" aria-label={node.question}>
                 {node.options.map((opt, i) => (
-                  <button
+                  <motion.button
                     key={i}
                     onClick={() => handleChoice(opt.next)}
-                    className="w-full text-left py-5 group flex items-start gap-4 hover:bg-muted/10 transition-colors -mx-2 px-2"
+                    whileHover={{ scale: 1.005, x: 4 }}
+                    whileTap={{ scale: 0.995 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    className="w-full text-left min-h-[44px] py-5 group flex items-start gap-4 hover:bg-muted/10 transition-colors -mx-2 px-2 cursor-pointer"
+                    role="radio"
+                    aria-checked={false}
+                    aria-label={opt.label}
                   >
-                    <span className="font-['Georgia',_serif] text-xl font-bold text-border group-hover:text-primary transition-colors shrink-0 mt-0.5">
+                    <span className="font-['Georgia',_serif] text-xl font-bold text-border group-hover:text-primary transition-colors shrink-0 mt-0.5" aria-hidden="true">
                       {String.fromCharCode(65 + i)}
                     </span>
                     <div>
@@ -192,20 +215,16 @@ export function DecisionTree() {
                       </span>
                       <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{opt.description}</p>
                     </div>
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
 
             {path.length > 1 && (
               <button
-                onClick={() => {
-                  const newPath = path.slice(0, -1);
-                  setPath(newPath);
-                  const prev = newPath[newPath.length - 1];
-                  setCurrentNode(decisionTree[prev] ? prev : "start");
-                }}
-                className="mt-6 text-[11px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors font-medium"
+                onClick={goBack}
+                className="mt-6 min-h-[44px] text-[11px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
+                aria-label="Go back to previous question"
               >
                 &larr; Go Back
               </button>

@@ -2,15 +2,34 @@
 
 import { motion } from "framer-motion";
 import { intentRoutes } from "@/lib/skill-data";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+
+/* ─── Input Sanitization ─── */
+const sanitizeInput = (input: string): string => {
+  return input
+    .replace(/<[^>]*>/g, "")
+    .replace(/[<>"'&]/g, "")
+    .slice(0, 200);
+};
 
 export function AIPortalGateway() {
   const [searchQuery, setSearchQuery] = useState("");
   const [matchedRoute, setMatchedRoute] = useState<typeof intentRoutes[0] | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((rawQuery: string) => {
+    const query = sanitizeInput(rawQuery);
     setSearchQuery(query);
-    if (!query.trim()) { setMatchedRoute(null); return; }
+
+    if (!query.trim()) {
+      setMatchedRoute(null);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+
+    // Simulate brief loading for UX
     const lower = query.toLowerCase();
     let bestMatch: typeof intentRoutes[0] | null = null;
     let bestScore = 0;
@@ -18,17 +37,28 @@ export function AIPortalGateway() {
       const score = route.keywords.reduce((s, kw) => s + (lower.includes(kw.toLowerCase()) ? 1 : 0), 0);
       if (score > bestScore) { bestScore = score; bestMatch = route; }
     }
-    setMatchedRoute(bestScore > 0 ? bestMatch : null);
-  };
+
+    // Small delay for skeleton visibility
+    setTimeout(() => {
+      setMatchedRoute(bestScore > 0 ? bestMatch : null);
+      setIsSearching(false);
+    }, 150);
+  }, []);
 
   return (
-    <section id="portal" className="py-20 md:py-28 px-6">
+    <section id="portal" className="py-20 md:py-28 px-6" aria-label="AI Portal Gateway">
       <div className="max-w-[1200px] mx-auto">
         {/* Section Header */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="md:col-span-8">
             <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none">07</span>
+              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">07</span>
               <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
                 AI Portal Gateway
               </h2>
@@ -37,12 +67,18 @@ export function AIPortalGateway() {
               The entry point for AI agents. Intent classification routes queries to the most relevant section automatically.
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <hr className="editorial-rule-thick mb-10" />
 
         {/* Search — Editorial Underline Input */}
-        <div className="max-w-2xl mx-auto mb-14">
+        <motion.div
+          className="max-w-2xl mx-auto mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="relative">
             <div className="border-b-2 border-foreground pb-1">
               <input
@@ -51,17 +87,32 @@ export function AIPortalGateway() {
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Type an intent: animation, install skill, which option..."
                 className="w-full bg-transparent py-3 text-lg text-foreground placeholder:text-muted-foreground/40 focus:outline-none font-['Georgia',_serif]"
+                aria-label="AI portal intent search"
+                maxLength={200}
               />
             </div>
             <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mt-2">
               Intent Search &middot; Keyword Classification Engine
             </p>
 
-            {matchedRoute && (
+            {/* Skeleton Loading */}
+            {isSearching && (
+              <div className="mt-4 border border-border rounded p-4 bg-card" aria-live="polite" aria-label="Searching">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                  <div className="h-4 w-24 bg-muted animate-pulse rounded" />
+                </div>
+                <div className="h-3 w-48 bg-muted animate-pulse rounded" />
+              </div>
+            )}
+
+            {/* Search Result */}
+            {matchedRoute && !isSearching && (
               <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-4 border border-border rounded p-4 bg-card"
+                aria-live="polite"
               >
                 <div className="flex items-center gap-3 mb-2">
                   <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">
@@ -81,12 +132,18 @@ export function AIPortalGateway() {
               </motion.div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Intent Routing Table */}
-        <div className="border-t-2 border-foreground">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+        <motion.div
+          className="border-t-2 border-foreground"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-sm" role="table" aria-label="Intent routing table">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left p-3 text-[10px] tracking-[0.2em] uppercase font-semibold text-muted-foreground">Intent</th>
@@ -123,7 +180,7 @@ export function AIPortalGateway() {
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

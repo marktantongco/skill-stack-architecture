@@ -26,22 +26,41 @@ const sectionMappings: SectionMap[] = [
   { id: "sec09", name: "Design Option 5", dominantSkill: "UI/UX Pro Max + FM", dominantSkillId: "S03+S02", sp7Vector: [4, 4, 3, 4, 3, 3, 3], sp7Score: 23.5, description: "Neo-Industrial — raw structural power. Monospace typography, mechanical animations, safety-color accents.", visualAsset: "Brutalist layout demo, industrial schematic" },
   { id: "sec10", name: "Comparative Analysis", dominantSkill: "Matrix Engine", dominantSkillId: "S15", sp7Vector: [4, 5, 5, 2, 2, 3, 4], sp7Score: 24.5, description: "Radar chart overlay and matrix table with option toggles. AntV and the custom Matrix Engine drive the comparative visualization.", visualAsset: "Radar chart, comparative matrix table, toggle filters" },
   { id: "sec11", name: "Implementation Blueprint", dominantSkill: "shadcn/ui + Mermaid", dominantSkillId: "S10+S07", sp7Vector: [3, 3, 4, 1, 3, 2, 4], sp7Score: 18.5, description: "Tier-by-tier install sequence with full bash script. Mermaid renders the dependency graph, shadcn/ui provides the code block.", visualAsset: "Dependency graph diagram, code block with syntax" },
-  { id: "sec12", name: "AI Portal Gateway", dominantSkill: "AI Portal Redirect", dominantSkillId: "S13", sp7Vector: [2, 4, 3, 1, 3, 5, 3], sp9Score: 21.0, sp7Score: 21.0, description: "Intent classification search with keyword routing table. The custom AI Portal Redirect skill drives the routing engine.", visualAsset: "Search interface, routing table, confidence bars" },
+  { id: "sec12", name: "AI Portal Gateway", dominantSkill: "AI Portal Redirect", dominantSkillId: "S13", sp7Vector: [2, 4, 3, 1, 3, 5, 3], sp7Score: 21.0, description: "Intent classification search with keyword routing table. The custom AI Portal Redirect skill drives the routing engine.", visualAsset: "Search interface, routing table, confidence bars" },
 ];
 
 const dimShort = ["VD", "IR", "DC", "MN", "AW", "AR", "CR"];
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.03 },
+  },
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 5 },
+  visible: { opacity: 1, y: 0 },
+};
 
 export function SectionMapping() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   return (
-    <section id="section-mapping" className="py-20 md:py-28 px-6 bg-muted/15">
+    <section id="section-mapping" className="py-20 md:py-28 px-6 bg-muted/15" aria-label="Section-to-Skill Mapping">
       <div className="max-w-[1200px] mx-auto">
         {/* Section Header */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="md:col-span-8">
             <div className="flex items-baseline gap-4 mb-3">
-              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none">10</span>
+              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">10</span>
               <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
                 Section-to-Skill Mapping
               </h2>
@@ -50,30 +69,35 @@ export function SectionMapping() {
               12 sections, each mapped to its dominant skill and scored across 7 SP-7 dimensions. Every section is also an installable skill.
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <hr className="editorial-rule-thick mb-10" />
 
         {/* Section Mapping Table */}
-        <div className="space-y-0 divide-y divide-border">
-          {sectionMappings.map((sec, i) => {
+        <motion.div
+          className="space-y-0 divide-y divide-border"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          {sectionMappings.map((sec) => {
             const isExpanded = expandedSection === sec.id;
             return (
               <motion.div
                 key={sec.id}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.02 }}
+                variants={fadeInUp}
                 className="group"
               >
                 <button
                   onClick={() => setExpandedSection(isExpanded ? null : sec.id)}
-                  className="w-full text-left py-4 hover:bg-muted/10 transition-colors -mx-2 px-2"
+                  className="w-full text-left min-h-[44px] py-4 hover:bg-muted/10 transition-colors -mx-2 px-2 cursor-pointer"
+                  aria-expanded={isExpanded}
+                  aria-controls={`mapping-${sec.id}`}
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-2 items-baseline">
                     <div className="md:col-span-1">
-                      <span className="font-['Georgia',_serif] text-sm font-bold text-border group-hover:text-primary transition-colors">
+                      <span className="font-['Georgia',_serif] text-sm font-bold text-border group-hover:text-primary transition-colors" aria-hidden="true">
                         {sec.id.replace("sec", "")}
                       </span>
                     </div>
@@ -106,9 +130,12 @@ export function SectionMapping() {
                 {/* Expanded Detail */}
                 {isExpanded && (
                   <motion.div
+                    id={`mapping-${sec.id}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     className="overflow-hidden pb-5 ml-0 md:ml-8"
+                    role="region"
+                    aria-label={`${sec.name} details`}
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-l-2 border-primary pl-5">
                       <div>
@@ -135,7 +162,7 @@ export function SectionMapping() {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
