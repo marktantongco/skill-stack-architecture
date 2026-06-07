@@ -13,9 +13,10 @@ import { DecisionTree } from "@/components/DecisionTree";
 import { SectionMapping } from "@/components/SectionMapping";
 import { VisualGallery } from "@/components/VisualGallery";
 import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
-import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Moon, Sun, ArrowUp, Menu, X } from "lucide-react";
+import { dividerVariant, hoverNavItem } from "@/lib/animation-variants";
 
 const navItems = [
   { id: "skill-reference", label: "Registry", num: "01" },
@@ -58,10 +59,26 @@ function useScrollSpy(sectionIds: string[]) {
   return activeId;
 }
 
+/* ─── Editorial Divider Component ─── */
+function EditorialDivider({ thick = false }: { thick?: boolean }) {
+  return (
+    <div className="max-w-[1200px] mx-auto px-6">
+      <motion.hr
+        className={thick ? "editorial-rule-thick" : "editorial-rule"}
+        variants={dividerVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+      />
+    </div>
+  );
+}
+
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const { setTheme } = useTheme();
+  const shouldReduce = useReducedMotion();
 
   // Use useSyncExternalStore for client-only detection (avoids setState-in-effect lint)
   const mounted = useSyncExternalStore(
@@ -139,9 +156,15 @@ export default function Home() {
       >
         <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between h-12">
           <div className="flex items-center gap-4">
-            <div className="w-5 h-5 bg-primary flex items-center justify-center" aria-hidden="true">
+            <motion.div
+              className="w-5 h-5 bg-primary flex items-center justify-center"
+              aria-hidden="true"
+              whileHover={shouldReduce ? undefined : { scale: 1.1 }}
+              whileTap={shouldReduce ? undefined : { scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+            >
               <span className="text-[8px] font-bold text-primary-foreground leading-none">SP</span>
-            </div>
+            </motion.div>
             <span className="text-xs font-medium tracking-[0.2em] uppercase text-foreground hidden sm:block">
               Skill Stack Architecture
             </span>
@@ -150,52 +173,68 @@ export default function Home() {
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-5" aria-label="Section navigation">
             {navItems.map((item) => (
-              <a
+              <motion.a
                 key={item.id}
                 href={`#${item.id}`}
                 onClick={(e) => {
                   e.preventDefault();
                   scrollTo(item.id);
                 }}
-                className={`text-[10px] tracking-[0.12em] uppercase font-medium cursor-pointer transition-colors min-h-[44px] flex items-center ${
+                className={`text-[10px] tracking-[0.12em] uppercase font-medium cursor-pointer min-h-[44px] flex items-center relative ${
                   activeSection === item.id
                     ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-current={activeSection === item.id ? "true" : undefined}
+                whileHover={shouldReduce ? undefined : hoverNavItem.whileHover}
+                transition={hoverNavItem.transition}
               >
                 <span className="text-primary/50 mr-0.5">{item.num}</span>
                 {item.label}
-              </a>
+                {/* Active indicator line */}
+                {activeSection === item.id && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                    layoutId="activeNav"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+              </motion.a>
             ))}
           </div>
 
           <div className="flex items-center gap-2">
             {/* Dark Mode Toggle */}
             {mounted && (
-              <button
+              <motion.button
                 onClick={toggleTheme}
-                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md hover:bg-muted transition-colors cursor-pointer"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md hover:bg-muted cursor-pointer"
                 aria-label="Toggle dark mode"
+                whileHover={shouldReduce ? undefined : { scale: 1.1 }}
+                whileTap={shouldReduce ? undefined : { scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
               >
                 <Sun className="w-4 h-4 text-foreground hidden dark:block" />
                 <Moon className="w-4 h-4 text-foreground block dark:hidden" />
-              </button>
+              </motion.button>
             )}
 
             {/* Mobile Hamburger */}
-            <button
+            <motion.button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
               aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={mobileMenuOpen}
+              whileHover={shouldReduce ? undefined : { scale: 1.05 }}
+              whileTap={shouldReduce ? undefined : { scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
             >
               {mobileMenuOpen ? (
                 <X className="w-5 h-5 text-foreground" />
               ) : (
                 <Menu className="w-5 h-5 text-foreground" />
               )}
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -210,8 +249,8 @@ export default function Home() {
               className="lg:hidden border-t border-border bg-background overflow-hidden"
             >
               <div className="max-w-[1200px] mx-auto px-6 py-4 space-y-1">
-                {navItems.map((item) => (
-                  <button
+                {navItems.map((item, i) => (
+                  <motion.button
                     key={item.id}
                     onClick={() => scrollTo(item.id)}
                     className={`block w-full text-left min-h-[44px] py-2 text-sm tracking-[0.1em] uppercase font-medium cursor-pointer transition-colors ${
@@ -219,10 +258,13 @@ export default function Home() {
                         ? "text-primary"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
+                    initial={shouldReduce ? false : { opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.03, duration: 0.2 }}
                   >
                     <span className="text-primary/60 mr-2">{item.num}</span>
                     {item.label}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
@@ -235,10 +277,7 @@ export default function Home() {
         {/* Hero / Masthead */}
         <HeroSection />
 
-        {/* Editorial Divider */}
-        <div className="max-w-[1200px] mx-auto px-6">
-          <hr className="editorial-rule-thick" />
-        </div>
+        <EditorialDivider thick />
 
         {/* Executive Summary — Editorial Lead */}
         <motion.section
@@ -285,8 +324,8 @@ export default function Home() {
                     <motion.div
                       key={t.tier}
                       className="group"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={shouldReduce ? undefined : { scale: 1.02 }}
+                      whileTap={shouldReduce ? undefined : { scale: 0.98 }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     >
                       <div className="flex items-baseline justify-between mb-1">
@@ -307,47 +346,47 @@ export default function Home() {
           </div>
         </motion.section>
 
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 01 — Skill Reference */}
         <SkillReference />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 02 — Design Algorithm */}
         <DesignAlgorithm />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 03 — Options Showcase */}
         <OptionsShowcase />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 04 — Comparative Analysis */}
         <ComparativeAnalysis />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 05 — Heatmap */}
         <HeatmapViz />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 06 — Implementation Blueprint */}
         <ImplementationBlueprint />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 07 — AI Portal Gateway */}
         <AIPortalGateway />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 08 — Tier Architecture */}
         <TierArchitecture />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 09 — Decision Tree */}
         <DecisionTree />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 10 — Section-to-Skill Mapping */}
         <SectionMapping />
-        <div className="max-w-[1200px] mx-auto px-6"><hr className="editorial-rule" /></div>
+        <EditorialDivider />
 
         {/* 11 — Visual Asset Gallery */}
         <VisualGallery />
@@ -409,10 +448,11 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 z-50 min-w-[44px] min-h-[44px] bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors cursor-pointer"
+            className="fixed bottom-6 right-6 z-50 min-w-[44px] min-h-[44px] bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg hover:bg-primary/90 cursor-pointer"
             aria-label="Scroll back to top"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={shouldReduce ? undefined : { scale: 1.1 }}
+            whileTap={shouldReduce ? undefined : { scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 500, damping: 25 }}
           >
             <ArrowUp className="w-5 h-5" />
           </motion.button>

@@ -176,8 +176,10 @@ export function DesignAlgorithm() {
                     />
                   </div>
 
+                  <AnimatePresence>
                   {selectedOption === opt.id && (
                     <motion.div
+                      key={`detail-${opt.id}`}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -200,6 +202,7 @@ export function DesignAlgorithm() {
                       </p>
                     </motion.div>
                   )}
+                  </AnimatePresence>
                 </motion.div>
               ))}
             </motion.div>

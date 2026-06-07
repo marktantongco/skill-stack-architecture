@@ -158,7 +158,7 @@ npx skills add testdino-hq/playwright-skill
 npx skills add antvis/chart-visualization-skills --skill d3-viz
 
 echo "=== Tier 3: Portal Layer (Custom) ==="
-ORG_URL=https://github.com/<your-org>/design-portal-skills
+ORG_URL=https://github.com/skill-stack-arch/design-portal-skills
 npx skills add $ORG_URL --skill ai-portal-redirect
 npx skills add $ORG_URL --skill stack-prioritizer
 npx skills add $ORG_URL --skill matrix-engine
