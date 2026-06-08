@@ -51,22 +51,22 @@ export interface IntentRoute {
 
 // ─── 16 Skills ───
 export const skills: Skill[] = [
-  { id: 'S01', name: 'Stitch Loop', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add https://www.skills.sh/google-labs-code/stitch-skills/stitch-loop', primaryRole: 'Autonomous iterative website generation with baton-passing loop', isCustom: false },
-  { id: 'S02', name: 'Framer Motion Animator', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add https://github.com/patricio0312rev/skills --skill framer-motion-animator', primaryRole: 'Production-ready React animations, micro-interactions, spring physics', isCustom: false },
-  { id: 'S03', name: 'UI/UX Pro Max', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max', primaryRole: '344+ design resources, style governance, accessibility, creative briefs', isCustom: false },
-  { id: 'S04', name: '21st.dev Registry', tier: 0, tierName: 'Foundation', installCommand: 'npx @21st-dev/registry install-skill --global', primaryRole: 'Community React component registry with shadcn CLI', isCustom: false },
+  { id: 'S01', name: 'Stitch Design', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add google-labs-code/stitch-skills --skill stitch-design', primaryRole: 'Autonomous iterative website generation with baton-passing design loop', isCustom: false },
+  { id: 'S02', name: 'Framer Motion Animator', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add patricio0312rev/skills --skill framer-motion-animator', primaryRole: 'Production-ready React animations, micro-interactions, spring physics', isCustom: false },
+  { id: 'S03', name: 'UI/UX Pro Max', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add nextlevelbuilder/ui-ux-pro-max-skill', primaryRole: '344+ design resources, style governance, accessibility, creative briefs', isCustom: false },
+  { id: 'S04', name: '21st.dev Registry', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add 21st-dev/registry', primaryRole: 'Community React component registry with shadcn CLI', isCustom: false },
   { id: 'S05', name: 'GSAP Skills', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add greensock/gsap-skills', primaryRole: 'ScrollTrigger animations, timeline sequencing, pinning, parallax', isCustom: false },
   { id: 'S06', name: 'Remotion Skills', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add remotion-dev/skills', primaryRole: 'Programmatic infographic-motion video generation', isCustom: false },
   { id: 'S07', name: 'Mermaid Diagrams', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add softaworks/agent-toolkit --skill mermaid-diagrams', primaryRole: 'Text-based schematic diagram rendering', isCustom: false },
   { id: 'S08', name: 'AntV Chart Viz', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add antvis/chart-visualization-skills', primaryRole: '26+ interactive chart types, radar, heatmap, treemap', isCustom: false },
-  { id: 'S09', name: 'AI Image Gen', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add skills-shell/skills --skill ai-image-generation', primaryRole: '50+ AI models for hero images, mockups, visual assets', isCustom: false },
+  { id: 'S09', name: 'AI Image Gen', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add inference-sh/skills --skill ai-image-generation', primaryRole: '50+ AI models for hero images, mockups, visual assets', isCustom: false },
   { id: 'S10', name: 'shadcn/ui Skill', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add shadcn-ui/ui --skill shadcn', primaryRole: 'Interactive table, data table, component scaffolding', isCustom: false },
   { id: 'S11', name: 'Playwright Visual', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add testdino-hq/playwright-skill', primaryRole: 'Screenshot capture, visual regression, cross-browser testing', isCustom: false },
-  { id: 'S12', name: 'D3.js Visualization', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add antvis/chart-visualization-skills --skill d3-viz', primaryRole: 'Custom interactive visualizations, force graphs, heatmaps', isCustom: false },
-  { id: 'S13', name: 'AI Portal Redirect', tier: 3, tierName: 'Portal', installCommand: 'npx skills add skill-stack-arch/design-portal-skills --skill ai-portal-redirect', primaryRole: 'AI agent intent classification, skill routing, guided navigation', isCustom: true },
-  { id: 'S14', name: 'Stack Prioritizer', tier: 3, tierName: 'Portal', installCommand: 'npx skills add skill-stack-arch/design-portal-skills --skill stack-prioritizer', primaryRole: '7-dimension scoring algorithm, dependency resolver', isCustom: true },
-  { id: 'S15', name: 'Matrix Engine', tier: 3, tierName: 'Portal', installCommand: 'npx skills add skill-stack-arch/design-portal-skills --skill matrix-engine', primaryRole: 'Comparative matrix rendering, interactive filters, radar viz', isCustom: true },
-  { id: 'S16', name: 'Design Algorithm', tier: 3, tierName: 'Portal', installCommand: 'npx skills add skill-stack-arch/design-portal-skills --skill design-algorithm', primaryRole: 'Stack prioritization computation, result visualization, decision tree', isCustom: true },
+  { id: 'S12', name: 'Chart Visualization', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add antvis/chart-visualization-skills --skill chart-visualization', primaryRole: 'Custom interactive visualizations, radar charts, heatmaps, force graphs', isCustom: false },
+  { id: 'S13', name: 'AI Portal Redirect', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/skill-stack-architecture --skill ai-portal-redirect', primaryRole: 'AI agent intent classification, skill routing, guided navigation', isCustom: true },
+  { id: 'S14', name: 'Stack Prioritizer', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/skill-stack-architecture --skill stack-prioritizer', primaryRole: '7-dimension scoring algorithm, dependency resolver', isCustom: true },
+  { id: 'S15', name: 'Matrix Engine', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/skill-stack-architecture --skill matrix-engine', primaryRole: 'Comparative matrix rendering, interactive filters, radar viz', isCustom: true },
+  { id: 'S16', name: 'Design Algorithm', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/skill-stack-architecture --skill design-algorithm', primaryRole: 'Stack prioritization computation, result visualization, decision tree', isCustom: true },
 ];
 
 // ─── 5 Design Options ───
@@ -75,7 +75,7 @@ export const options: DesignOption[] = [
     id: 'opt1',
     name: 'The Autopoietic Canvas',
     tagline: 'Self-Evolving Design System',
-    dominantSkill: 'Stitch Loop',
+    dominantSkill: 'Stitch Design',
     dominantSkillId: 'S01',
     philosophy: 'A self-evolving design where each iteration reads the current state, identifies gaps, and autonomously generates the next version. The interface builds and refines itself through iterative generation cycles inspired by biological autopoiesis.',
     skillWeights: { S01: 40, S03: 30, S02: 15, S04: 15 },
@@ -204,7 +204,7 @@ export const intentRoutes: IntentRoute[] = [
 // ─── Comparison matrix data ───
 export const comparisonMatrix = [
   { dimension: 'Core Principle', opt1: 'Self-evolving design', opt2: 'Motion as language', opt3: 'Precision restraint', opt4: 'Architectural depth', opt5: 'Raw structural power' },
-  { dimension: 'Dominant Skill', opt1: 'Stitch Loop', opt2: 'Framer Motion', opt3: 'UI/UX Pro Max', opt4: '21st.dev Registry', opt5: 'UI/UX Pro Max + FM' },
+  { dimension: 'Dominant Skill', opt1: 'Stitch Design', opt2: 'Framer Motion', opt3: 'UI/UX Pro Max', opt4: '21st.dev Registry', opt5: 'UI/UX Pro Max + FM' },
   { dimension: 'Motion Style', opt1: 'Organic, spring-based', opt2: 'Choreographed, multi-tier', opt3: 'Minimal, precise', opt4: 'Parallax, 3D transforms', opt5: 'Mechanical, stepped' },
   { dimension: 'Color Strategy', opt1: 'Evolutionary palette', opt2: 'Motion-legible palette', opt3: 'Two-color system', opt4: 'Depth-gradient palette', opt5: 'Safety-color accent' },
   { dimension: 'Typography', opt1: 'Adaptive scale', opt2: 'Variable weight animated', opt3: 'Single family, 3 weights', opt4: 'Depth-aware sizing', opt5: 'Monospace, extreme scale' },
@@ -215,7 +215,7 @@ export const comparisonMatrix = [
 
 // ─── Skill utilization heatmap ───
 export const heatmapData = [
-  { skill: 'S01 Stitch Loop', values: [0,0,1,0,5,1,0,1,0,0,1,0] },
+  { skill: 'S01 Stitch Design', values: [0,0,1,0,5,1,0,1,0,0,1,0] },
   { skill: 'S02 Framer Motion', values: [3,2,0,0,3,5,3,3,5,0,0,0] },
   { skill: 'S03 UI/UX Pro Max', values: [3,3,2,1,2,2,5,2,3,1,1,1] },
   { skill: 'S04 21st.dev Reg', values: [0,0,1,0,1,1,1,3,0,0,1,0] },
@@ -226,7 +226,7 @@ export const heatmapData = [
   { skill: 'S09 AI Image Gen', values: [5,0,0,0,5,5,3,5,3,0,0,0] },
   { skill: 'S10 shadcn/ui', values: [0,0,5,0,0,0,3,1,0,5,3,0] },
   { skill: 'S11 Playwright', values: [0,0,0,0,0,0,2,0,0,0,1,0] },
-  { skill: 'S12 D3.js Viz', values: [0,0,0,0,0,0,0,0,0,3,0,0] },
+  { skill: 'S12 Chart Viz', values: [0,0,0,0,0,0,0,0,0,3,0,0] },
   { skill: 'S13 AI Portal', values: [0,0,3,0,0,0,0,0,0,0,1,5] },
   { skill: 'S14 Stack Prior.', values: [0,0,0,3,0,0,0,0,0,0,3,0] },
   { skill: 'S15 Matrix Engine', values: [0,0,5,2,0,0,0,0,0,5,0,0] },

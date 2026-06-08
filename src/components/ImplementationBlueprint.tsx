@@ -140,10 +140,10 @@ export function ImplementationBlueprint() {
 # Usage: bash install-all-skills.sh
 
 echo "=== Tier 0: Foundation Layer ==="
-npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max
-npx @21st-dev/registry install-skill --global
-npx skills add https://www.skills.sh/google-labs-code/stitch-skills/stitch-loop
-npx skills add https://github.com/patricio0312rev/skills --skill framer-motion-animator
+npx skills add google-labs-code/stitch-skills --skill stitch-design
+npx skills add patricio0312rev/skills --skill framer-motion-animator
+npx skills add nextlevelbuilder/ui-ux-pro-max-skill
+npx skills add 21st-dev/registry
 
 echo "=== Tier 1: Interactive Layer ==="
 npx skills add greensock/gsap-skills
@@ -152,13 +152,13 @@ npx skills add softaworks/agent-toolkit --skill mermaid-diagrams
 npx skills add antvis/chart-visualization-skills
 
 echo "=== Tier 2: Visual Asset Layer ==="
-npx skills add skills-shell/skills --skill ai-image-generation
+npx skills add inference-sh/skills --skill ai-image-generation
 npx skills add shadcn-ui/ui --skill shadcn
 npx skills add testdino-hq/playwright-skill
-npx skills add antvis/chart-visualization-skills --skill d3-viz
+npx skills add antvis/chart-visualization-skills --skill chart-visualization
 
 echo "=== Tier 3: Portal Layer (Custom) ==="
-ORG_URL=https://github.com/skill-stack-arch/design-portal-skills
+ORG_URL=https://github.com/marktantongco/skill-stack-architecture
 npx skills add $ORG_URL --skill ai-portal-redirect
 npx skills add $ORG_URL --skill stack-prioritizer
 npx skills add $ORG_URL --skill matrix-engine

@@ -163,7 +163,7 @@ export function OptionExpanded({ option, index, onClose }: { option: DesignOptio
             </h4>
             <div className="space-y-2.5">
               {Object.entries(option.skillWeights).sort(([,a],[,b]) => b-a).map(([skillId, weight]) => {
-                const skillName = skillId === 'S01' ? 'Stitch Loop' : skillId === 'S02' ? 'Framer Motion' : skillId === 'S03' ? 'UI/UX Pro Max' : '21st.dev Registry';
+                const skillName = skillId === 'S01' ? 'Stitch Design' : skillId === 'S02' ? 'Framer Motion' : skillId === 'S03' ? 'UI/UX Pro Max' : '21st.dev Registry';
                 return (
                   <div key={skillId} className="flex items-center gap-3">
                     <span className="text-xs text-muted-foreground w-28 shrink-0">{skillName}</span>

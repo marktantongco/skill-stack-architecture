@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     "npx skills add",
     "UI/UX",
     "Framer Motion",
-    "Stitch Loop",
+    "Stitch Design",
     "SP-7",
   ],
   authors: [{ name: "Design Portal Skills" }],

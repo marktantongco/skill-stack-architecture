@@ -415,7 +415,7 @@ export default function Home() {
                 Stack Summary
               </p>
               <div className="space-y-1 text-sm text-muted-foreground">
-                <p>T0: Stitch Loop, Framer Motion, UI/UX Pro Max, 21st.dev</p>
+                <p>T0: Stitch Design, Framer Motion, UI/UX Pro Max, 21st.dev</p>
                 <p>T1: GSAP, Remotion, Mermaid, AntV</p>
                 <p>T2: AI Image, shadcn, Playwright, D3.js</p>
                 <p>T3: AI Portal, Prioritizer, Matrix, Algorithm</p>
