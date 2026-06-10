@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://github.com/serafimcloud/21st",
+    "name": "GitHub - serafimcloud/21st: npm for design engineers",
+    "snippet": "Found a component you love on 21st.dev? Installing it is a breeze. Just copy the npx shadcn command and run it in your project's root folder. For example, to ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://mcpservers.org/agent-skills/shadcn-ui/shadcn",
+    "name": "shadcn | Agent Skills Library - Awesome MCP Servers",
+    "snippet": "Use npx shadcn@latest view to browse registry items you haven't installed. To preview changes to installed components, use npx shadcn@latest add --diff .",
+    "host_name": "mcpservers.org",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=TxsNTqaTrKw&vl=en-US",
+    "name": "Shadcn's NEW MCP is Here: Build UIs with AI Agents & Claude Code",
+    "snippet": "Stop building UIs the slow way. Shadcn's NEW official MCP server is a game-changer, and in this tutorial, I'll show you how to combine it ...",
+    "host_name": "www.youtube.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://ui.shadcn.com/docs/changelog/2026-03-cli-v4",
+    "name": "March 2026 - shadcn/cli v4",
+    "snippet": "Here's everything new. shadcn/skills#. shadcn/skills gives coding agents the context they need to work with your components and registry correctly.",
+    "host_name": "ui.shadcn.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://ui.shadcn.com/docs/skills",
+    "name": "Skills - shadcn/ui",
+    "snippet": "Skills give AI assistants like Claude Code project-aware context about shadcn/ui. When installed, your AI assistant knows how to find, install, compose, ...",
+    "host_name": "ui.shadcn.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

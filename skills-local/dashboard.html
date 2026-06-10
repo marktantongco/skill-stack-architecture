@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+h1 { font-size: 24px; margin-bottom: 20px; color: #f8fafc; }
+.last-update { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
+table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; }
+th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #334155; }
+th { background: #334155; font-weight: 600; font-size: 14px; color: #cbd5e1; }
+td { font-size: 14px; }
+tr:hover { background: #283548; }
+tr.yolo { background: #7f1d1d !important; }
+tr.yolo:hover { background: #991b1b !important; }
+.status-active { color: #4ade80; font-weight: 600; }
+.status-inactive { color: #f87171; font-weight: 600; }
+.cron-yes { color: #4ade80; }
+.cron-no { color: #f87171; }
+.yolo-yes { color: #fbbf24; font-weight: 600; }
+.yolo-no { color: #94a3b8; }
+.health-pass { color: #4ade80; font-weight: 600; }
+.health-fail { color: #f87171; font-weight: 600; }
+.health-unknown { color: #94a3b8; }
+.btn { padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; position: relative; }
+.btn:hover { background: #2563eb; }
+.btn:disabled { background: #64748b; cursor: not-allowed; }
+.btn.running { background: #f59e0b; }
+.btn-run { padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; position: relative; }
+.btn-run:hover { background: #059669; }
+.tooltip { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #334155; color: #e2e8f0; padding: 6px 10px; border-radius: 4px; font-size: 11px; white-space: nowrap; margin-bottom: 5px; z-index: 10; }
+.btn-run:hover .tooltip { display: block; }
+#toast { position: fixed; bottom: 20px; right: 20px; background: #10b981; color: white; padding: 12px 20px; border-radius: 6px; display: none; z-index: 1000; }
+#toast.error { background: #ef4444; }
+@media (max-width: 768px) {
+  table { font-size: 12px; }
+  th, td { padding: 8px 10px; }
+  .btn, .btn-run { padding: 4px 8px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<h1>Skill Dashboard</h1>
+<div class="last-update">Last updated: <span id="update-time"></span></div>
+<table>
+<thead><tr><th>Skill</th><th>Status</th><th>Health</th><th>Cron</th><th>YOLO</th><th>Last Modified</th><th>Action</th><th>Run</th></tr></thead>
+<tbody id="skill-table"></tbody>
+</table>
+<div id="toast"></div>
+<script>
+const SKILLS_DATA = [
+  {"name":"audit-analyzer","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/audit-analyzer/startup-check.sh"},
+  {"name":"browser-use","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/browser-use/startup-check.sh"},
+  {"name":"chain-of-thought","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/chain-of-thought/startup-check.sh"},
+  {"name":"competitive-analyzer","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/competitive-analyzer/startup-check.sh"},
+  {"name":"context-compressor","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/context-compressor/startup-check.sh"},
+  {"name":"cover-designer","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/cover-designer/startup-check.sh"},
+  {"name":"deployment-manager","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/deployment-manager/startup-check.sh"},
+  {"name":"devils-advocate","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/devils-advocate/startup-check.sh"},
+  {"name":"ebook-publisher","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/ebook-publisher/startup-check.sh"},
+  {"name":"ebook-typesetter","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/ebook-typesetter/startup-check.sh"},
+  {"name":"explained-code","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/explained-code/startup-check.sh"},
+  {"name":"feedback-loop","status":"active","cron":true,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/feedback-loop/startup-check.sh"},
+  {"name":"frontend-design","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/frontend-design/startup-check.sh"},
+  {"name":"gumroad-pipeline","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/gumroad-pipeline/startup-check.sh"},
+  {"name":"humanizer","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/humanizer/startup-check.sh"},
+  {"name":"jtbd-research","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/jtbd-research/startup-check.sh"},
+  {"name":"landing-page-copywriter","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/landing-page-copywriter/startup-check.sh"},
+  {"name":"launch-sequencer","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/launch-sequencer/startup-check.sh"},
+  {"name":"mcp-builder","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/mcp-builder/startup-check.sh"},
+  {"name":"nvidia-build","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/nvidia-build/startup-check.sh"},
+  {"name":"orchestrator-pattern","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/orchestrator-pattern/startup-check.sh"},
+  {"name":"output-formatter","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/output-formatter/startup-check.sh"},
+  {"name":"photography-ai","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/photography-ai/startup-check.sh"},
+  {"name":"seo-content-writer","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/seo-content-writer/startup-check.sh"},
+  {"name":"simulation-sandbox","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/simulation-sandbox/startup-check.sh"},
+  {"name":"skill-auditor","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/skill-auditor/startup-check.sh"},
+  {"name":"skill-finder","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/skill-finder/startup-check.sh"},
+  {"name":"skill-monitor","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/skill-monitor/startup-check.sh"},
+  {"name":"social-content-pillars","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/social-content-pillars/startup-check.sh"},
+  {"name":"social-media-manager","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/social-media-manager/startup-check.sh"},
+  {"name":"socratic-method","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/socratic-method/startup-check.sh"},
+  {"name":"superpowers","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/superpowers/startup-check.sh"},
+  {"name":"system-prompt-sync","status":"active","cron":true,"yolo":true,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/system-prompt-sync/startup-check.sh"},
+  {"name":"web-artifacts-builder","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/web-artifacts-builder/startup-check.sh"},
+  {"name":"web-design-guidelines","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/web-design-guidelines/startup-check.sh"},
+  {"name":"web-reader","status":"active","cron":false,"yolo":false,"lastModified":"2026-04-28","runCommand":"bash /workspace/skills/web-reader/startup-check.sh"}
+];
+
+let healthData = {};
+
+async function fetchHealthData() {
+  try {
+    const response = await fetch('skill-health.json');
+    if (response.ok) {
+      const data = await response.json();
+      healthData = {};
+      data.forEach(item => {
+        healthData[item.name] = item;
+      });
+    }
+  } catch (e) {
+    console.log('Health data not available yet');
+  }
+}
+
+function getHealthDisplay(skillName) {
+  const health = healthData[skillName];
+  if (!health) return '<span class="health-unknown">Unknown</span>';
+  const cls = health.status === 'pass' ? 'health-pass' : 'health-fail';
+  return `<span class="${cls}">${health.status} (${health.reason})</span>`;
+}
+
+function renderTable() {
+  const tbody = document.getElementById('skill-table');
+  tbody.innerHTML = '';
+  SKILLS_DATA.forEach(skill => {
+    const tr = document.createElement('tr');
+    if (skill.yolo) tr.className = 'yolo';
+    tr.innerHTML = `
+      <td><strong>${skill.name}</strong></td>
+      <td><span class="status-${skill.status}">${skill.status}</span></td>
+      <td>${getHealthDisplay(skill.name)}</td>
+      <td><span class="${skill.cron ? 'cron-yes' : 'cron-no'}">${skill.cron ? 'Yes' : 'No'}</span></td>
+      <td><span class="${skill.yolo ? 'yolo-yes' : 'yolo-no'}">${skill.yolo ? 'Yes' : 'No'}</span></td>
+      <td>${skill.lastModified}</td>
+      <td><button class="btn" onclick="runCheck('${skill.name}', this)">Run Check</button></td>
+      <td><button class="btn-run" onclick="copyRunCommand('${skill.runCommand}', this)">Run Skill<span class="tooltip">Copy Run Command: ${skill.runCommand}</span></button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('update-time').textContent = new Date().toLocaleString();
+}
+
+async function copyRunCommand(cmd, btn) {
+  try {
+    await navigator.clipboard.writeText(cmd);
+    const originalText = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = originalText; }, 1500);
+    showToast(`Copied to clipboard: ${cmd}`);
+  } catch (e) {
+    showToast('Failed to copy to clipboard', true);
+  }
+}
+
+function runCheck(skillName, btn) {
+  btn.textContent = 'Running...';
+  btn.className = 'btn running';
+  const cmd = `cd /workspace/skills/${skillName} && bash startup-check.sh`;
+  showToast(`Run this command in terminal: ${cmd}`, false, 5000);
+  setTimeout(() => {
+    btn.textContent = 'Run Check';
+    btn.className = 'btn';
+  }, 2000);
+}
+
+function showToast(msg, isError, duration) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = isError ? 'error' : '';
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, duration || 3000);
+}
+
+(async () => {
+  await fetchHealthData();
+  renderTable();
+  setInterval(async () => {
+    await fetchHealthData();
+    renderTable();
+  }, 60000);
+})();
+</script>
+</body>
+</html>

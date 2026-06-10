@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://github.com/vercel-labs/skills",
+    "name": "vercel-labs/skills: The open agent skills tool - npx skills - GitHub",
+    "snippet": "The CLI for the open agent skills ecosystem. ... Install all skills to all agents without prompts. Examples. # List skills in a repository npx skills add vercel- ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://vercel.com/changelog/introducing-skills-the-open-agent-skills-ecosystem",
+    "name": "Introducing skills, the open agent skills ecosystem - Vercel",
+    "snippet": "We released skills , a CLI for installing and managing skill packages for agents. Install a skill package with npx skills add <package> .",
+    "host_name": "vercel.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://commandcode.ai/skills",
+    "name": "Skills - The Open Agent Skills Ecosystem - Command Code",
+    "snippet": "Discover and install reusable capabilities for AI agents. Browse 5000+ skills to enhance Claude Code, Cursor, and Command Code with procedural knowledge.",
+    "host_name": "commandcode.ai",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=PkeC2hNQ9Zw",
+    "name": "How I Made Claude Code WAY Better With Vercel Agent Skills",
+    "snippet": "The AI development landscape just got turned upside down. Vercel's new Agent Skills ecosystem is fundamentally changing how we work with ...",
+    "host_name": "www.youtube.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/vercel-labs/skills/blob/main/skills/find-skills/SKILL.md",
+    "name": "skills/skills/find-skills/SKILL.md at main · vercel-labs/skills - GitHub",
+    "snippet": "The Skills CLI ( npx skills ) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent capabilities with ...",
+    "host_name": "github.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.danstroot.com/posts/2026-01-21-vercel-skills-directory",
+    "name": "Vercel Skills.sh - Dan Stroot",
+    "snippet": "Skills.sh is an open ecosystem for finding and sharing agent skills. Add a skill to any agent with: △ ~/ npx skills add <owner/repo> ... npx ...",
+    "host_name": "www.danstroot.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://vercel.com/docs/agent-resources/skills",
+    "name": "Agent Skills - Vercel",
+    "snippet": "Install any skill using the skills CLI: npx skills add <owner/repo>. To install a specific skill from a repository with multiple skills: npx ...",
+    "host_name": "vercel.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/LLMDevs/comments/1qgu8qr/vercels_opensource_agent_skills_hint_at_the_next",
+    "name": "Vercel's open-source “agent skills” hint at the next phase of AI coding",
+    "snippet": "Vercel just open-sourced agent-skills and it feels like a quiet but important step in how AI coding agents may evolve.",
+    "host_name": "www.reddit.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.infoq.com/news/2026/02/vercel-agent-skills",
+    "name": "Vercel Introduces Skills.sh, an Open Ecosystem for Agent Commands",
+    "snippet": "Developers can install Skills.sh and run skills directly on their machines, while also integrating the same skills into agent-driven workflows.",
+    "host_name": "www.infoq.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://levelup.gitconnected.com/vercel-skills-101-88b995b6125d",
+    "name": "Vercel Skills 101. The Package Manager Your AI Agents Were",
+    "snippet": "Once you've found a skill (e.g., vercel-labs/agent-skills ), you can download it with the command npx skills add vercel-labs/agent-skills.",
+    "host_name": "levelup.gitconnected.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

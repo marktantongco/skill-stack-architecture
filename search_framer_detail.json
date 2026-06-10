@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://github.com/freshtechbro/claudedesignskills/blob/main/.claude/skills/motion-framer/SKILL.md",
+    "name": "claudedesignskills/.claude/skills/motion-framer/SKILL.md at  - GitHub",
+    "snippet": "Modern animation library for React and JavaScript. Create smooth, production-ready animations with motion components, variants, gestures (hover/tap/drag) ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://tessl.io/registry/skills/github/secondsky/claude-skills/motion",
+    "name": "motion • claude-skills • secondsky • Skills • Registry - Tessl",
+    "snippet": "Motion (Framer Motion) React animation library. Use for drag-and-drop, scroll animations, gestures, SVG morphing, or encountering bundle size, ...",
+    "host_name": "tessl.io",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://motion.dev",
+    "name": "Motion: JavaScript & React animation library",
+    "snippet": "Motion (prev Framer Motion) is a fast, production-grade animation library for React, JavaScript and Vue. Build smooth UI animations at a tiny footprint.",
+    "host_name": "motion.dev",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://lobehub.com/skills/openclaw-skills-lb-motion-skill",
+    "name": "motion | Skills Marketplace - LobeHub",
+    "snippet": "Motion.dev (formerly Framer Motion) is a modern animation library and documentation hub for React, vanilla JavaScript, ...",
+    "host_name": "lobehub.com",
+    "rank": 3,
+    "date": "Jun 3, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://mcpmarket.com/tools/skills/motion-framer-motion-animation-1",
+    "name": "Motion-Framer Claude Code Skill | Interactive React Animation",
+    "snippet": "Add production-ready animations to your React projects with the Motion-Framer Claude Code skill. Master gestures, layout transitions, and spring physics.",
+    "host_name": "mcpmarket.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

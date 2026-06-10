@@ -1,0 +1,318 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MCP Stack Registry - 8 Pre-Built Stacks",
+  "description": "Curated MCP server combinations optimized for specific use cases. Each stack contains 4 servers selected for maximum synergy and minimal conflict.",
+  "version": "2.0.0",
+  "lastUpdated": "2026-05-19",
+  "curatedBy": "opencode-accomplishments",
+  "stackCuratorAlgorithm": {
+    "name": "MCP Stack Curator v2",
+    "description": "Algorithmic approach to optimal 4-server MCP stack composition",
+    "principles": [
+      {
+        "name": "Complementarity",
+        "description": "Each server must provide a capability the other 3 cannot. No two servers should solve the same problem."
+      },
+      {
+        "name": "Data Flow",
+        "description": "Servers must form a clear data pipeline: extract \u2192 process \u2192 store \u2192 verify. At least one server must produce output another consumes."
+      },
+      {
+        "name": "Universal Base",
+        "description": "Memory MCP and Filesystem MCP are universal enhancers \u2014 they can join any stack without conflict. Only include when they actively improve the data flow."
+      },
+      {
+        "name": "Conflict Avoidance",
+        "description": "Never combine Postgres + Supabase, two web search servers, or two file-writers on the same directory. These create race conditions and data conflicts."
+      },
+      {
+        "name": "Minimum Surprise",
+        "description": "All 4 servers must be free, publicly available, and have active maintenance (commits within 6 months). No private or paywalled servers in pre-built stacks."
+      }
+    ],
+    "conflictMatrix": {
+      "Postgres + Supabase": "CRITICAL - Both modify database schema, creates migration conflicts",
+      "Brave Search + Serper": "WARNING - Two web search servers produce redundant results",
+      "Filesystem + Filesystem": "CRITICAL - Two file writers on same paths creates race conditions",
+      "GitHub + GitLab": "CONDITIONAL - Only compatible if managing repos on separate platforms",
+      "Postgres + SQLite": "COMPATIBLE - Postgres for production, SQLite for local analytics is fine",
+      "Memory + any server": "COMPATIBLE - Memory MCP is a universal complement"
+    },
+    "synergyMatrix": {
+      "Memory + any": "Universal enhancer \u2014 stores preferences, context, and learned patterns",
+      "Sequential Thinking + any complex task": "Structured reasoning before action reduces errors 40%",
+      "Filesystem + any artifact producer": "Saves generated content to organized project structure",
+      "Brave Search + Fetch": "Search finds sources, Fetch extracts full content \u2014 classic research pipeline",
+      "PictoFlux AI + Filesystem": "Generate images, save to project assets \u2014 visual content pipeline",
+      "GitHub + Filesystem": "Code changes tracked in git, files managed locally \u2014 development workflow",
+      "Brave Search + Sequential Thinking": "Research findings structured into logical arguments",
+      "Postgres + Filesystem": "Database exports to local files for backup and analysis"
+    }
+  },
+  "compatibilityMatrix": {
+    "Brave Search": {
+      "compatible": ["Memory", "Filesystem", "Sequential Thinking", "Fetch", "PictoFlux AI", "GitHub", "SQLite", "Postgres"],
+      "incompatible": ["Serper", "Brave Search"],
+      "conditional": ["Arxiv"]
+    },
+    "Postgres": {
+      "compatible": ["Filesystem", "Memory", "Sequential Thinking", "Brave Search", "Fetch", "GitHub", "SQLite"],
+      "incompatible": ["Supabase"],
+      "conditional": ["SQLite"]
+    },
+    "Filesystem": {
+      "compatible": ["Memory", "Sequential Thinking", "Brave Search", "Fetch", "PictoFlux AI", "GitHub", "Postgres", "SQLite", "Supabase"],
+      "incompatible": ["Filesystem"],
+      "conditional": []
+    },
+    "Memory": {
+      "compatible": ["Filesystem", "Sequential Thinking", "Brave Search", "Fetch", "PictoFlux AI", "GitHub", "Postgres", "SQLite", "Supabase", "Arxiv"],
+      "incompatible": [],
+      "conditional": []
+    },
+    "Sequential Thinking": {
+      "compatible": ["Memory", "Filesystem", "Brave Search", "Fetch", "PictoFlux AI", "GitHub", "Postgres", "SQLite", "Supabase"],
+      "incompatible": [],
+      "conditional": []
+    },
+    "PictoFlux AI": {
+      "compatible": ["Filesystem", "Memory", "Sequential Thinking", "Brave Search", "GitHub"],
+      "incompatible": [],
+      "conditional": ["Figma MCP"]
+    },
+    "GitHub": {
+      "compatible": ["Filesystem", "Memory", "Sequential Thinking", "Brave Search", "Postgres", "Fetch", "PictoFlux AI"],
+      "incompatible": [],
+      "conditional": ["GitLab"]
+    },
+    "Supabase": {
+      "compatible": ["Filesystem", "Memory", "Sequential Thinking", "Brave Search", "Fetch"],
+      "incompatible": ["Postgres"],
+      "conditional": ["SQLite"]
+    },
+    "Fetch": {
+      "compatible": ["Memory", "Filesystem", "Sequential Thinking", "Brave Search", "Postgres", "GitHub", "PictoFlux AI", "SQLite"],
+      "incompatible": [],
+      "conditional": []
+    },
+    "SQLite": {
+      "compatible": ["Filesystem", "Memory", "Sequential Thinking", "Brave Search", "Fetch", "GitHub"],
+      "incompatible": [],
+      "conditional": ["Postgres", "Supabase"]
+    }
+  },
+  "stacks": [
+    {
+      "id": "creative-studio",
+      "name": "Creative Studio",
+      "tagline": "From idea to visual - image generation meets design systems",
+      "icon": "\ud83c\udfa8",
+      "version": "2.0",
+      "servers": [
+        {"name": "PictoFlux AI", "package": "@anthropic/pictoflux-ai", "category": "Image Generation", "role": "Primary image generator", "url": "https://chat.mcp.so/server/pictoflux-ai", "free": true, "unlimited": true},
+        {"name": "Figma MCP", "package": "@figma/mcp-server", "category": "Design Tools", "role": "Design file access", "url": "https://github.com/figma/mcp-server", "free": true},
+        {"name": "Filesystem MCP", "package": "@modelcontextprotocol/server-filesystem", "category": "File Operations", "role": "Asset management", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Memory MCP", "package": "@modelcontextprotocol/server-memory", "category": "Knowledge Graph", "role": "Style memory", "url": "https://github.com/modelcontextprotocol/servers", "free": true}
+      ],
+      "synergy": ["PictoFlux generates images -> Filesystem saves them to project", "Figma provides design context -> PictoFlux generates matching visuals", "Memory stores brand preferences -> PictoFlux applies consistent styles"],
+      "mismatches": [],
+      "bestFor": ["Design agencies", "Content creators", "Marketing teams"],
+      "estimatedSetupMin": 5,
+      "curatorNotes": "These four servers cover the full creative pipeline: Figma supplies design specs, PictoFlux generates visuals from those specs, Filesystem persists assets, and Memory retains brand/style decisions across sessions.",
+      "dataFlow": "Design specs (Figma) \u2192 Generate visuals (PictoFlux) \u2192 Save assets (Filesystem) \u2192 Recall brand rules (Memory)",
+      "alternatives": [
+        {"replace": "Figma MCP", "with": "Brave Search MCP", "tradeoff": "Loses design file access but gains trend research for inspiration-first workflows"},
+        {"replace": "PictoFlux AI", "with": "Sequential Thinking MCP", "tradeoff": "Loses image generation but gains structured creative brief planning before manual design"}
+      ]
+    },
+    {
+      "id": "research-engine",
+      "name": "Research Engine",
+      "tagline": "Deep research across web, academic, and code sources",
+      "icon": "\ud83d\udd0d",
+      "version": "2.0",
+      "servers": [
+        {"name": "Brave Search MCP", "package": "@anthropic/mcp-server-brave-search", "category": "Web Search", "role": "Web search", "url": "https://github.com/anthropics/mcp-servers", "free": true},
+        {"name": "Fetch MCP", "package": "@modelcontextprotocol/server-fetch", "category": "Web Scraping", "role": "Content extraction", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Arxiv MCP", "package": "@anthropic/mcp-server-arxiv", "category": "Academic Research", "role": "Paper search", "url": "https://github.com/anthropics/mcp-servers", "free": true},
+        {"name": "Memory MCP", "package": "@modelcontextprotocol/server-memory", "category": "Knowledge Graph", "role": "Research memory", "url": "https://github.com/modelcontextprotocol/servers", "free": true}
+      ],
+      "synergy": ["Brave Search finds sources -> Fetch extracts full content", "Arxiv provides papers -> Memory indexes findings"],
+      "mismatches": [],
+      "bestFor": ["Researchers", "Analysts", "Students"],
+      "estimatedSetupMin": 4,
+      "curatorNotes": "Search (Brave) and extraction (Fetch) form the classic research pipeline, Arxiv adds academic depth that web search cannot reach, and Memory ensures no finding is lost across sessions.",
+      "dataFlow": "Search sources (Brave) \u2192 Extract content (Fetch) \u2192 Academic depth (Arxiv) \u2192 Index findings (Memory)",
+      "alternatives": [
+        {"replace": "Arxiv MCP", "with": "PictoFlux AI", "tradeoff": "Loses academic paper access but gains ability to generate visual summaries of research"},
+        {"replace": "Fetch MCP", "with": "Filesystem MCP", "tradeoff": "Loses live web scraping but gains ability to save and organize research locally as files"}
+      ]
+    },
+    {
+      "id": "fullstack-dev",
+      "name": "Full-Stack Dev",
+      "tagline": "Code, database, deploy - the complete development pipeline",
+      "icon": "\u26a1",
+      "version": "2.0",
+      "servers": [
+        {"name": "GitHub MCP", "package": "@github/mcp-server", "category": "Code Repository", "role": "Repository management", "url": "https://github.com/github/github-mcp-server", "free": true},
+        {"name": "Postgres MCP", "package": "@modelcontextprotocol/server-postgres", "category": "Database", "role": "Database operations", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Filesystem MCP", "package": "@modelcontextprotocol/server-filesystem", "category": "File Operations", "role": "Project files", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Sequential Thinking MCP", "package": "@modelcontextprotocol/server-sequential-thinking", "category": "Reasoning", "role": "Step-by-step reasoning", "url": "https://github.com/modelcontextprotocol/servers", "free": true}
+      ],
+      "synergy": ["GitHub manages code -> Filesystem edits files -> Postgres manages data", "Sequential Thinking plans architecture -> Filesystem creates structure"],
+      "mismatches": ["Avoid Postgres MCP and Supabase MCP simultaneously"],
+      "bestFor": ["Full-stack developers", "Startups", "Solo builders"],
+      "estimatedSetupMin": 8,
+      "curatorNotes": "GitHub handles version control, Postgres manages production data, Filesystem edits project files locally, and Sequential Thinking ensures architectural decisions are reasoned through before code is written.",
+      "dataFlow": "Plan architecture (Sequential Thinking) \u2192 Edit code (Filesystem) \u2192 Version control (GitHub) \u2192 Manage data (Postgres)",
+      "alternatives": [
+        {"replace": "Postgres MCP", "with": "SQLite MCP", "tradeoff": "Loses production-grade database but gains lighter local analytics with no server setup"},
+        {"replace": "GitHub MCP", "with": "Brave Search MCP", "tradeoff": "Loves repo management but gains ability to search for solutions and documentation during development"}
+      ]
+    },
+    {
+      "id": "content-machine",
+      "name": "Content Machine",
+      "tagline": "Write, optimize, publish - end-to-end content pipeline",
+      "icon": "\u270d\ufe0f",
+      "version": "2.0",
+      "servers": [
+        {"name": "Brave Search MCP", "package": "@anthropic/mcp-server-brave-search", "category": "Web Search", "role": "Topic research", "url": "https://github.com/anthropics/mcp-servers", "free": true},
+        {"name": "PictoFlux AI", "package": "@anthropic/pictoflux-ai", "category": "Image Generation", "role": "Featured images", "url": "https://chat.mcp.so/server/pictoflux-ai", "free": true, "unlimited": true},
+        {"name": "Filesystem MCP", "package": "@modelcontextprotocol/server-filesystem", "category": "File Operations", "role": "Content storage", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Memory MCP", "package": "@modelcontextprotocol/server-memory", "category": "Knowledge Graph", "role": "Brand voice memory", "url": "https://github.com/modelcontextprotocol/servers", "free": true}
+      ],
+      "synergy": ["Brave Search researches -> Memory stores brand voice -> Content written consistently", "PictoFlux generates visuals -> Filesystem saves with content"],
+      "mismatches": [],
+      "bestFor": ["Content marketers", "Bloggers", "Newsletter writers"],
+      "estimatedSetupMin": 5,
+      "curatorNotes": "Brave Search researches topics, PictoFlux creates featured images, Filesystem organizes published content, and Memory preserves brand voice so every piece sounds consistent.",
+      "dataFlow": "Research topics (Brave Search) \u2192 Generate visuals (PictoFlux) \u2192 Store content (Filesystem) \u2192 Recall brand voice (Memory)",
+      "alternatives": [
+        {"replace": "PictoFlux AI", "with": "Fetch MCP", "tradeoff": "Loses image generation but gains deep content extraction from competitor articles for research-heavy workflows"},
+        {"replace": "Brave Search MCP", "with": "Sequential Thinking MCP", "tradeoff": "Loses web research but gains structured content outlining for long-form writing"}
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "name": "Data Pipeline",
+      "tagline": "Extract, transform, visualize - data engineering in a box",
+      "icon": "\ud83d\udcca",
+      "version": "2.0",
+      "servers": [
+        {"name": "Postgres MCP", "package": "@modelcontextprotocol/server-postgres", "category": "Database", "role": "Data storage", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Fetch MCP", "package": "@modelcontextprotocol/server-fetch", "category": "Web Scraping", "role": "Data extraction", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Filesystem MCP", "package": "@modelcontextprotocol/server-filesystem", "category": "File Operations", "role": "ETL staging", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "SQLite MCP", "package": "@modelcontextprotocol/server-sqlite", "category": "Database", "role": "Local analytics", "url": "https://github.com/modelcontextprotocol/servers", "free": true}
+      ],
+      "synergy": ["Fetch extracts -> Filesystem stages -> Postgres warehouses -> SQLite explores locally"],
+      "mismatches": ["Do NOT use Postgres MCP and Supabase MCP together"],
+      "bestFor": ["Data engineers", "Analysts", "BI teams"],
+      "estimatedSetupMin": 10,
+      "curatorNotes": "Fetch extracts raw data from the web, Filesystem stages intermediate ETL files, Postgres serves as the production warehouse, and SQLite provides lightweight local analytics \u2014 a complete data pipeline with no overlapping roles.",
+      "dataFlow": "Extract data (Fetch) \u2192 Stage files (Filesystem) \u2192 Warehouse (Postgres) \u2192 Analyze locally (SQLite)",
+      "alternatives": [
+        {"replace": "SQLite MCP", "with": "Memory MCP", "tradeoff": "Loses local SQL analytics but gains persistent memory of pipeline configurations and schema decisions"},
+        {"replace": "Fetch MCP", "with": "Brave Search MCP", "tradeoff": "Loses direct data scraping but gains broader discovery of data sources and APIs"}
+      ]
+    },
+    {
+      "id": "security-audit",
+      "name": "Security Audit",
+      "tagline": "Scan, analyze, report - comprehensive security review",
+      "icon": "\ud83d\udee1\ufe0f",
+      "version": "2.0",
+      "servers": [
+        {"name": "GitHub MCP", "package": "@github/mcp-server", "category": "Code Repository", "role": "Code review", "url": "https://github.com/github/github-mcp-server", "free": true},
+        {"name": "Filesystem MCP", "package": "@modelcontextprotocol/server-filesystem", "category": "File Operations", "role": "Local scan", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Sequential Thinking MCP", "package": "@modelcontextprotocol/server-sequential-thinking", "category": "Reasoning", "role": "Threat modeling", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Brave Search MCP", "package": "@anthropic/mcp-server-brave-search", "category": "Web Search", "role": "CVE lookup", "url": "https://github.com/anthropics/mcp-servers", "free": true}
+      ],
+      "synergy": ["GitHub scans remote -> Filesystem scans local -> comprehensive coverage", "Brave Search finds CVEs -> Sequential Thinking assesses exploitability"],
+      "mismatches": [],
+      "bestFor": ["Security engineers", "DevOps teams", "Compliance officers"],
+      "estimatedSetupMin": 6,
+      "curatorNotes": "GitHub audits remote code, Filesystem scans local code, Brave Search looks up known CVEs, and Sequential Thinking systematically models threat vectors \u2014 full coverage from code to context to reasoning.",
+      "dataFlow": "Scan remote code (GitHub) \u2192 Scan local code (Filesystem) \u2192 Lookup CVEs (Brave Search) \u2192 Model threats (Sequential Thinking)",
+      "alternatives": [
+        {"replace": "Brave Search MCP", "with": "Fetch MCP", "tradeoff": "Loses broad CVE search but gains ability to pull detailed vulnerability reports from specific advisory pages"},
+        {"replace": "Sequential Thinking MCP", "with": "Memory MCP", "tradeoff": "Loses structured threat modeling but gains persistent tracking of past audit findings and remediation decisions"}
+      ]
+    },
+    {
+      "id": "agent-os",
+      "name": "Agent OS",
+      "tagline": "Memory, orchestration, reasoning - the autonomous agent foundation",
+      "icon": "\ud83e\udd16",
+      "version": "2.0",
+      "servers": [
+        {"name": "Memory MCP", "package": "@modelcontextprotocol/server-memory", "category": "Knowledge Graph", "role": "Long-term memory", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Sequential Thinking MCP", "package": "@modelcontextprotocol/server-sequential-thinking", "category": "Reasoning", "role": "Structured reasoning", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Filesystem MCP", "package": "@modelcontextprotocol/server-filesystem", "category": "File Operations", "role": "Persistent storage", "url": "https://github.com/modelcontextprotocol/servers", "free": true},
+        {"name": "Brave Search MCP", "package": "@anthropic/mcp-server-brave-search", "category": "Web Search", "role": "Grounding", "url": "https://github.com/anthropics/mcp-servers", "free": true}
+      ],
+      "synergy": ["The four pillars: Remember (Memory) -> Reason (Thinking) -> Act (Filesystem) -> Verify (Search)"],
+      "mismatches": [],
+      "bestFor": ["AI researchers", "Agent builders", "Automation engineers"],
+      "estimatedSetupMin": 5,
+      "curatorNotes": "This is the canonical agent architecture: Memory provides persistent knowledge, Sequential Thinking enables multi-step reasoning, Filesystem allows actions on the world, and Brave Search grounds the agent in real-time information.",
+      "dataFlow": "Recall context (Memory) \u2192 Reason about task (Sequential Thinking) \u2192 Execute actions (Filesystem) \u2192 Verify with reality (Brave Search)",
+      "alternatives": [
+        {"replace": "Brave Search MCP", "with": "Fetch MCP", "tradeoff": "Loses broad search discovery but gains deep content extraction for agents that need to read full pages"},
+        {"replace": "Filesystem MCP", "with": "GitHub MCP", "tradeoff": "Loses general file I/O but gains code-specific operations for agents focused on software development tasks"}
+      ]
+    },
+    {
+      "id": "product-launch",
+      "name": "Product Launch",
+      "tagline": "Research, build, market, sell - from zero to launched",
+      "icon": "\ud83d\ude80",
+      "version": "2.0",
+      "servers": [
+        {"name": "Brave Search MCP", "package": "@anthropic/mcp-server-brave-search", "category": "Web Search", "role": "Market research", "url": "https://github.com/anthropics/mcp-servers", "free": true},
+        {"name": "PictoFlux AI", "package": "@anthropic/pictoflux-ai", "category": "Image Generation", "role": "Launch assets", "url": "https://chat.mcp.so/server/pictoflux-ai", "free": true, "unlimited": true},
+        {"name": "GitHub MCP", "package": "@github/mcp-server", "category": "Code Repository", "role": "Ship code", "url": "https://github.com/github/github-mcp-server", "free": true},
+        {"name": "Memory MCP", "package": "@modelcontextprotocol/server-memory", "category": "Knowledge Graph", "role": "Launch playbook", "url": "https://github.com/modelcontextprotocol/servers", "free": true}
+      ],
+      "synergy": ["Research (Search) -> Build (GitHub) -> Visualize (PictoFlux) -> Remember (Memory)"],
+      "mismatches": [],
+      "bestFor": ["Indie hackers", "Startup founders", "Solo entrepreneurs"],
+      "estimatedSetupMin": 7,
+      "curatorNotes": "Brave Search validates the market, GitHub ships the code, PictoFlux creates launch visuals, and Memory stores the launch playbook so nothing is forgotten across the chaotic launch period.",
+      "dataFlow": "Research market (Brave Search) \u2192 Build product (GitHub) \u2192 Create assets (PictoFlux) \u2192 Store playbook (Memory)",
+      "alternatives": [
+        {"replace": "PictoFlux AI", "with": "Filesystem MCP", "tradeoff": "Loses image generation but gains organized file management for launch documents, copy, and configs"},
+        {"replace": "Memory MCP", "with": "Sequential Thinking MCP", "tradeoff": "Loses persistent launch playbook but gains structured decision-making for go/no-go launch criteria"}
+      ]
+    }
+  ],
+  "synergyRules": {
+    "algorithmVersion": "2.0",
+    "alwaysCombine": ["Memory MCP + any other server", "Sequential Thinking + any complex task", "Filesystem MCP + any server that produces artifacts"],
+    "neverCombine": ["Postgres MCP + Supabase MCP (database access conflict)", "Multiple file-write servers on same directory", "Two web search servers simultaneously"],
+    "conditionalCombine": ["GitHub MCP + GitLab MCP (only if managing repos on both platforms)", "Postgres MCP + SQLite MCP (fine if Postgres is production and SQLite is local)"],
+    "confidenceLevels": {
+      "high": [
+        "Memory + Filesystem",
+        "Brave Search + Fetch",
+        "PictoFlux AI + Filesystem",
+        "GitHub + Filesystem",
+        "Memory + Sequential Thinking"
+      ],
+      "medium": [
+        "Brave Search + Sequential Thinking",
+        "Postgres + Filesystem",
+        "Fetch + Postgres",
+        "GitHub + Brave Search",
+        "PictoFlux AI + Memory"
+      ],
+      "low": [
+        "Postgres + SQLite",
+        "GitHub + GitLab",
+        "Brave Search + Serper",
+        "PictoFlux AI + Fetch"
+      ]
+    }
+  }
+}

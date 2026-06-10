@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://mcpservers.org/agent-skills/google-labs-code/stitch-loop",
+    "name": "stitch-loop | Agent Skills Library - Awesome MCP Servers",
+    "snippet": "Autonomous website builder using iterative Stitch generation with baton-passing loop coordination. Implements a relay pattern where each agent iteration reads a ...",
+    "host_name": "mcpservers.org",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/jezweb/claude-skills/blob/main/plugins/frontend/skills/design-loop/SKILL.md",
+    "name": "claude-skills/plugins/frontend/skills/design-loop/SKILL.md at main",
+    "snippet": "Use whenever the user asks to build an entire site autonomously, build all pages of a site, generate multiple pages in sequence, or run a 'design loop' / 'baton ...",
+    "host_name": "github.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=b0lwCDNOFUY&vl=en",
+    "name": "How to Use Google Stitch to Make Sites 10X More Beautiful - YouTube",
+    "snippet": "Four ways to use Google Stitch with Claude Code to avoid generic AI-generated designs · The design.md file: how it locks in a google stitch ...\nHow to use Google Stitch with Claude Code to build apps that don't look AI-generated. Covers design systems, the google stitch tutorial for ...",
+    "host_name": "www.youtube.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/StitchAI/comments/1r1yf7a/stitch_agent_skills_repo_for_designtocode",
+    "name": "Stitch Agent Skills repo for design-to-code automation : r/StitchAI",
+    "snippet": "Core skills include: design-md – Generates a structured DESIGN.md file from a Stitch project, creating a clear source of truth for design rules.",
+    "host_name": "www.reddit.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://tessl.io/registry/skills/github/google-labs-code/stitch-skills/stitch-loop/security",
+    "name": "stitch-loop • stitch-skills • google-labs-code • Skills • Registry - Tessl",
+    "snippet": "Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern.",
+    "host_name": "tessl.io",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

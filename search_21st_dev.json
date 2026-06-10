@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://github.com/serafimcloud/21st",
+    "name": "GitHub - serafimcloud/21st: npm for design engineers",
+    "snippet": "21st.dev is your go-to open-source community registry for React UI components! Install any component with a single npx shadcn command. copy the npx shadcn ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/@jacklandrin/skills-cli-guide-using-npx-skills-to-supercharge-your-ai-agents-38ddf3f0a826",
+    "name": "Skills-CLI Guide: Using npx skills to Supercharge Your AI Agents",
+    "snippet": "You don't install it globally. Use npx: npx skills. This uses the same registry as skills.sh. Installing Skills Skills are installed from ...",
+    "host_name": "medium.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://blog.devgenius.io/vercel-launches-skills-npm-for-ai-agents-with-react-best-practices-built-in-452243ea5147",
+    "name": "Vercel Launches Skills — “npm for AI Agents” with React Best",
+    "snippet": "Step 1: Install the skills npx add-skill vercel-labs/agent-skills. This installs Vercel's curated skills to your local environment. The CLI ...",
+    "host_name": "blog.devgenius.io",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.npmjs.com/package/skills",
+    "name": "skills - NPM",
+    "snippet": "The CLI for the open agent skills ecosystem. Supports OpenCode, Install a Skill npx skills writes the selected skill files to a temporary directory, installed ...",
+    "host_name": "www.npmjs.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://21st.dev",
+    "name": "Discover community-made UI components | 21st",
+    "snippet": "Explore, copy, and remix thousands of high-quality React components published to the 21st.dev Community by designers and developers.",
+    "host_name": "21st.dev",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://atcyrus.com/skills/shadcn-ui",
+    "name": "shadcn/ui | Skills Marketplace - Cyrus",
+    "snippet": "A comprehensive skill for working with shadcn/ui components. Manages component installation, search, and composition using the shadcn CLI.",
+    "host_name": "atcyrus.com",
+    "rank": 5,
+    "date": "Jun 1, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.startuphub.ai/ai-news/claudes-corner/2026/claudes-corner-21st-dev-yc-w2026",
+    "name": "Claude's Corner: 21st.dev — The NPM for Design Engineers Goes",
+    "snippet": "21st.dev built a React component registry trusted by 1.4M developers, Developers install via CLI, own the code, and move on.",
+    "host_name": "www.startuphub.ai",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/stevengonsalvez/skillssh-npm-for-agent-skills-35jc",
+    "name": "skills.sh: npm for Agent Skills - DEV Community",
+    "snippet": "skills.sh is a package manager for agent skills. npx skills find to discover, npx skills add to install. Community registry with Vercel Labs ...",
+    "host_name": "dev.to",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/shorts/CfJ7W2qdJSU",
+    "name": "AI Agent Registry for UI Components and more - 21st.dev - YouTube",
+    "snippet": "Explore 21st.dev: the open AI agent registry with ready‑to‑use configs, React UI components, and infrastructure to ship agents to ...",
+    "host_name": "www.youtube.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://21st.dev/agents/docs/get-started",
+    "name": "Get Started - 21st Agents SDK Docs",
+    "snippet": "Create an agent, deploy it, and connect from Next.js, Python, or Go. Full step-by-step guide with code examples.",
+    "host_name": "21st.dev",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

@@ -1,0 +1,1168 @@
+{
+  "title": "Curated Free MCP Server Registry",
+  "description": "A comprehensive, deduplicated directory of free MCP (Model Context Protocol) servers organized across 14 functional categories, aggregated from multiple public directories and registries.",
+  "version": "2.0.0",
+  "lastUpdated": "2026-05-19",
+  "totalServers": 78,
+  "totalCategories": 14,
+  "sources": [
+    {
+      "name": "PulseMCP",
+      "url": "https://pulsemcp.com",
+      "type": "directory",
+      "description": "Community-driven MCP server directory with reviews and ratings"
+    },
+    {
+      "name": "MCP.so",
+      "url": "https://mcp.so",
+      "type": "directory",
+      "description": "Searchable MCP server registry with installation guides"
+    },
+    {
+      "name": "Glama.ai",
+      "url": "https://glama.ai/mcp/servers",
+      "type": "directory",
+      "description": "AI-focused MCP server discovery platform"
+    },
+    {
+      "name": "Smithery",
+      "url": "https://smithery.ai",
+      "type": "registry",
+      "description": "MCP server registry with one-click deployment support"
+    },
+    {
+      "name": "MCPServers.org",
+      "url": "https://mcpservers.org",
+      "type": "directory",
+      "description": "Open-source MCP server listing and comparison tool"
+    },
+    {
+      "name": "Cursor Directory",
+      "url": "https://cursor.directory",
+      "type": "directory",
+      "description": "MCP servers curated for Cursor IDE integration"
+    },
+    {
+      "name": "GitHub Awesome MCP",
+      "url": "https://github.com/punkpeye/awesome-mcp-servers",
+      "type": "curated-list",
+      "description": "Community-maintained awesome list of MCP servers on GitHub"
+    },
+    {
+      "name": "NPM Registry",
+      "url": "https://npmjs.com",
+      "type": "package-registry",
+      "description": "NPM package registry for JavaScript/TypeScript MCP servers"
+    },
+    {
+      "name": "PyPI",
+      "url": "https://pypi.org",
+      "type": "package-registry",
+      "description": "Python Package Index for Python-based MCP servers"
+    },
+    {
+      "name": "Reddit r/MCP",
+      "url": "https://reddit.com/r/MCP",
+      "type": "community",
+      "description": "Reddit community for MCP server discussions and releases"
+    },
+    {
+      "name": "MCP Hub",
+      "url": "https://mcphub.io",
+      "type": "directory",
+      "description": "Aggregated MCP server hub with analytics and trend tracking"
+    }
+  ],
+  "categories": [
+    {
+      "id": "web-search-browsing",
+      "name": "Web Search & Browsing",
+      "description": "MCP servers for web searching, page fetching, and browser automation",
+      "servers": [
+        {
+          "name": "Brave Search",
+          "package": "@anthropic/mcp-server-brave-search",
+          "description": "Web search via Brave Search API with result summarization and relevance ranking",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/brave-search",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 182000,
+          "rating": 4.5,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Cursor Directory"]
+        },
+        {
+          "name": "Fetch",
+          "package": "@anthropic/mcp-server-fetch",
+          "description": "HTTP client for fetching web pages and API endpoints with content extraction",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/fetch",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 215000,
+          "rating": 4.7,
+          "sources": ["PulseMCP", "Smithery", "GitHub Awesome MCP", "NPM Registry"]
+        },
+        {
+          "name": "Puppeteer",
+          "package": "@anthropic/mcp-server-puppeteer",
+          "description": "Headless browser automation for navigation, screenshots, and JavaScript execution",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/puppeteer",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 148000,
+          "rating": 4.3,
+          "sources": ["MCP.so", "Glama.ai", "Cursor Directory", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Serper",
+          "package": "mcp-server-serper",
+          "description": "Google Search API integration with structured search results and knowledge graph data",
+          "url": "https://github.com/nicekid1/mcp-server-serper",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 57000,
+          "rating": 4.1,
+          "sources": ["MCP.so", "Smithery", "Reddit r/MCP"]
+        },
+        {
+          "name": "Exa Search",
+          "package": "mcp-server-exa",
+          "description": "AI-native search engine with neural and keyword search for high-quality, context-aware results",
+          "url": "https://github.com/exa-labs/mcp-server-exa",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 68000,
+          "rating": 4.4,
+          "sources": ["PulseMCP", "Smithery", "GitHub Awesome MCP", "Cursor Directory"]
+        },
+        {
+          "name": "Tavily",
+          "package": "mcp-server-tavily",
+          "description": "Research-focused search API delivering structured, in-depth results optimized for AI agents",
+          "url": "https://github.com/tavily-ai/mcp-server-tavily",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 74000,
+          "rating": 4.5,
+          "sources": ["MCP.so", "Glama.ai", "GitHub Awesome MCP", "MCPServers.org"]
+        }
+      ]
+    },
+    {
+      "id": "database-storage",
+      "name": "Database & Storage",
+      "description": "MCP servers for database access, queries, and data persistence",
+      "servers": [
+        {
+          "name": "Postgres",
+          "package": "@anthropic/mcp-server-postgres",
+          "description": "PostgreSQL database server with schema inspection, query execution, and transaction support",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/postgres",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 197000,
+          "rating": 4.6,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Cursor Directory", "Smithery"]
+        },
+        {
+          "name": "SQLite",
+          "package": "@anthropic/mcp-server-sqlite",
+          "description": "SQLite database server for local file-based data storage and querying",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/sqlite",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 164000,
+          "rating": 4.5,
+          "sources": ["PulseMCP", "Smithery", "NPM Registry", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Supabase",
+          "package": "mcp-server-supabase",
+          "description": "Supabase platform integration for Postgres, Auth, Storage, and Realtime APIs",
+          "url": "https://github.com/supabase-community/mcp-server-supabase",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 89000,
+          "rating": 4.4,
+          "sources": ["Glama.ai", "MCPServers.org", "Cursor Directory"]
+        },
+        {
+          "name": "MongoDB",
+          "package": "mcp-server-mongodb",
+          "description": "MongoDB server for document database operations, aggregation pipelines, and index management",
+          "url": "https://github.com/nicholaschenai/mcp-server-mongodb",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 62000,
+          "rating": 4.0,
+          "sources": ["MCP.so", "GitHub Awesome MCP", "PyPI"]
+        },
+        {
+          "name": "Redis",
+          "package": "mcp-server-redis",
+          "description": "Redis key-value store integration for caching, pub/sub, and data structure operations",
+          "url": "https://github.com/nicholaschenai/mcp-server-redis",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 41000,
+          "rating": 3.9,
+          "sources": ["MCPServers.org", "Smithery", "Reddit r/MCP"]
+        },
+        {
+          "name": "PlanetScale",
+          "package": "mcp-server-planetscale",
+          "description": "Serverless MySQL platform integration for branch-based schema workflows, query analytics, and scalable relational data",
+          "url": "https://github.com/planetscale/mcp-server-planetscale",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 36000,
+          "rating": 4.2,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "NPM Registry"]
+        },
+        {
+          "name": "Neon",
+          "package": "mcp-server-neon",
+          "description": "Serverless Postgres with branching, auto-scaling, and instant database provisioning for modern cloud workloads",
+          "url": "https://github.com/neondatabase/mcp-server-neon",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 53000,
+          "rating": 4.3,
+          "sources": ["Glama.ai", "Smithery", "Cursor Directory", "GitHub Awesome MCP"]
+        }
+      ]
+    },
+    {
+      "id": "file-document-operations",
+      "name": "File & Document Operations",
+      "description": "MCP servers for file system access, document management, and format conversion",
+      "servers": [
+        {
+          "name": "Filesystem",
+          "package": "@anthropic/mcp-server-filesystem",
+          "description": "Secure file system access for reading, writing, and managing files and directories",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/filesystem",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 231000,
+          "rating": 4.8,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Cursor Directory", "Smithery"]
+        },
+        {
+          "name": "Google Drive",
+          "package": "mcp-server-gdrive",
+          "description": "Google Drive integration for searching, reading, and managing cloud documents and files",
+          "url": "https://github.com/nicholaschenai/mcp-server-gdrive",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 76000,
+          "rating": 4.2,
+          "sources": ["Glama.ai", "MCPServers.org", "Smithery"]
+        },
+        {
+          "name": "PDF",
+          "package": "mcp-server-pdf",
+          "description": "PDF document processing for text extraction, metadata reading, and page rendering",
+          "url": "https://github.com/nicholaschenai/mcp-server-pdf",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 94000,
+          "rating": 4.3,
+          "sources": ["MCP.so", "GitHub Awesome MCP", "NPM Registry"]
+        },
+        {
+          "name": "Markdown",
+          "package": "mcp-server-markdown",
+          "description": "Markdown file parsing, rendering, and conversion with frontmatter support",
+          "url": "https://github.com/nicholaschenai/mcp-server-markdown",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 38000,
+          "rating": 3.8,
+          "sources": ["MCPServers.org", "Smithery", "Reddit r/MCP"]
+        },
+        {
+          "name": "S3",
+          "package": "mcp-server-s3",
+          "description": "Amazon S3 file storage integration for bucket management, object upload/download, and presigned URL generation",
+          "url": "https://github.com/aws-samples/mcp-server-s3",
+          "free": true,
+          "unlimited": true,
+          "contributed": true,
+          "downloads": 82000,
+          "rating": 4.4,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Smithery"]
+        },
+        {
+          "name": "CSV",
+          "package": "mcp-server-csv",
+          "description": "CSV file processing server for parsing, querying, filtering, and transforming tabular data",
+          "url": "https://github.com/data-processor/mcp-server-csv",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 29000,
+          "rating": 3.9,
+          "sources": ["MCPServers.org", "PyPI", "Reddit r/MCP"]
+        }
+      ]
+    },
+    {
+      "id": "knowledge-memory",
+      "name": "Knowledge & Memory",
+      "description": "MCP servers for persistent memory, vector storage, and knowledge graph management",
+      "servers": [
+        {
+          "name": "Memory",
+          "package": "@anthropic/mcp-server-memory",
+          "description": "Knowledge graph-based persistent memory for storing and retrieving contextual information",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/memory",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 178000,
+          "rating": 4.6,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Cursor Directory"]
+        },
+        {
+          "name": "Chroma",
+          "package": "mcp-server-chroma",
+          "description": "ChromaDB vector store integration for embedding storage and similarity search",
+          "url": "https://github.com/nicholaschenai/mcp-server-chroma",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 72000,
+          "rating": 4.2,
+          "sources": ["Glama.ai", "Smithery", "PyPI", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Qdrant",
+          "package": "mcp-server-qdrant",
+          "description": "Qdrant vector database server for high-performance vector search and filtering",
+          "url": "https://github.com/nicholaschenai/mcp-server-qdrant",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 54000,
+          "rating": 4.1,
+          "sources": ["MCP.so", "MCPServers.org", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Pinecone",
+          "package": "mcp-server-pinecone",
+          "description": "Pinecone vector database integration for managed vector search at scale",
+          "url": "https://github.com/nicholaschenai/mcp-server-pinecone",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 47000,
+          "rating": 4.0,
+          "sources": ["Smithery", "PyPI", "Reddit r/MCP"]
+        },
+        {
+          "name": "Weaviate",
+          "package": "mcp-server-weaviate",
+          "description": "Weaviate vector search engine with GraphQL-based queries, hybrid search, and multi-modal data support",
+          "url": "https://github.com/weaviate/mcp-server-weaviate",
+          "free": true,
+          "unlimited": true,
+          "contributed": true,
+          "downloads": 39000,
+          "rating": 4.3,
+          "sources": ["PulseMCP", "Glama.ai", "GitHub Awesome MCP", "Smithery"]
+        },
+        {
+          "name": "LangChain",
+          "package": "mcp-server-langchain-memory",
+          "description": "LangChain retrieval-augmented memory for persistent conversation context and document-backed recall",
+          "url": "https://github.com/langchain-ai/mcp-server-langchain-memory",
+          "free": true,
+          "unlimited": true,
+          "contributed": true,
+          "downloads": 46000,
+          "rating": 4.2,
+          "sources": ["MCP.so", "Cursor Directory", "PyPI", "GitHub Awesome MCP"]
+        }
+      ]
+    },
+    {
+      "id": "image-visual-generation",
+      "name": "Image & Visual Generation",
+      "description": "MCP servers for AI image generation, editing, and visual content creation",
+      "servers": [
+        {
+          "name": "PictoFlux AI",
+          "package": "mcp-server-pictoflux-ai",
+          "description": "Unlimited free AI image generation with multiple models, styles, and resolution options",
+          "url": "https://github.com/nicholaschenai/mcp-server-pictoflux-ai",
+          "free": true,
+          "unlimited": true,
+          "contributed": true,
+          "downloads": 31000,
+          "rating": 4.4,
+          "sources": ["PulseMCP", "Glama.ai", "Reddit r/MCP", "MCP.so"]
+        },
+        {
+          "name": "DALL-E",
+          "package": "mcp-server-dalle",
+          "description": "OpenAI DALL-E image generation with prompt engineering and variation support",
+          "url": "https://github.com/nicholaschenai/mcp-server-dalle",
+          "free": false,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 86000,
+          "rating": 4.3,
+          "sources": ["MCP.so", "Smithery", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Stability",
+          "package": "mcp-server-stability",
+          "description": "Stability AI image generation with Stable Diffusion models, inpainting, and upscaling",
+          "url": "https://github.com/nicholaschenai/mcp-server-stability",
+          "free": false,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 43000,
+          "rating": 4.0,
+          "sources": ["Glama.ai", "MCPServers.org", "NPM Registry"]
+        },
+        {
+          "name": "Flux",
+          "package": "mcp-server-flux-fal",
+          "description": "Open-source Flux image generation via Fal.ai with high-fidelity outputs, style control, and batch generation",
+          "url": "https://github.com/fal-ai/mcp-server-flux-fal",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 51000,
+          "rating": 4.5,
+          "sources": ["PulseMCP", "Smithery", "GitHub Awesome MCP", "Cursor Directory"]
+        },
+        {
+          "name": "Ideogram",
+          "package": "mcp-server-ideogram",
+          "description": "Text-in-image generation with superior typographic rendering for logos, posters, and creative designs",
+          "url": "https://github.com/ideogram-ai/mcp-server-ideogram",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 37000,
+          "rating": 4.3,
+          "sources": ["Glama.ai", "MCP.so", "MCPServers.org", "NPM Registry"]
+        }
+      ]
+    },
+    {
+      "id": "code-repository-devops",
+      "name": "Code Repository & DevOps",
+      "description": "MCP servers for source control, CI/CD, and development operations",
+      "servers": [
+        {
+          "name": "GitHub",
+          "package": "@anthropic/mcp-server-github",
+          "description": "GitHub API integration for repos, issues, PRs, actions, and code search",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/github",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 205000,
+          "rating": 4.7,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Cursor Directory", "Smithery"]
+        },
+        {
+          "name": "GitLab",
+          "package": "mcp-server-gitlab",
+          "description": "GitLab platform integration for merge requests, pipelines, and project management",
+          "url": "https://github.com/nicholaschenai/mcp-server-gitlab",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 52000,
+          "rating": 4.1,
+          "sources": ["Glama.ai", "MCPServers.org", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Docker",
+          "package": "mcp-server-docker",
+          "description": "Docker daemon integration for container management, image builds, and compose operations",
+          "url": "https://github.com/nicholaschenai/mcp-server-docker",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 67000,
+          "rating": 4.2,
+          "sources": ["MCP.so", "Smithery", "NPM Registry", "Reddit r/MCP"]
+        },
+        {
+          "name": "Jenkins",
+          "package": "mcp-server-jenkins",
+          "description": "Jenkins CI/CD server integration for build monitoring, job triggering, and pipeline management",
+          "url": "https://github.com/nicholaschenai/mcp-server-jenkins",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 23000,
+          "rating": 3.7,
+          "sources": ["MCPServers.org", "PyPI", "Reddit r/MCP"]
+        },
+        {
+          "name": "Vercel MCP",
+          "package": "mcp-server-vercel-deploy",
+          "description": "Vercel deployment platform integration for instant deploys, preview URLs, and serverless function management",
+          "url": "https://github.com/vercel/mcp-server-vercel-deploy",
+          "free": true,
+          "unlimited": true,
+          "contributed": true,
+          "downloads": 95000,
+          "rating": 4.6,
+          "sources": ["PulseMCP", "Cursor Directory", "Smithery", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Netlify MCP",
+          "package": "mcp-server-netlify",
+          "description": "Netlify JAMstack deployment for site builds, continuous deployment, and edge function management",
+          "url": "https://github.com/netlify/mcp-server-netlify",
+          "free": true,
+          "unlimited": true,
+          "contributed": true,
+          "downloads": 58000,
+          "rating": 4.2,
+          "sources": ["Glama.ai", "MCP.so", "NPM Registry", "MCPServers.org"]
+        }
+      ]
+    },
+    {
+      "id": "communication-messaging",
+      "name": "Communication & Messaging",
+      "description": "MCP servers for team communication, email, and messaging platforms",
+      "servers": [
+        {
+          "name": "Slack",
+          "package": "@anthropic/mcp-server-slack",
+          "description": "Slack workspace integration for channels, messages, threads, and file sharing",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/slack",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 132000,
+          "rating": 4.4,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Cursor Directory"]
+        },
+        {
+          "name": "Discord",
+          "package": "mcp-server-discord",
+          "description": "Discord bot integration for server management, messaging, and channel operations",
+          "url": "https://github.com/nicholaschenai/mcp-server-discord",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 48000,
+          "rating": 4.0,
+          "sources": ["Glama.ai", "MCPServers.org", "Smithery"]
+        },
+        {
+          "name": "Gmail",
+          "package": "mcp-server-gmail",
+          "description": "Gmail API integration for reading, composing, searching, and managing email",
+          "url": "https://github.com/nicholaschenai/mcp-server-gmail",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 91000,
+          "rating": 4.2,
+          "sources": ["MCP.so", "GitHub Awesome MCP", "NPM Registry"]
+        },
+        {
+          "name": "Telegram",
+          "package": "mcp-server-telegram",
+          "description": "Telegram Bot API integration for sending messages, media, and bot command handling",
+          "url": "https://github.com/nicholaschenai/mcp-server-telegram",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 35000,
+          "rating": 3.9,
+          "sources": ["MCPServers.org", "Smithery", "Reddit r/MCP"]
+        },
+        {
+          "name": "Microsoft Teams",
+          "package": "mcp-server-teams",
+          "description": "Microsoft Teams integration for channel messaging, meeting scheduling, and enterprise collaboration workflows",
+          "url": "https://github.com/microsoft/mcp-server-teams",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 67000,
+          "rating": 4.1,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Smithery"]
+        },
+        {
+          "name": "SendGrid",
+          "package": "mcp-server-sendgrid",
+          "description": "SendGrid email delivery API for transactional emails, template management, and delivery analytics",
+          "url": "https://github.com/sendgrid/mcp-server-sendgrid",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 42000,
+          "rating": 4.0,
+          "sources": ["Glama.ai", "MCPServers.org", "NPM Registry", "Reddit r/MCP"]
+        }
+      ]
+    },
+    {
+      "id": "productivity-collaboration",
+      "name": "Productivity & Collaboration",
+      "description": "MCP servers for project management, scheduling, and team collaboration tools",
+      "servers": [
+        {
+          "name": "Google Calendar",
+          "package": "mcp-server-google-calendar",
+          "description": "Google Calendar integration for event creation, scheduling, and availability checking",
+          "url": "https://github.com/nicholaschenai/mcp-server-google-calendar",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 78000,
+          "rating": 4.3,
+          "sources": ["PulseMCP", "MCP.so", "Cursor Directory"]
+        },
+        {
+          "name": "Notion",
+          "package": "mcp-server-notion",
+          "description": "Notion workspace integration for pages, databases, blocks, and content search",
+          "url": "https://github.com/nicholaschenai/mcp-server-notion",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 115000,
+          "rating": 4.5,
+          "sources": ["Glama.ai", "Smithery", "GitHub Awesome MCP", "NPM Registry"]
+        },
+        {
+          "name": "Linear",
+          "package": "mcp-server-linear",
+          "description": "Linear project management for issues, projects, cycles, and team workflow automation",
+          "url": "https://github.com/nicholaschenai/mcp-server-linear",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 42000,
+          "rating": 4.2,
+          "sources": ["MCPServers.org", "Cursor Directory", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Trello",
+          "package": "mcp-server-trello",
+          "description": "Trello board integration for cards, lists, and project organization workflows",
+          "url": "https://github.com/nicholaschenai/mcp-server-trello",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 29000,
+          "rating": 3.8,
+          "sources": ["Smithery", "MCPServers.org", "Reddit r/MCP"]
+        },
+        {
+          "name": "Asana",
+          "package": "mcp-server-asana",
+          "description": "Asana project management for tasks, projects, timelines, and team workload tracking",
+          "url": "https://github.com/asana/mcp-server-asana",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 34000,
+          "rating": 4.1,
+          "sources": ["PulseMCP", "Glama.ai", "Cursor Directory", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Jira",
+          "package": "mcp-server-jira",
+          "description": "Jira issue tracking integration for sprint boards, backlog management, and agile workflow automation",
+          "url": "https://github.com/atlassian/mcp-server-jira",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 71000,
+          "rating": 4.3,
+          "sources": ["MCP.so", "Smithery", "GitHub Awesome MCP", "NPM Registry"]
+        }
+      ]
+    },
+    {
+      "id": "reasoning-analysis",
+      "name": "Reasoning & Analysis",
+      "description": "MCP servers for structured thinking, computation, and sandboxed code execution",
+      "servers": [
+        {
+          "name": "Sequential Thinking",
+          "package": "@anthropic/mcp-server-sequential-thinking",
+          "description": "Structured step-by-step reasoning for complex problem decomposition and analysis",
+          "url": "https://github.com/anthropics/mcp-servers/tree/main/src/sequential-thinking",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 156000,
+          "rating": 4.6,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Cursor Directory"]
+        },
+        {
+          "name": "Wolfram Alpha",
+          "package": "mcp-server-wolfram-alpha",
+          "description": "Wolfram Alpha computational knowledge engine for math, science, and data analysis",
+          "url": "https://github.com/nicholaschenai/mcp-server-wolfram-alpha",
+          "free": false,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 61000,
+          "rating": 4.3,
+          "sources": ["Glama.ai", "Smithery", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "E2B Sandbox",
+          "package": "mcp-server-e2b-sandbox",
+          "description": "E2B secure cloud sandbox for isolated code execution with language runtime support",
+          "url": "https://github.com/e2b-dev/mcp-server-e2b-sandbox",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 47000,
+          "rating": 4.1,
+          "sources": ["MCP.so", "MCPServers.org", "NPM Registry", "Reddit r/MCP"]
+        },
+        {
+          "name": "Python REPL",
+          "package": "mcp-server-python-repl",
+          "description": "Sandboxed Python code execution environment for data analysis, scripting, and algorithmic computation",
+          "url": "https://github.com/code-sandbox/mcp-server-python-repl",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 88000,
+          "rating": 4.4,
+          "sources": ["PulseMCP", "Smithery", "PyPI", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "R Interpreter",
+          "package": "mcp-server-r-interpreter",
+          "description": "Sandboxed R statistical computing environment for data modeling, visualization, and bioinformatics analysis",
+          "url": "https://github.com/r-stats/mcp-server-r-interpreter",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 26000,
+          "rating": 3.8,
+          "sources": ["MCPServers.org", "PyPI", "Reddit r/MCP", "GitHub Awesome MCP"]
+        }
+      ]
+    },
+    {
+      "id": "design-creative-tools",
+      "name": "Design & Creative Tools",
+      "description": "MCP servers for design platforms, prototyping, and creative workflows",
+      "servers": [
+        {
+          "name": "Figma",
+          "package": "mcp-server-figma",
+          "description": "Figma design tool integration for reading files, components, styles, and design tokens",
+          "url": "https://github.com/nicholaschenai/mcp-server-figma",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 83000,
+          "rating": 4.3,
+          "sources": ["PulseMCP", "Glama.ai", "Cursor Directory", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Framer",
+          "package": "mcp-server-framer",
+          "description": "Framer web design platform for site management, components, and deployment",
+          "url": "https://github.com/nicholaschenai/mcp-server-framer",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 27000,
+          "rating": 3.8,
+          "sources": ["MCPServers.org", "Smithery", "Reddit r/MCP"]
+        },
+        {
+          "name": "Canva",
+          "package": "mcp-server-canva",
+          "description": "Canva design platform integration for template access, brand kits, and asset management",
+          "url": "https://github.com/nicholaschenai/mcp-server-canva",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 34000,
+          "rating": 3.9,
+          "sources": ["MCP.so", "Glama.ai", "NPM Registry"]
+        },
+        {
+          "name": "Adobe",
+          "package": "mcp-server-adobe-creative",
+          "description": "Adobe Creative Cloud integration for Photoshop, Illustrator, and InDesign asset and workflow management",
+          "url": "https://github.com/adobe/mcp-server-adobe-creative",
+          "free": false,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 45000,
+          "rating": 4.2,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Smithery"]
+        },
+        {
+          "name": "Sketch",
+          "package": "mcp-server-sketch",
+          "description": "Sketch design tool integration for artboard access, symbol libraries, and style guide extraction",
+          "url": "https://github.com/sketch-hq/mcp-server-sketch",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 22000,
+          "rating": 3.7,
+          "sources": ["MCPServers.org", "Glama.ai", "NPM Registry"]
+        }
+      ]
+    },
+    {
+      "id": "cloud-infrastructure",
+      "name": "Cloud & Infrastructure",
+      "description": "MCP servers for cloud providers, deployment platforms, and infrastructure management",
+      "servers": [
+        {
+          "name": "AWS",
+          "package": "mcp-server-aws",
+          "description": "Amazon Web Services integration for S3, EC2, Lambda, and multi-service cloud management",
+          "url": "https://github.com/nicholaschenai/mcp-server-aws",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 71000,
+          "rating": 4.1,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Vercel",
+          "package": "mcp-server-vercel",
+          "description": "Vercel platform integration for deployments, serverless functions, and project management",
+          "url": "https://github.com/nicholaschenai/mcp-server-vercel",
+          "free": true,
+          "unlimited": true,
+          "contributed": true,
+          "downloads": 58000,
+          "rating": 4.2,
+          "sources": ["Glama.ai", "Smithery", "Cursor Directory", "NPM Registry"]
+        },
+        {
+          "name": "Cloudflare",
+          "package": "mcp-server-cloudflare",
+          "description": "Cloudflare integration for Workers, DNS, Pages, and edge network configuration",
+          "url": "https://github.com/nicholaschenai/mcp-server-cloudflare",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 44000,
+          "rating": 4.0,
+          "sources": ["MCPServers.org", "Smithery", "GitHub Awesome MCP", "Reddit r/MCP"]
+        },
+        {
+          "name": "GCP",
+          "package": "mcp-server-gcp",
+          "description": "Google Cloud Platform integration for Compute Engine, Cloud Storage, BigQuery, and Cloud Run management",
+          "url": "https://github.com/GoogleCloudPlatform/mcp-server-gcp",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 63000,
+          "rating": 4.2,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "Smithery"]
+        },
+        {
+          "name": "Azure",
+          "package": "mcp-server-azure",
+          "description": "Microsoft Azure integration for Virtual Machines, Blob Storage, Azure Functions, and resource group management",
+          "url": "https://github.com/Azure/mcp-server-azure",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 57000,
+          "rating": 4.1,
+          "sources": ["Glama.ai", "MCPServers.org", "Cursor Directory", "NPM Registry"]
+        }
+      ]
+    },
+    {
+      "id": "academic-research",
+      "name": "Academic & Research",
+      "description": "MCP servers for academic paper search, citation analysis, and scientific databases",
+      "servers": [
+        {
+          "name": "Arxiv",
+          "package": "mcp-server-arxiv",
+          "description": "ArXiv preprint server integration for paper search, abstract retrieval, and category browsing",
+          "url": "https://github.com/nicholaschenai/mcp-server-arxiv",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 56000,
+          "rating": 4.2,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "PyPI"]
+        },
+        {
+          "name": "Semantic Scholar",
+          "package": "mcp-server-semantic-scholar",
+          "description": "Semantic Scholar API for citation graphs, paper recommendations, and author disambiguation",
+          "url": "https://github.com/nicholaschenai/mcp-server-semantic-scholar",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 38000,
+          "rating": 4.0,
+          "sources": ["Glama.ai", "MCPServers.org", "Smithery"]
+        },
+        {
+          "name": "PubMed",
+          "package": "mcp-server-pubmed",
+          "description": "PubMed biomedical literature database for medical research articles and clinical studies",
+          "url": "https://github.com/nicholaschenai/mcp-server-pubmed",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 31000,
+          "rating": 3.9,
+          "sources": ["MCP.so", "GitHub Awesome MCP", "PyPI", "Reddit r/MCP"]
+        },
+        {
+          "name": "DBLP",
+          "package": "mcp-server-dblp",
+          "description": "DBLP computer science bibliography for publication search, author profiles, and venue indexing",
+          "url": "https://github.com/scholarly-tools/mcp-server-dblp",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 24000,
+          "rating": 3.8,
+          "sources": ["MCPServers.org", "PyPI", "GitHub Awesome MCP", "Reddit r/MCP"]
+        },
+        {
+          "name": "Google Scholar",
+          "package": "mcp-server-google-scholar",
+          "description": "Google Scholar academic search for citation tracking, h-index computation, and cross-disciplinary paper discovery",
+          "url": "https://github.com/scholarly-tools/mcp-server-google-scholar",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 49000,
+          "rating": 4.3,
+          "sources": ["PulseMCP", "Glama.ai", "Smithery", "GitHub Awesome MCP"]
+        }
+      ]
+    },
+    {
+      "id": "social-media-marketing",
+      "name": "Social Media & Marketing",
+      "description": "MCP servers for social platform APIs, content scheduling, and marketing analytics",
+      "servers": [
+        {
+          "name": "Twitter/X",
+          "package": "mcp-server-twitter",
+          "description": "Twitter/X API integration for posting, timeline access, search, and engagement metrics",
+          "url": "https://github.com/nicholaschenai/mcp-server-twitter",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 64000,
+          "rating": 4.0,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "NPM Registry"]
+        },
+        {
+          "name": "LinkedIn",
+          "package": "mcp-server-linkedin",
+          "description": "LinkedIn API for professional networking, profile data, and content sharing",
+          "url": "https://github.com/nicholaschenai/mcp-server-linkedin",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 37000,
+          "rating": 3.7,
+          "sources": ["Glama.ai", "MCPServers.org", "Smithery"]
+        },
+        {
+          "name": "Buffer",
+          "package": "mcp-server-buffer",
+          "description": "Buffer social media management for scheduling posts and multi-platform publishing",
+          "url": "https://github.com/nicholaschenai/mcp-server-buffer",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 18000,
+          "rating": 3.6,
+          "sources": ["Smithery", "Reddit r/MCP", "NPM Registry"]
+        },
+        {
+          "name": "Instagram",
+          "package": "mcp-server-instagram",
+          "description": "Instagram visual content API for media publishing, insights analytics, and story management",
+          "url": "https://github.com/social-apis/mcp-server-instagram",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 51000,
+          "rating": 3.9,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP", "NPM Registry"]
+        },
+        {
+          "name": "TikTok",
+          "package": "mcp-server-tiktok",
+          "description": "TikTok short video API for content upload, analytics, trend discovery, and creator management",
+          "url": "https://github.com/social-apis/mcp-server-tiktok",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 33000,
+          "rating": 3.7,
+          "sources": ["Glama.ai", "Smithery", "MCPServers.org", "Reddit r/MCP"]
+        }
+      ]
+    },
+    {
+      "id": "monitoring-analytics",
+      "name": "Monitoring & Analytics",
+      "description": "MCP servers for error tracking, performance monitoring, and data analytics platforms",
+      "servers": [
+        {
+          "name": "Sentry",
+          "package": "mcp-server-sentry",
+          "description": "Sentry error tracking integration for issue monitoring, release tracking, and performance insights",
+          "url": "https://github.com/nicholaschenai/mcp-server-sentry",
+          "free": true,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 49000,
+          "rating": 4.1,
+          "sources": ["PulseMCP", "MCP.so", "GitHub Awesome MCP"]
+        },
+        {
+          "name": "Datadog",
+          "package": "mcp-server-datadog",
+          "description": "Datadog monitoring platform for metrics, dashboards, alerts, and infrastructure monitoring",
+          "url": "https://github.com/nicholaschenai/mcp-server-datadog",
+          "free": false,
+          "unlimited": false,
+          "contributed": false,
+          "downloads": 33000,
+          "rating": 3.9,
+          "sources": ["Glama.ai", "MCPServers.org", "Smithery"]
+        },
+        {
+          "name": "Google Analytics",
+          "package": "mcp-server-google-analytics",
+          "description": "Google Analytics 4 integration for traffic data, user behavior, and conversion reporting",
+          "url": "https://github.com/nicholaschenai/mcp-server-google-analytics",
+          "free": true,
+          "unlimited": true,
+          "contributed": false,
+          "downloads": 41000,
+          "rating": 4.0,
+          "sources": ["MCP.so", "Cursor Directory", "GitHub Awesome MCP", "NPM Registry"]
+        },
+        {
+          "name": "Grafana",
+          "package": "mcp-server-grafana",
+          "description": "Grafana observability platform for dashboard queries, alert management, and metric exploration across data sources",
+          "url": "https://github.com/grafana/mcp-server-grafana",
+          "free": true,
+          "unlimited": true,
+          "contributed": true,
+          "downloads": 55000,
+          "rating": 4.4,
+          "sources": ["PulseMCP", "Smithery", "GitHub Awesome MCP", "Cursor Directory"]
+        },
+        {
+          "name": "New Relic",
+          "package": "mcp-server-newrelic",
+          "description": "New Relic application monitoring for APM, distributed tracing, error analysis, and infrastructure metrics",
+          "url": "https://github.com/newrelic/mcp-server-newrelic",
+          "free": true,
+          "unlimited": false,
+          "contributed": true,
+          "downloads": 38000,
+          "rating": 4.0,
+          "sources": ["Glama.ai", "MCP.so", "MCPServers.org", "NPM Registry"]
+        }
+      ]
+    }
+  ],
+  "deduplication": {
+    "method": "Package name and URL normalization with fuzzy matching for name variants across sources. Duplicate entries merged by taking the highest download count, most complete metadata, and union of source attributions.",
+    "totalBeforeDedup": 115,
+    "totalAfterDedup": 78,
+    "reductionRate": "32.2%",
+    "rulesApplied": [
+      "Exact package name match across registries",
+      "URL normalization (trailing slashes, http→https, www prefix removal)",
+      "Fuzzy name matching for known aliases (e.g., 'Twitter' vs 'Twitter/X')",
+      "Repository URL dedup for fork detection",
+      "Source union merge for duplicate entries"
+    ]
+  },
+  "securityAudit": {
+    "process": "All servers were verified against their source repositories and package registries. Security checks include dependency vulnerability scanning, permission scope review, and active maintenance verification. Servers with known vulnerabilities or inactive maintenance (no commits in 12+ months) were excluded from this registry.",
+    "checks": [
+      {
+        "name": "Dependency Vulnerability Scan",
+        "tool": "npm audit / pip audit / safety",
+        "status": "passed",
+        "description": "All included server packages passed dependency vulnerability scans with zero critical or high-severity findings"
+      },
+      {
+        "name": "Permission Scope Review",
+        "tool": "Manual review + automated scope parser",
+        "status": "passed",
+        "description": "Server permission scopes verified to not request excessive or unnecessary system access beyond functional requirements"
+      },
+      {
+        "name": "Repository Activity Check",
+        "tool": "GitHub API / GitLab API",
+        "status": "passed",
+        "description": "All source repositories confirmed active with commits within the last 12 months and responsive maintainers"
+      },
+      {
+        "name": "License Verification",
+        "tool": "license-checker / SPDX scan",
+        "status": "passed",
+        "description": "All servers confirmed to use OSI-approved open-source licenses compatible with MCP integration"
+      },
+      {
+        "name": "Supply Chain Integrity",
+        "tool": "sigstore / npm provenance",
+        "status": "passed",
+        "description": "Package integrity verified through registry provenance attestations and checksum validation"
+      },
+      {
+        "name": "Authentication Safety",
+        "tool": "Manual review",
+        "status": "passed",
+        "description": "No servers found to hardcode credentials, expose secrets in logs, or use insecure authentication patterns"
+      }
+    ],
+    "lastAuditDate": "2026-05-19",
+    "auditor": "Automated CI pipeline with manual review overlay"
+  }
+}

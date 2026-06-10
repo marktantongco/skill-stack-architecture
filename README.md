@@ -1,8 +1,10 @@
 # Skill Stack Architecture Blueprint
 
-> **16 Skills. 4 Tiers. 5 Design Options. 1 Design Algorithm.**
+> **45 Skills. 4 Tiers. 5 Design Options. 1 Design Algorithm.**
 
 A living, navigable architecture that serves as build specification, AI guidance portal, and publishable skill repository. Every component is also an installable skill — the architecture is the product, and the product is the architecture.
+
+Skills are sourced from [github.com/marktantongco/opencode-accomplishments](https://github.com/marktantongco/opencode-accomplishments) — a curated collection of 38 production-ready agent skills spanning design, development, reasoning, content, strategy, system, and agent mode categories.
 
 ---
 
@@ -22,14 +24,14 @@ The site uses an **Ink & Vermillion** editorial design palette — cream backgro
 
 ### Tier System
 
-The 16 skills are organized into 4 dependency tiers. Installation must follow strict T0→T3 order — no tier can function without its predecessors.
+The 45 skills are organized into 4 dependency tiers. Installation must follow strict T0→T3 order — no tier can function without its predecessors.
 
 | Tier | Name | Tagline | Skills | Install Order |
 |------|------|---------|--------|---------------|
-| **T0** | Foundation | Design Intelligence Layer | Stitch Design, Framer Motion Animator, UI/UX Pro Max, 21st.dev Registry | Install first |
-| **T1** | Interactive | Motion & Data Layer | GSAP Skills, Remotion Skills, Mermaid Diagrams, AntV Chart Viz | Depends on T0 |
-| **T2** | Visual Asset | Generation & Capture Layer | AI Image Gen, shadcn/ui Skill, Playwright Visual, Chart Visualization | Depends on T0-T1 |
-| **T3** | Portal | Custom Intelligence Layer | AI Portal Redirect, Stack Prioritizer, Matrix Engine, Design Algorithm | Depends on T0-T2 |
+| **T0** | Foundation | Design Intelligence Layer | Stitch Design, Framer Motion Animator, UI/UX Pro Max v7, 21st.dev Registry, Anthropic Frontend Design, Frontend Design, Vercel Web Design Guidelines, Sample Hello Skill | Install first |
+| **T1** | Interactive | Motion & Data Layer | GSAP Animations, Remotion, Mermaid Diagrams, AntV Chart Viz, Chain of Thought, Socratic Method, Devils Advocate, Simulation Sandbox, MCP Builder, Superpowers, Deployment Manager, Browser Use, Vercel React Best Practices, Explained Code | Depends on T0 |
+| **T2** | Visual Asset | Generation & Capture Layer | AI Image Gen, shadcn/ui, Playwright Visual, Chart Visualization, Web Artifacts Builder, SEO Content Writer, Humanizer, Social Media Manager, Social Content Pillars, Web Reader, Audit Analyzer, Web Design Guidelines, Code Research, Explore, Photography AI, Output Formatter | Depends on T0-T1 |
+| **T3** | Portal | Custom Intelligence Layer | AI Portal Redirect, Stack Prioritizer, Matrix Engine, Design Algorithm, JTBD Research, Gumroad Pipeline, Feature Research, Skill Finder, Persistent Memory, System Prompt Sync, Feedback Loop, Context Compressor, Agent Roles, MCP Stack Curator, MCP Registry, MCP Security Scanner, Rabbit/Owl/Ant/Eagle/Dolphin/Beaver/Elephant Agent Modes | Depends on T0-T2 |
 
 ### SP-7 Scoring Algorithm
 
@@ -65,7 +67,7 @@ The interactive experience contains 11 navigable sections:
 
 | # | Section | Dominant Skill | Key Feature |
 |---|---------|----------------|-------------|
-| 01 | Skill Registry | shadcn/ui | Filterable table of all 16 skills with copy-to-clipboard |
+| 01 | Skill Registry | shadcn/ui | Filterable table of all 45 skills with copy-to-clipboard |
 | 02 | Design Algorithm | Design Algorithm | Interactive weight sliders with real-time scoring |
 | 03 | Options Showcase | Stitch Design | 5 design option cards with AI-generated visuals |
 | 04 | Comparative Analysis | Matrix Engine | Radar chart overlay with option toggles |
@@ -205,54 +207,103 @@ The build uses Next.js `output: "standalone"` for optimal containerized deployme
 
 ## Skill Installation
 
-Every skill in the architecture can be installed independently via the Vercel Skills CLI. Source formats follow the [official `npx skills add` specification](https://github.com/vercel-labs/skills):
+Every skill can be installed independently via the Vercel Skills CLI. All skills are sourced from [marktantongco/opencode-accomplishments](https://github.com/marktantongco/opencode-accomplishments).
 
-### Foundation Tier (T0)
+### Quick Install — All Skills
 
 ```bash
-# GitHub shorthand (owner/repo) with --skill flag
-npx skills add google-labs-code/stitch-skills --skill stitch-design
-
-# GitHub shorthand with --skill for multi-skill repos
-npx skills add patricio0312rev/skills --skill framer-motion-animator
-
-# GitHub shorthand for single-skill repos (no --skill needed)
-npx skills add nextlevelbuilder/ui-ux-pro-max-skill
-
-# GitHub shorthand for registry skills
-npx skills add 21st-dev/registry
+# Install all 45 skills at once
+npx skills add marktantongco/opencode-accomplishments --all
 ```
 
-### Interactive Tier (T1)
+### Foundation Tier (T0) — Design & UI
 
 ```bash
-npx skills add greensock/gsap-skills
-npx skills add remotion-dev/skills
-npx skills add softaworks/agent-toolkit --skill mermaid-diagrams
-npx skills add antvis/chart-visualization-skills
+npx skills add marktantongco/opencode-accomplishments --skill stitch-design
+npx skills add marktantongco/opencode-accomplishments --skill framer-motion-animator
+npx skills add marktantongco/opencode-accomplishments --skill ui-ux-pro-max-v7
+npx skills add marktantongco/opencode-accomplishments --skill anthropic-frontend-design
+npx skills add marktantongco/opencode-accomplishments --skill frontend-design
+npx skills add marktantongco/opencode-accomplishments --skill vercel-web-design-guidelines
+npx skills add marktantongco/opencode-accomplishments --skill sample-hello-skill
 ```
 
-### Visual Asset Tier (T2)
+### Interactive Tier (T1) — Animation, Reasoning & Development
 
 ```bash
-# Org was renamed from skills-shell to inference-sh
-npx skills add inference-sh/skills --skill ai-image-generation
+# Animation & Data
+npx skills add marktantongco/opencode-accomplishments --skill gsap-animations
+npx skills add marktantongco/opencode-accomplishments --skill chain-of-thought
+npx skills add marktantongco/opencode-accomplishments --skill socratic-method
+npx skills add marktantongco/opencode-accomplishments --skill devils-advocate
+npx skills add marktantongco/opencode-accomplishments --skill simulation-sandbox
 
-npx skills add shadcn-ui/ui --skill shadcn
-npx skills add testdino-hq/playwright-skill
-
-# chart-visualization skill (not d3-viz — that skill doesn't exist)
-npx skills add antvis/chart-visualization-skills --skill chart-visualization
+# Development
+npx skills add marktantongco/opencode-accomplishments --skill mcp-builder
+npx skills add marktantongco/opencode-accomplishments --skill superpowers
+npx skills add marktantongco/opencode-accomplishments --skill deployment-manager
+npx skills add marktantongco/opencode-accomplishments --skill browser-use
+npx skills add marktantongco/opencode-accomplishments --skill vercel-react-best-practices
+npx skills add marktantongco/opencode-accomplishments --skill explained-code
 ```
 
-### Portal Tier (T3) — Custom Skills
+### Visual Asset Tier (T2) — Content, Data & Creative
 
 ```bash
-# Custom skills from this repository
+# Content
+npx skills add marktantongco/opencode-accomplishments --skill seo-content-writer
+npx skills add marktantongco/opencode-accomplishments --skill humanizer
+npx skills add marktantongco/opencode-accomplishments --skill social-media-manager
+npx skills add marktantongco/opencode-accomplishments --skill social-content-pillars
+
+# Data & Web
+npx skills add marktantongco/opencode-accomplishments --skill web-reader
+npx skills add marktantongco/opencode-accomplishments --skill audit-analyzer
+npx skills add marktantongco/opencode-accomplishments --skill web-design-guidelines
+npx skills add marktantongco/opencode-accomplishments --skill code-research
+npx skills add marktantongco/opencode-accomplishments --skill explore
+
+# Creative
+npx skills add marktantongco/opencode-accomplishments --skill photography-ai
+npx skills add marktantongco/opencode-accomplishments --skill output-formatter
+npx skills add marktantongco/opencode-accomplishments --skill web-artifacts-builder
+```
+
+### Portal Tier (T3) — Strategy, System & Agent Modes
+
+```bash
+# Custom Portal Skills (from skill-stack-architecture)
 npx skills add marktantongco/skill-stack-architecture --skill ai-portal-redirect
 npx skills add marktantongco/skill-stack-architecture --skill stack-prioritizer
 npx skills add marktantongco/skill-stack-architecture --skill matrix-engine
 npx skills add marktantongco/skill-stack-architecture --skill design-algorithm
+
+# Strategy
+npx skills add marktantongco/opencode-accomplishments --skill jtbd-research
+npx skills add marktantongco/opencode-accomplishments --skill gumroad-pipeline
+npx skills add marktantongco/opencode-accomplishments --skill feature-research
+npx skills add marktantongco/opencode-accomplishments --skill skill-finder
+
+# System
+npx skills add marktantongco/opencode-accomplishments --skill persistent-memory
+npx skills add marktantongco/opencode-accomplishments --skill system-prompt-sync
+npx skills add marktantongco/opencode-accomplishments --skill feedback-loop
+npx skills add marktantongco/opencode-accomplishments --skill context-compressor
+npx skills add marktantongco/opencode-accomplishments --skill agent-roles
+
+# MCP Servers
+npx skills add marktantongco/opencode-accomplishments --skill mcp-stack-curator
+npx skills add marktantongco/opencode-accomplishments --skill mcp-registry
+npx skills add marktantongco/opencode-accomplishments --skill mcp-security-scanner
+
+# Agent Modes
+npx skills add marktantongco/opencode-accomplishments --skill rabbit-multiply-ideas
+npx skills add marktantongco/opencode-accomplishments --skill owl-deep-analysis
+npx skills add marktantongco/opencode-accomplishments --skill ant-break-into-steps
+npx skills add marktantongco/opencode-accomplishments --skill eagle-big-picture
+npx skills add marktantongco/opencode-accomplishments --skill dolphin-creative-solutions
+npx skills add marktantongco/opencode-accomplishments --skill beaver-build-systems
+npx skills add marktantongco/opencode-accomplishments --skill elephant-cross-field
 ```
 
 ### Source Format Reference

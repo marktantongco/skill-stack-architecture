@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://github.com/patricio0312rev/skills",
+    "name": "patricio0312rev/skills: Comprehensive library of +100  - GitHub",
+    "snippet": "A comprehensive library of 155 production-ready development skills covering every aspect of modern software engineering. Skills are modular, reusable knowledge ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/freshtechbro/claudedesignskills/blob/main/.claude/skills/motion-framer/SKILL.md",
+    "name": "claudedesignskills/.claude/skills/motion-framer/SKILL.md at  - GitHub",
+    "snippet": "It provides motion components that wrap HTML elements with animation superpowers, supports gesture recognition (hover, tap, drag, focus), and includes advanced ...",
+    "host_name": "github.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/ClaudeCode/comments/1sau2o4/recommendations_on_skills_from_github_to_import",
+    "name": "Recommendations on Skills from Github to Import onto Claude Code?",
+    "snippet": "secondsky/claude-skills has a motion skill that's really solid for framer motion/react animations, saves a ton of time on scroll effects and ...",
+    "host_name": "www.reddit.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://tessl.io/registry/skills/github/secondsky/claude-skills/motion",
+    "name": "motion • claude-skills • secondsky • Skills • Registry - Tessl",
+    "snippet": "Motion (Framer Motion) React animation library. Use for drag-and-drop, scroll animations, gestures, SVG morphing, or encountering bundle size, ...",
+    "host_name": "tessl.io",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/framer/motion/blob/main/packages/framer-motion/README.md",
+    "name": "motion/packages/framer-motion/README.md at main - GitHub",
+    "snippet": "Framer Motion drives the animations on the Cursor homepage, and is working with Cursor to bring powerful AI workflows to the Motion examples and docs.",
+    "host_name": "github.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/adobe/react-spectrum/discussions/5324",
+    "name": "Framer motion examples for specific React Aria Components?",
+    "snippet": "GitHub Skills SUPPORT is it possible to have some Framer motion examples on some key components? works for the entry animation but obviously without an ...",
+    "host_name": "github.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://lobehub.com/skills/patricio0312rev-skills-framer-motion-animator",
+    "name": "framer-motion-animator | Skills Mark - LobeHub",
+    "snippet": "Framer Motion Animator is a developer-focused Skill for building smooth, production-ready animations and micro-interactions in React using ...",
+    "host_name": "lobehub.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://explainx.ai/patricio0312rev",
+    "name": "patricio0312rev skills on explainx.ai",
+    "snippet": "patricio0312rev publishes 15 approved skills on ExplainX. This page loads 10 skills at a time. Current page is led by framer-motion-animator. framermotion ...",
+    "host_name": "explainx.ai",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://mcpmarket.com/tools/skills/motion-animation-for-react",
+    "name": "Motion Claude Code Skill | Framer Motion React Animations",
+    "snippet": "The Motion skill empowers Claude to build sophisticated, production-ready React animations using the Framer Motion library. It provides expert guidance on ...",
+    "host_name": "mcpmarket.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/topics/framer-motion-3d",
+    "name": "framer-motion-3d · GitHub Topics",
+    "snippet": "A creatively themed personal developer portfolio built with Next.js, Tailwind CSS, and Framer Motion — featuring spooky visuals, smooth animations, and fully ...",
+    "host_name": "github.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

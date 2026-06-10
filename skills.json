@@ -1,0 +1,2264 @@
+{
+  "version": "1.0.0",
+  "format": "agentskills.io",
+  "description": "AI Agent Skills Collection - Compatible with npx skills add",
+  "skills": [
+    {
+      "name": "agent-browser",
+      "directory": "agent-browser",
+      "category": "agent",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "A fast Rust-based headless browser automation CLI with Node.js fallback that enables AI agents to navigate, click, type, and snapshot pages via structured commands.\n",
+      "metadata": {
+        "clawdbot": {
+          "emoji": "🌐",
+          "requires": {
+            "bins": [
+              "node",
+              "npm"
+            ]
+          }
+        },
+        "category": "agent",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "ai-news-collectors",
+      "directory": "ai-news-collectors",
+      "category": "agent",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "_meta.json",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references"
+      ],
+      "description": "AI 新闻聚合与热度排序工具。当用户询问 AI 领域最新动态时触发，如：\"今天有什么 AI 新闻？\"\"总结一下这周的 AI 动态\"\"最近有什么火的 AI 产品？\"\"AI 圈最近在讨论什么？\"。覆盖：新产品发布、研究论文、行业动态、融资新闻、开源项目更新、社区病毒传播现象、AI 工具/Agent 热门项目。输出中文摘要列表，按热度排序，附带原文链接。\n",
+      "metadata": {
+        "category": "agent",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "browser-use",
+      "directory": "browser-use",
+      "category": "agent",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with browser use related tasks.",
+      "metadata": {
+        "category": "agent",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "browser-use-owl",
+      "directory": "browser-use-owl",
+      "category": "agent",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with browser use owl related tasks.",
+      "metadata": {
+        "category": "agent",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "blog-writer",
+      "directory": "blog-writer",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "2024-03-14-effective-ai-prompts.md",
+        "2024-02-17-raycast-spotlight-superpowers.md",
+        "README.md",
+        "style-guide.md",
+        "2024-11-08-ai-revolutionizing-entry-level-sales.md",
+        "manage_examples.py",
+        "2024-02-17-short-form-content-marketing.md",
+        "2025-11-12-why-ai-art-is-useless.md",
+        "2024-02-17-typing-speed-benefits.md",
+        "_meta.json",
+        "SKILL.md",
+        "2024-02-17-radical-transparency-sales.md"
+      ],
+      "subdirs": [],
+      "description": "This skill should be used when writing blog posts, articles, or long-form content in the writer's distinctive writing style. It produces authentic, opinionated content that matches the writer's voice—direct, conversational, and grounded in personal experience. The skill handles the complete workflow from research review through Notion publication. Use this skill for drafting blog posts, thought leadership pieces, or any writing meant to reflect the writer's perspective on AI, productivity, sales, marketing, or technology topics.\n",
+      "metadata": {
+        "category": "business",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "content-strategy",
+      "directory": "content-strategy",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "_meta.json",
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Build and execute a content marketing strategy for a solopreneur business. Use when planning what content to create, deciding on content formats and channels, building a content calendar, measuring content performance, or systematizing content production. Covers audience research for content, content pillars, distribution strategy, repurposing workflows, and metrics. Trigger on \"content strategy\", \"content marketing\", \"what content should I create\", \"content plan\", \"content calendar\", \"content ideas\", \"content distribution\", \"grow through content\".\n",
+      "metadata": {
+        "category": "business",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "finance",
+      "directory": "finance",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "Finance_API_Doc.md",
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Comprehensive Finance API integration skill for real-time and historical financial data analysis, market research, and investment decision-making. Priority use cases: stock price queries, market data analysis, company financial information, portfolio tracking, market news retrieval, stock screening, technical analysis, and any financial market-related requests. This skill should be the primary choice for all  Finance API interactions and financial data needs.\n",
+      "metadata": {
+        "category": "business",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "gumroad-pipeline",
+      "directory": "gumroad-pipeline",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with gumroad pipeline related tasks.",
+      "metadata": {
+        "category": "business",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "jobs-to-be-done",
+      "directory": "jobs-to-be-done",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Jobs to Be Done (JTBD) framework for understanding customer motivations and designing products people actually want. Use when the user needs customer research, product-market fit analysis, value proposition design, competitive positioning, or innovation strategy. Focuses on outcomes customers want, not features they request.\n",
+      "metadata": {
+        "author": "ronyang",
+        "version": "2.0",
+        "category": "business",
+        "type": "instruction"
+      },
+      "tags": [
+        "strategy",
+        "product",
+        "customer-research",
+        "innovation",
+        "jtbd",
+        "value-proposition"
+      ]
+    },
+    {
+      "name": "market-research-reports",
+      "directory": "market-research-reports",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": true,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "assets",
+        "scripts"
+      ],
+      "description": "Generate comprehensive market research reports (50+ pages) in the style of top consulting firms (McKinsey, BCG, Gartner). Features professional LaTeX formatting, extensive visual generation with scientific-schematics and generate-image, deep integration with research-lookup for data gathering, and multi-framework strategic analysis including Porter's Five Forces, PESTLE, SWOT, TAM/SAM/SOM, and BCG Matrix.\n",
+      "metadata": {
+        "category": "business",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "marketing-mode",
+      "directory": "marketing-mode",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "README.md",
+        "skill.json",
+        "mode-prompt.md",
+        "_meta.json",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with marketing mode related tasks.",
+      "metadata": {
+        "category": "business",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "seo-content-writer",
+      "directory": "seo-content-writer",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "_meta.json",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references"
+      ],
+      "description": "Use when the user asks to \"write SEO content\", \"create a blog post\", \"write an article\", \"content writing\", \"draft optimized content\", \"write me an article\", \"create a blog post about\", \"help me write SEO content\", or \"draft content for\". Creates high-quality, SEO-optimized content that ranks in search engines. Applies on-page SEO best practices, keyword optimization, and content structure for maximum visibility and engagement. For AI citation optimization, see geo-content-optimizer. For updating existing content, see content-refresher.\n",
+      "metadata": {
+        "author": "aaron-he-zhu",
+        "version": "2.0.0",
+        "geo-relevance": "medium",
+        "tags": [
+          "seo",
+          "content writing",
+          "blog post",
+          "article",
+          "copywriting",
+          "content creation",
+          "on-page seo"
+        ],
+        "triggers": [
+          "write SEO content",
+          "create blog post",
+          "write an article",
+          "content writing",
+          "draft optimized content",
+          "write for SEO",
+          "blog writing",
+          "write me an article",
+          "create a blog post about",
+          "help me write SEO content",
+          "draft content for"
+        ],
+        "category": "business",
+        "type": "instruction"
+      },
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "social-media-manager",
+      "directory": "social-media-manager",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with social media manager related tasks.",
+      "metadata": {
+        "category": "business",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "stock-analysis-skill",
+      "directory": "stock-analysis-skill",
+      "category": "business",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "package.json",
+        "tsconfig.json",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "src"
+      ],
+      "description": "Comprehensive stock market analysis skill covering A-share (China), Hong Kong, and US equities. Priority use cases: stock analysis and buy/sell/hold recommendations by ticker code, generating decision dashboards and research reports with technical/fundamental/sentiment analysis, position-aware investment strategies based on user's cost price, dividend income scoring and safety analysis, rumor and early market signal scanning (M&A, insider activity, analyst actions), watchlist management with price target and stop-loss alerts, and K-line chart pattern recognition from images. This skill should be the primary choice whenever users mention a stock ticker, ask whether to buy or sell a stock, reference their holding cost or position, request dividend analysis, ask about market rumors or early signals, want to add/check/manage a watchlist, or upload a chart image for technical analysis.\n",
+      "metadata": {
+        "category": "business",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "auto-target-tracker",
+      "directory": "auto-target-tracker",
+      "category": "career",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "自动目标进度追踪器。在对话中检测到目标相关图片（笔记、进度、截图、记录）时，自动调用 VLM 识别关键信息并记录到目标日记。适用于学习管理、健身追踪、工作进度、习惯养成、创作记录等所有目标管理场景。",
+      "metadata": {
+        "category": "career",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "interview-designer",
+      "directory": "interview-designer",
+      "category": "career",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "README.md",
+        "_meta.json",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "templates"
+      ],
+      "description": "Analyze resumes and design interview strategies using evidence-based methodology. Transforms interview prep from \"read resume → ask questions\" into \"define standard → forensic evidence → future simulation\". Combines Geoff Smart's Topgrading, Lou Adler's performance-based hiring, and Daniel Kahneman's bias control. Use when preparing for interviews, creating structured interview guides, or designing questions to validate candidate competencies.\n",
+      "metadata": {
+        "category": "career",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "interview-prep",
+      "directory": "interview-prep",
+      "category": "career",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "scripts"
+      ],
+      "description": "帮用户准备面试。基于目标 JD、公司、岗位方向，生成\"高频面试题 + 参考回答 + 行为面 / 技术面 / Case 面分类题库\"，并产出可打印的『面试备战手册』。当用户说\"帮我准备面试\"\"明天有面试 / 后天面试\"\"面试题\"\"面经\"\"模拟面试\"\"我要面 X 公司 Y 岗位\"\"帮我准备 STAR 故事\"\"怎么回答这道面试题\"\"自我介绍 / 离职原因 / 优缺点 怎么答\"，必须触发本 skill。请勿用本 skill 改简历（去 jd-resume-tailor / resume-builder）或推荐方向（去 job-intent-tracker）。\n",
+      "metadata": {
+        "category": "career",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "jd-resume-tailor",
+      "directory": "jd-resume-tailor",
+      "category": "career",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "scripts"
+      ],
+      "description": "给定一份 JD 和一份现有简历，做\"JD 拆解 + 简历定向改写\"。拆 JD 抽出硬技能、软技能、加分项；对照简历做 gap 分析；产出针对该岗位重写后的简历，突出相关经验、补齐关键词缺口、并保留候选人真实经历不编造。当用户说\"针对这个岗位 / 这家公司改简历\"\"帮我对一下这个 JD\"\"我想投这个职位你看怎么改\"\"把这份简历针对 X 公司优化\"\"做一份定向版简历\"，或同时给出 JD 文本 + 简历文件时，必须触发本 skill。**请勿用本 skill 做\"从零写简历\"**——那是 resume-builder 的事。\n",
+      "metadata": {
+        "category": "career",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "job-intent-tracker",
+      "directory": "job-intent-tracker",
+      "category": "career",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "scripts"
+      ],
+      "description": "帮助用户梳理求职意向、生成目标岗位画像，并维护一份结构化的\"岗位投递追踪表\"。当用户说\"我想换工作 / 不知道投什么岗 / 帮我看看我适合什么岗位 / 帮我管理投递进度 / 我投了好几家但记不住状态了 / 想做一个求职 OKR / 整理一下求职方向\"，或上传简历但没说要改简历时，应该主动触发本 skill。本 skill 也适用于实习生、应届生、转行候选人在求职启动阶段做\"自我盘点 + 目标画像 + 投递管理\"三件事。\n",
+      "metadata": {
+        "category": "career",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "resume-builder",
+      "directory": "resume-builder",
+      "category": "career",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "scripts"
+      ],
+      "description": "从零生成或全面优化一份中文简历，并导出 docx / pdf / markdown 多种格式。用 STAR 法则改写经历、做 ATS 关键词覆盖率检查、根据行业（互联网产品 / 技术 / 金融 / 通用）选模板。当用户说\"帮我写简历 / 优化简历 / 简历不会写 / 我的简历太弱了 / 简历看起来不专业 / 简历改一改 / 给我做个简历模板 / 简历导出 / 简历加点关键词\"，或者上传 .pdf/.docx 简历后说\"看看怎么改\"时，必须触发本 skill。即使用户只问\"我的简历有什么问题\"也要触发。\n",
+      "metadata": {
+        "category": "career",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "dream-interpreter",
+      "directory": "dream-interpreter",
+      "category": "creative",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": true,
+      "files": [
+        "skill.json",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "references",
+        "assets",
+        "scripts"
+      ],
+      "description": "Use when the user needs help with dream interpreter related tasks.",
+      "metadata": {
+        "category": "creative",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "get-fortune-analysis",
+      "directory": "get-fortune-analysis",
+      "category": "creative",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "lunar_python.py",
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "生成视觉华丽、内容详实、具有仪式感的流年运势报告（流金星象风格）。",
+      "metadata": {
+        "category": "creative",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "gift-evaluator",
+      "directory": "gift-evaluator",
+      "category": "creative",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md",
+        "html_tools.py",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [],
+      "description": "The PRIMARY tool for Spring Festival gift analysis and social interaction generation. Use this skill when users upload photos of gifts (alcohol, tea, supplements, etc.) to inquire about their value, authenticity, or how to respond socially. Integrates visual perception, market valuation, and HTML card generation.\n",
+      "metadata": {
+        "category": "creative",
+        "type": "instruction",
+        "version": "1.0.0"
+      },
+      "license": "Internal Tool"
+    },
+    {
+      "name": "mindfulness-meditation",
+      "directory": "mindfulness-meditation",
+      "category": "creative",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "_meta.json",
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Build a meditation practice with guided sessions, streaks, and mindfulness reminders",
+      "metadata": {
+        "author": "clawd-team",
+        "version": "1.0.0",
+        "category": "creative",
+        "type": "instruction"
+      }
+    },
+    {
+      "name": "podcast-generate",
+      "directory": "podcast-generate",
+      "category": "creative",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "readme.md",
+        "LICENSE.txt",
+        "generate.ts",
+        "package.json",
+        "tsconfig.json",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "test_data"
+      ],
+      "description": "Generate podcast episodes from user-provided content or by searching the web for specified topics. If user uploads a text file/article, creates a dual-host dialogue podcast (or single-host upon request). If no content is provided, searches the web for information about the user-specified topic and generates a podcast. Duration scales with content size (3-20 minutes, ~240 chars/min). Uses z-ai-web-dev-sdk for LLM script generation and TTS audio synthesis. Outputs both a podcast script (Markdown) and a complete audio file (WAV).\n",
+      "metadata": {
+        "category": "creative",
+        "type": "instruction",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "storyboard-manager",
+      "directory": "storyboard-manager",
+      "category": "creative",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "package.json",
+        "SKILL.md",
+        "index.js"
+      ],
+      "subdirs": [
+        "references",
+        "scripts"
+      ],
+      "description": "Assist writers with story planning, character development, plot structuring, chapter writing, timeline tracking, and consistency checking. Use this skill when working with creative writing projects organized in folders containing characters, chapters, story planning documents, and summaries. Trigger this skill for tasks like \"Help me develop this character,\" \"Write the next chapter,\" \"Check consistency across my story,\" or \"Track the timeline of events.\"\n",
+      "metadata": {
+        "category": "creative",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "motion-system-playbook",
+      "directory": "motion-system-playbook",
+      "category": "design",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with motion system playbook related tasks.",
+      "metadata": {
+        "category": "design",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "photography-ai",
+      "directory": "photography-ai",
+      "category": "design",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "AI-powered photography assistant covering 6 core categories - Composition, Lighting, Post-Processing, Equipment, Genre-Specific, and Business. Use when the user needs photography advice, camera settings, lighting setups, editing workflows, portfolio building, or AI-enhanced photography techniques. v3.0\n",
+      "metadata": {
+        "author": "marktantongco",
+        "version": "3.0",
+        "category": "design",
+        "type": "instruction"
+      },
+      "tags": [
+        "photography",
+        "ai",
+        "composition",
+        "lighting",
+        "post-processing",
+        "equipment",
+        "business"
+      ]
+    },
+    {
+      "name": "ui-ux-pro-max",
+      "directory": "ui-ux-pro-max",
+      "category": "design",
+      "type": "complex",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": true,
+      "files": [
+        "_meta.json",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "data",
+        "assets",
+        "scripts"
+      ],
+      "description": "UI/UX design intelligence and implementation guidance for building polished interfaces. Use when the user asks for UI design, UX flows, information architecture, visual style direction, design systems/tokens, component specs, copy/microcopy, accessibility, or to generate/critique/refine frontend UI (HTML/CSS/JS, React, Next.js, Vue, Svelte, Tailwind). Includes workflows for (1) generating new UI layouts and styling, (2) improving existing UI/UX, (3) producing design-system tokens and component guidelines, and (4) turning UX recommendations into concrete code changes.\n",
+      "metadata": {
+        "category": "design",
+        "type": "complex",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "ui-ux-pro-max-v8-components",
+      "directory": "ui-ux-pro-max-v8-components",
+      "category": "design",
+      "type": "complex",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "UI/UX Pro Max v8.0 — Components, Patterns & Validation. Use this file when the query is about React components, accessibility (a11y), motion presets, validation/audit, advanced patterns, or creative brief workflows. Contains Module 1 (Creative Brief Engine), Module 4 (Component Library), Module 5 (Motion Presets), Module 6 (Validation & Audit), Module 8 (Cross-Reference Integration), and Module 10 (Advanced Patterns). For design tokens, CSS primitives, data tables, and theming, see PART-A-INFRASTRUCTURE.md.\n",
+      "metadata": {
+        "version": "8.0.0",
+        "category": "design",
+        "type": "complex"
+      }
+    },
+    {
+      "name": "ui-ux-pro-max-v8-data",
+      "directory": "ui-ux-pro-max-v8-data",
+      "category": "design",
+      "type": "complex",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "data",
+        "scripts"
+      ],
+      "description": "Data Lookup Engine for UI/UX PRO MAX v8.0. Provides programmatic access to style specifications, color palettes, font pairings, UX rules, chart recommendations, icon mappings, landing page patterns, and framework-specific guidelines stored as searchable CSV/JSON data files.\n",
+      "metadata": {
+        "version": "8.0.0",
+        "category": "design",
+        "type": "complex"
+      }
+    },
+    {
+      "name": "ui-ux-pro-max-v8-infra",
+      "directory": "ui-ux-pro-max-v8-infra",
+      "category": "design",
+      "type": "complex",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "UI/UX Pro Max v8.0 — Part A: Design & Style Infrastructure. Activate this skill when the query involves design tokens, color palettes, CSS primitives, theming (dark mode, theme switching), typography, spacing systems, OKLCH colors, APCA contrast, Tailwind v4 @theme integration, container queries, @starting-style, @layer, @scope, @property, CSS nesting, visual direction, style selection, font pairings, industry design rules, or embedded data lookups for styles, palettes, fonts, and rules. This is the infrastructure layer — it provides the design system foundation (tokens, CSS primitives, theme system, data tables) that Part B (components) and Part C (data) consume. Do NOT activate for React component implementations, motion presets, validation checklists, or advanced component patterns — those belong in Part B.\n",
+      "metadata": {
+        "version": "8.0.0",
+        "category": "design",
+        "type": "complex"
+      }
+    },
+    {
+      "name": "visual-design-foundations",
+      "directory": "visual-design-foundations",
+      "category": "design",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references"
+      ],
+      "description": "Apply typography, color theory, spacing systems, and iconography principles to create cohesive visual designs. Use when establishing design tokens, building style guides, or improving visual hierarchy and consistency.\n",
+      "metadata": {
+        "category": "design",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "web-design-guidelines",
+      "directory": "web-design-guidelines",
+      "category": "design",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".\n",
+      "metadata": {
+        "author": "vercel",
+        "version": "1.0.0",
+        "category": "design",
+        "type": "instruction"
+      }
+    },
+    {
+      "name": "coding-agent",
+      "directory": "coding-agent",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "state.md",
+        "criteria.md",
+        "verification.md",
+        "execution.md",
+        "memory-template.md",
+        "_meta.json",
+        "SKILL.md",
+        "planning.md"
+      ],
+      "subdirs": [],
+      "description": "Coding workflow with planning, implementation, verification, and testing for clean software development.",
+      "metadata": {
+        "clawdbot": {
+          "emoji": "💻",
+          "requires": {
+            "bins": []
+          },
+          "os": [
+            "linux",
+            "darwin",
+            "win32"
+          ]
+        },
+        "category": "development",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "composition-patterns",
+      "directory": "composition-patterns",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.\n",
+      "metadata": {
+        "author": "vercel",
+        "version": "1.0.0",
+        "category": "development",
+        "type": "instruction"
+      }
+    },
+    {
+      "name": "fullstack-dev",
+      "directory": "fullstack-dev",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [],
+      "description": "Fullstack web development with Next.js 16, TypeScript, Tailwind CSS 4, shadcn/ui, Prisma ORM. Use when: building web apps, creating UI components, setting up database schemas, implementing API routes, adding websocket/socket.io support, fullstack project scaffolding, frontend development, backend development, web dev, Next.js app.\n",
+      "metadata": {
+        "category": "development",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "gsap-animations",
+      "directory": "gsap-animations",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "GSAP (GreenSock Animation Platform) skill for creating professional web animations. Covers all GSAP plugins including ScrollTrigger, Flip, Draggable, MotionPath, SplitText, DrawSVG, MorphSVG, ScrollSmoother, Observer, and TextPlugin. Use when the user needs web animations, scroll effects, interactive UI animations, SVG animations, or timeline-based motion design.\n",
+      "metadata": {
+        "author": "xerxes-on",
+        "version": "1.0.0",
+        "category": "development",
+        "type": "instruction"
+      },
+      "tags": [
+        "animation",
+        "gsap",
+        "scroll",
+        "svg",
+        "motion",
+        "frontend"
+      ]
+    },
+    {
+      "name": "next-best-practices",
+      "directory": "next-best-practices",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Next.js best practices - file conventions, RSC boundaries, data patterns, async APIs, metadata, error handling, route handlers, image/font optimization, bundling\n",
+      "metadata": {
+        "category": "development",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "react-best-practices",
+      "directory": "react-best-practices",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.\n",
+      "metadata": {
+        "author": "vercel",
+        "version": "1.0.0",
+        "category": "development",
+        "type": "instruction"
+      }
+    },
+    {
+      "name": "react-native-skills",
+      "directory": "react-native-skills",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "React Native and Expo best practices for building performant mobile apps. Use when building React Native components, optimizing list performance, implementing animations, or working with native modules.\n",
+      "metadata": {
+        "author": "vercel",
+        "version": "1.0.0",
+        "category": "development",
+        "type": "instruction"
+      }
+    },
+    {
+      "name": "shadcn",
+      "directory": "shadcn",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Manages shadcn components and projects — adding, searching, fixing, debugging, styling, and composing UI. Provides project context, component docs, and usage examples. Applies when working with shadcn/ui, component registries, presets, or any project with a components.json file.\n",
+      "metadata": {
+        "category": "development",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "simulation-sandbox",
+      "directory": "simulation-sandbox",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with simulation sandbox related tasks.",
+      "metadata": {
+        "category": "development",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "web-artifacts-builder",
+      "directory": "web-artifacts-builder",
+      "category": "development",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with web artifacts builder related tasks.",
+      "metadata": {
+        "category": "development",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "docx",
+      "directory": "docx",
+      "category": "document",
+      "type": "complex",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "setup.sh",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "routes",
+        "scenes",
+        "scripts"
+      ],
+      "description": "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. When GLM needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks\n",
+      "metadata": {
+        "author": "Z.AI",
+        "version": "1.0",
+        "category": "document",
+        "type": "complex"
+      },
+      "license": "Proprietary. LICENSE.txt has complete terms"
+    },
+    {
+      "name": "pdf",
+      "directory": "pdf",
+      "category": "document",
+      "type": "complex",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "references",
+        "briefs",
+        "typesetting",
+        "configs",
+        "scripts"
+      ],
+      "description": "Professional PDF toolkit with four production lines: (1) Report - structured documents via ReportLab (reports, proposals, contracts, white papers) (2) Creative - visual design via JSON Blueprint → design_engine.py → Playwright snapshot (posters, infographics, invitations, dashboards). The LLM acts as Art Director outputting ONLY JSON spatial blueprints; convert.blueprint compiles to pixel-perfect PDF. (3) Academic - scholarly work via LaTeX/Tectonic (papers, theses, math-heavy documents) (4) Process - manipulate existing PDFs (extract, merge, split, fill forms, convert) Auto-routes based on document type. Includes ATS/creative/academic resume sub-paths.\n",
+      "metadata": {
+        "author": "Z.AI",
+        "version": "1.0",
+        "category": "document",
+        "type": "complex"
+      },
+      "license": "Proprietary. LICENSE.txt has complete terms"
+    },
+    {
+      "name": "ppt",
+      "directory": "ppt",
+      "category": "document",
+      "type": "complex",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "beamer.md",
+        "LICENSE.txt",
+        "themes.md",
+        "design-system.md",
+        "ooxml.md",
+        "html2pptx.md",
+        "data-viz-components.md",
+        "setup.sh",
+        "SKILL.md",
+        "components.md"
+      ],
+      "subdirs": [
+        "references",
+        ".claude",
+        "ooxml",
+        "scripts"
+      ],
+      "description": "Presentation creation, editing, and analysis for .pptx files: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes. Academic/paper-based presentations use the embedded Beamer module at end of this file (PDF output only).\n",
+      "metadata": {
+        "author": "Z.AI",
+        "version": "1.0",
+        "category": "document",
+        "type": "complex"
+      },
+      "license": "Proprietary. LICENSE.txt has complete terms"
+    },
+    {
+      "name": "xlsx",
+      "directory": "xlsx",
+      "category": "document",
+      "type": "complex",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "xlsx.py",
+        "LICENSE.txt",
+        "setup.sh",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "quality",
+        "scenes",
+        "templates",
+        "engines"
+      ],
+      "description": "Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .csv, or .tsv file; create a new spreadsheet from scratch or from other data sources; analyze data and output results as an Excel file with charts; convert between tabular file formats (CSV/JSON/PDF → XLSX or vice versa); clean, merge, pivot, or transform tabular data. Trigger especially when the user references a spreadsheet file by name or path, says 'make a table/report/model', mentions Excel/CSV/数据分析/报表/汇总, or wants data visualization inside a spreadsheet.\n",
+      "metadata": {
+        "author": "Z.AI",
+        "version": "1.0",
+        "category": "document",
+        "type": "complex"
+      },
+      "license": "Proprietary. LICENSE.txt has complete terms"
+    },
+    {
+      "name": "quiz-html",
+      "directory": "quiz-html",
+      "category": "education",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "skill.yaml",
+        "README.md",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "examples",
+        "templates",
+        "scripts"
+      ],
+      "description": "把题目数组生成一个**可独立运行的网页练习页**（HTML 文件）。当用户完成 quiz-mastery 的「从资料出题」或「从文件提取题目」流程后，应主动询问是否需要\"在网页里练习\"，确认后调用本 skill 把题目注入模板，生成 HTML 给用户。也支持用户直接说\"把这些题做成网页/HTML/练习页\"时触发。**不处理**：出题（→ quiz-mastery）、评分（→ quiz-mastery）、长期复习计划（→ study-buddy）。\n",
+      "metadata": {
+        "category": "education",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "quiz-mastery",
+      "directory": "quiz-mastery",
+      "category": "education",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "skill.yaml",
+        "README.md",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "data",
+        ".claude",
+        "src",
+        "scripts"
+      ],
+      "description": "出题、测验、复习、掌握度追踪工具。**用户说\"复习\"、\"巩固\"、\"回顾\"任一关键词时优先触发本 skill**。当用户的请求与\"题目/复习\"相关时触发：把学习资料/PDF/材料转成题目练习（\"给这个 PDF 出几道题\"）、导入题目文件做练习（\"我有一份题目文件，帮我做\"）、复习已学内容（\"复习一下昨天的\"、\"巩固一下\"、\"回顾下昨天\"、\"用艾宾浩斯帮我安排\"）、遗忘曲线追踪、掌握度评分。**🔴 强制规则**：每次出题/导入题目成功后，**首轮展示题目前必须问一句**\"要不要生成网页练习页？\"，用户说要 → 调用 quiz-html skill。**不处理**：长期学习项目的进度管理、计划制定（→ study-buddy）。\n",
+      "metadata": {
+        "category": "education",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "study-buddy",
+      "directory": "study-buddy",
+      "category": "education",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "智能督学助手，管理用户的长期学习项目工作流。当用户表达学习项目相关意图时触发：创建/制定学习计划（\"我想学X\"、\"帮我制定计划\"）、汇报学习进度（\"学完了\"、\"今天搞定了\"、\"完成今日任务\"）、查询计划状态（\"我学到哪了\"、\"看下进度\"）、查看学习报告（\"日报\"\"周报\"\"月报\"\"项目总结\"\"5月10号到15号的报告\"）、晨间/晚间打卡复盘、督促、动态调整计划、抱怨学不下去时（情绪支持）。**🔴 项目生成流程铁律**：项目生成成功后**必须一口气走完\"项目→知识点→计划表\"**，禁止只汇报\"项目已生成 / X 个知识点 / X 个模块\"就停下，必须**立即**输出\"DAY / 项目 / 知识点 / 时长 / 难度\"表格供用户确认 DAY 安排，否则视为流程失败。**🔴 报告查询铁律**：用户表达查看学习报告意图时（日报/周报/月报/项目总结/任意时间段），必须从 USER.md 取**对应时间段**的 `project_id` + `knowledge_id`，传给 `study_buddy_supervise` 工具的 `study_check` action 拿原始数据，按\"模块3 主动报告查询\"输出，**全程只读不写 USER.md**。**不处理**：单次出题（→ quiz-mastery）、Cheatsheet 生成（→ cheat-sheet）、把题目文件导入做练习（→ quiz-mastery）。\n",
+      "metadata": {
+        "category": "education",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "asr",
+      "directory": "ASR",
+      "category": "general",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement speech-to-text (ASR/automatic speech recognition) capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to transcribe audio files, convert speech to text, build voice input features, or process audio recordings. Supports base64 encoded audio files and returns accurate text transcriptions.\n",
+      "metadata": {
+        "category": "general",
+        "type": "instruction",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "llm",
+      "directory": "LLM",
+      "category": "general",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement large language model (LLM) chat completions using the z-ai-web-dev-sdk. Use this skill when the user needs to build conversational AI applications, chatbots, AI assistants, or any text generation features. Supports multi-turn conversations, system prompts, and context management.\n",
+      "metadata": {
+        "category": "general",
+        "type": "instruction",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "tts",
+      "directory": "TTS",
+      "category": "general",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "tts.ts",
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [],
+      "description": "Implement text-to-speech (TTS) capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to convert text into natural-sounding speech, create audio content, build voice-enabled applications, or generate spoken audio files. Supports multiple voices, adjustable speed, and various audio formats.\n",
+      "metadata": {
+        "category": "general",
+        "type": "instruction",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "vlm",
+      "directory": "VLM",
+      "category": "general",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement vision-based AI chat capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to analyze images, describe visual content, or create applications that combine image understanding with conversational AI. Supports image URLs and base64 encoded images for multimodal interactions.\n",
+      "metadata": {
+        "category": "general",
+        "type": "instruction",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "api-gateway-skill",
+      "directory": "api-gateway-skill",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with api gateway skill related tasks.",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "combined-proxy-billing",
+      "directory": "combined-proxy-billing",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with combined proxy billing related tasks.",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "deployment-manager",
+      "directory": "deployment-manager",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with deployment manager related tasks.",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "find-skills",
+      "directory": "find-skills",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities.\n",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "mcp-builder",
+      "directory": "mcp-builder",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with mcp builder related tasks.",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "mcp-builder-billing",
+      "directory": "mcp-builder-billing",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with mcp builder billing related tasks.",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "persistent-memory",
+      "directory": "persistent-memory",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with persistent memory related tasks.",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "directory": "skill-creator",
+      "category": "infrastructure",
+      "type": "complex",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": true,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "assets",
+        "eval-viewer",
+        "agents",
+        "scripts"
+      ],
+      "description": "Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit, or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.\n",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "complex",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "skill-finder-cn",
+      "directory": "skill-finder-cn",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "package.json",
+        "_meta.json",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Skill 查找器 | Skill Finder. 帮助发现和安装 ClawHub Skills | Discover and install ClawHub Skills. 回答'有什么技能可以X'、'找一个技能' | Answers 'what skill can X', 'find a skill'. 触发词：找 skill、find skill、搜索 skill.\n",
+      "metadata": {
+        "openclaw": {
+          "emoji": "🔍",
+          "requires": {
+            "bins": [
+              "clawhub"
+            ]
+          }
+        },
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "skill-router",
+      "directory": "skill-router",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with skill router related tasks.",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "skill-scanner",
+      "directory": "skill-scanner",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Scan agent skills for security issues. Use when asked to \"scan a skill\", \"audit a skill\", \"review skill security\", or assess whether an agent skill is safe to install. Checks for prompt injection, malicious scripts, excessive permissions, secret exposure, and supply chain risks.\n",
+      "metadata": {
+        "author": "getsentry",
+        "version": "1.0.0",
+        "category": "infrastructure",
+        "type": "instruction"
+      }
+    },
+    {
+      "name": "skill-vetter",
+      "directory": "skill-vetter",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Security-first skill vetting for AI agents. Use before installing any skill from ClawdHub, GitHub, or other sources. Checks for red flags, permission scope, and suspicious patterns.\n",
+      "metadata": {
+        "category": "infrastructure",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "supabase-postgres",
+      "directory": "supabase-postgres",
+      "category": "infrastructure",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Postgres performance optimization and best practices from Supabase. Use this skill when writing, reviewing, or optimizing Postgres queries, schema designs, or database configurations.\n",
+      "metadata": {
+        "author": "supabase",
+        "version": "1.1.1",
+        "organization": "Supabase",
+        "category": "infrastructure",
+        "type": "instruction"
+      }
+    },
+    {
+      "name": "aminer-academic-search",
+      "directory": "aminer-academic-search",
+      "category": "research",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "ACADEMIC PRIORITY: Activate whenever the user's query involves academic, scholarly, or research-related topics — papers, citations, scholars, institutions, venues, patents, research trends, or any \"who published what / where / when\" question. Takes precedence over general web search for academic data needs. Routes through the z-ai gateway's `/v1/functions/invoke` endpoint to the AMiner Open Platform (27 APIs, 5 workflows).\n",
+      "metadata": {
+        "category": "research",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "aminer-daily-paper",
+      "directory": "aminer-daily-paper",
+      "category": "research",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "README.md",
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Get personalized academic paper recommendations. Activate whenever the user asks for paper recommendations — explicit command (/aminer-dp) or natural language (e.g. 'recommend me papers on RAG', 'suggest recent papers on multimodal agents'). Workflow: extract topics / author / aminer_author_id from the input, invoke scripts/recommend.py, return results as Markdown.\n",
+      "metadata": {
+        "category": "research",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "aminer-free-academic",
+      "directory": "aminer-free-academic",
+      "category": "research",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "references",
+        "evals"
+      ],
+      "description": "ACADEMIC PRIORITY: Activate this skill whenever the user's query involves any academic or research-related topic. This is the free-tier entry point for AMiner academic search. Free-tier-only AMiner skill (7 free APIs, zero cost). Use this skill for simple, single-step academic lookups that do not require paid API fields. Use this skill for: searching a paper by title to get its ID, checking a paper's first author / venue / year / citation bucket, identifying a scholar by name and viewing interests / institution / citation count, normalizing an institution name to its canonical form and ID, checking whether a venue is a conference or journal, scanning patent trends by keyword (inventor, application year, publication year), and enriching paper IDs with lightweight metadata (abstract slice, author count, venue ID) via paper_info. Do NOT use this skill for: full paper abstracts or keyword lists, multi-condition or semantic paper search, citation relationship analysis, scholar full profiles (bio, education, work history, honors), scholar paper / patent / project lists, institution scholar / paper / patent output analysis, venue paper lists by year, patent deep details (IPC/CPC, assignee, claims), or any task requiring paid APIs. Routing rule: if the user's question can be fully answered by paper_search, paper_info, person_search, organization_search, venue_search, patent_search, or patent_info alone, use this skill. Otherwise route to aminer-academic-search.\n",
+      "metadata": {
+        "openclaw": {
+          "requires": {
+            "env": [
+              "AMINER_API_KEY"
+            ]
+          },
+          "primaryEnv": "AMINER_API_KEY"
+        },
+        "category": "research",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "deep-research",
+      "directory": "deep-research",
+      "category": "research",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Comprehensive multi-source research workflow that goes beyond simple web search. Uses parallel search agents, source verification, cross-referencing, and structured reporting. Use when the user needs thorough research on any topic, market analysis, competitive intelligence, or academic literature review.\n",
+      "metadata": {
+        "author": "skills-sh",
+        "version": "1.0",
+        "category": "research",
+        "type": "instruction"
+      },
+      "tags": [
+        "research",
+        "analysis",
+        "deep-search",
+        "verification",
+        "multi-source"
+      ]
+    },
+    {
+      "name": "multi-search-engine",
+      "directory": "multi-search-engine",
+      "category": "research",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "CHANGELOG.md",
+        "metadata.json",
+        "_meta.json",
+        "SKILL.md",
+        "config.json",
+        "CHANNELLOG.md"
+      ],
+      "subdirs": [
+        "references"
+      ],
+      "description": "Multi search engine integration with 8 domestic (CN) search engines. Supports advanced search operators, time filters, site search, and WeChat article search. No API keys required.\n",
+      "metadata": {
+        "category": "research",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "qingyan-research",
+      "directory": "qingyan-research",
+      "category": "research",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "generate_html.py",
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Deep web research and HTML report generation. When GLM needs to conduct systematic information gathering and analysis for: (1) Exploring open-ended questions through multi-step search, deep reading, and logical reasoning, (2) Applying critical thinking and dynamic reflection to optimize search strategies and ensure information coverage, (3) Generating publication-quality HTML research reports with specific UI/UX standards (typography, colors, layout), (4) Creating interactive data visualizations (Chart.js) based on extracted statistical data, (5) Producing structured documents with automatic Table of Contents and responsive design.\n",
+      "metadata": {
+        "category": "research",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "image-edit",
+      "directory": "image-edit",
+      "category": "sdk-api",
+      "type": "sdk-wrapper",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement AI image editing and modification capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to edit existing images, create variations, modify visual content, redesign assets, or transform images based on text descriptions. Supports multiple image sizes and returns base64 encoded results. Also includes CLI tool for quick image editing.\n",
+      "metadata": {
+        "category": "sdk-api",
+        "type": "sdk-wrapper",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "image-generation",
+      "directory": "image-generation",
+      "category": "sdk-api",
+      "type": "sdk-wrapper",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement AI image generation capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to create images from text descriptions, generate visual content, create artwork, design assets, or build applications with AI-powered image creation. Supports multiple image sizes and returns base64 encoded images. Also includes CLI tool for quick image generation.\n",
+      "metadata": {
+        "category": "sdk-api",
+        "type": "sdk-wrapper",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "image-understand",
+      "directory": "image-understand",
+      "category": "sdk-api",
+      "type": "sdk-wrapper",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement specialized image understanding capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to analyze static images, extract visual information, perform OCR, detect objects, classify images, or understand visual content. Optimized for PNG, JPEG, GIF, WebP, and BMP formats.\n",
+      "metadata": {
+        "category": "sdk-api",
+        "type": "sdk-wrapper",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "video-generation",
+      "directory": "video-generation",
+      "category": "sdk-api",
+      "type": "sdk-wrapper",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement AI-powered video generation capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to generate videos from text prompts or images, create video content programmatically, or build applications that produce video outputs. Supports asynchronous task management with status polling and result retrieval.\n",
+      "metadata": {
+        "category": "sdk-api",
+        "type": "sdk-wrapper",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "video-understand",
+      "directory": "video-understand",
+      "category": "sdk-api",
+      "type": "sdk-wrapper",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement specialized video understanding capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to analyze video content, understand motion and temporal sequences, extract information from video frames, describe video scenes, or perform video-based AI analysis. Optimized for MP4, AVI, MOV, and other common video formats.\n",
+      "metadata": {
+        "category": "sdk-api",
+        "type": "sdk-wrapper",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "web-reader",
+      "directory": "web-reader",
+      "category": "sdk-api",
+      "type": "sdk-wrapper",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement web page content extraction capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to scrape web pages, extract article content, retrieve page metadata, or build applications that process web content. Supports automatic content extraction with title, HTML, and publication time retrieval.\n",
+      "metadata": {
+        "category": "sdk-api",
+        "type": "sdk-wrapper",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "web-search",
+      "directory": "web-search",
+      "category": "sdk-api",
+      "type": "sdk-wrapper",
+      "has_scripts": true,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "scripts"
+      ],
+      "description": "Implement web search capabilities using the z-ai-web-dev-sdk. Use this skill when the user needs to search for real-time information from the web, retrieve up-to-date content beyond the knowledge cutoff, or find the latest news and data. Returns structured search results with URLs, snippets, and metadata.\n",
+      "metadata": {
+        "category": "sdk-api",
+        "type": "sdk-wrapper",
+        "version": "1.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "seo-geo",
+      "directory": "seo-geo",
+      "category": "seo-geo",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "SEO + GEO (Generative Engine Optimization) content strategy skill for optimizing content for both traditional search engines and AI-powered answer engines. Use when the user needs content that ranks in Google AND gets cited by AI assistants like ChatGPT, Perplexity, and Google SGE. Covers AI citation optimization, entity-based SEO, and structured content for LLM visibility.\n",
+      "metadata": {
+        "author": "aaron-he-zhu",
+        "version": "2.0",
+        "category": "seo-geo",
+        "type": "instruction"
+      },
+      "tags": [
+        "seo",
+        "geo",
+        "generative-engine-optimization",
+        "ai-citations",
+        "content-strategy",
+        "llm-visibility"
+      ]
+    },
+    {
+      "name": "anti-pua",
+      "directory": "anti-pua",
+      "category": "specialized",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "识别和分析PUA（Pickup Artist）及情感操纵行为的专业心理分析工具。具备人格分析、心理侧写、情感分析能力，能够识别情感操纵、煤气灯操纵、虐待等有毒关系模式，评估人格特质（如黑暗三人格、脆弱型自恋等），预测对方行为并给出具体的相处建议。当用户需要：分析对方言行动机、识别PUA/情感操纵行为、评估NPD（自恋型人格障碍）倾向、识别操纵行为、预测对方未来行为、寻求健康关系建议、分析黑暗三人格或光明三人格时使用此skill。\n",
+      "metadata": {
+        "category": "specialized",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "superpowers",
+      "directory": "superpowers",
+      "category": "specialized",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with superpowers related tasks.",
+      "metadata": {
+        "category": "specialized",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "task-review",
+      "directory": "task-review",
+      "category": "specialized",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "当用户指令为高复杂度任务时触发，用于将刚完成的任务路径保存为可复用技能，生成相关的SKILL.md文档。",
+      "metadata": {
+        "category": "specialized",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "web-shader-extractor",
+      "directory": "web-shader-extractor",
+      "category": "specialized",
+      "type": "instruction",
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "references",
+        "scripts"
+      ],
+      "description": "从网页中提取 WebGL/Canvas/Shader 视觉特效代码，反混淆后移植为独立原生 JS 项目。 触发条件：用户提供网址并要求提取 shader、提取特效、提取动画效果、提取 canvas 效果、 复刻某网站的视觉效果、\"把这个网站的背景效果扒下来\" 等。\n",
+      "metadata": {
+        "category": "specialized",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "brainstorming",
+      "directory": "brainstorming",
+      "category": "thinking",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.\n",
+      "metadata": {
+        "category": "thinking",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "caveman",
+      "directory": "caveman",
+      "category": "thinking",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with caveman related tasks.",
+      "metadata": {
+        "category": "thinking",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "chain-of-thought",
+      "directory": "chain-of-thought",
+      "category": "thinking",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Enables explicit step-by-step reasoning to solve complex problems. Use when the user needs structured thinking, multi-step analysis, logical deduction, or wants the AI to show its reasoning process. Improves accuracy on math, logic, coding, and complex decision-making tasks.\n",
+      "metadata": {
+        "author": "ai-skills-library",
+        "version": "1.0",
+        "category": "thinking",
+        "type": "instruction"
+      },
+      "tags": [
+        "reasoning",
+        "thinking",
+        "analysis",
+        "logic",
+        "problem-solving"
+      ]
+    },
+    {
+      "name": "devils-advocate",
+      "directory": "devils-advocate",
+      "category": "thinking",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with devils advocate related tasks.",
+      "metadata": {
+        "category": "thinking",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "socratic-method",
+      "directory": "socratic-method",
+      "category": "thinking",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Guides the user to an answer through questioning rather than direct statements. Use when the user needs to develop critical thinking, explore assumptions, discover knowledge they already have, or when direct answers would hinder learning. Ideal for coaching, teaching, and reflective problem-solving.\n",
+      "metadata": {
+        "author": "ai-skills-library",
+        "version": "1.0",
+        "category": "thinking",
+        "type": "instruction"
+      },
+      "tags": [
+        "teaching",
+        "coaching",
+        "questioning",
+        "critical-thinking",
+        "learning"
+      ]
+    },
+    {
+      "name": "charts",
+      "directory": "charts",
+      "category": "visualization",
+      "type": "complex",
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false,
+      "files": [
+        "LICENSE.txt",
+        "setup.sh",
+        "SKILL.md",
+        "SKILL.md.bak"
+      ],
+      "subdirs": [
+        "references"
+      ],
+      "description": "Professional chart and diagram creation skill. Covers all types of visual data representation and structural diagrams: - **Data charts**: bar charts, line charts, pie charts, scatter plots, heatmaps, radar charts, candlestick charts, boxplots, histograms, area charts, waterfall charts, regression plots, distribution plots, and statistical visualizations. - **Structural diagrams**: flowcharts, mind maps, tree diagrams, org charts, architecture diagrams, network/relationship graphs, ER diagrams, class diagrams, Gantt charts, swimlane diagrams, and sequence diagrams. - **Dashboards**: data dashboards, KPI panels, multi-chart compositions, and interactive visualizations. - **Design quality**: professional color systems, anti-overlap rules, layout optimization, scene-based framework routing (matplotlib, seaborn, ECharts, D3.js, Mermaid, Playwright+CSS), and publication-ready output. Applies when the user wants to create, generate, draw, plot, visualize, or improve any chart, graph, diagram, or dashboard. Also applies when the user asks for something more polished, cleaner, or publication-ready. NOT for: PDF document layout (use pdf skill), slide decks (use slides skill), spreadsheets with embedded charts (use xlsx skill), AI image generation (use image_gen), posters / infographics / creative cards (use pdf skill Creative pipeline). FORBIDDEN: Using matplotlib/seaborn to draw mind maps, tree diagrams, org charts, flowcharts, or any structural diagram. These MUST use Playwright+CSS.\n",
+      "metadata": {
+        "author": "Z.AI",
+        "version": "1.0",
+        "category": "visualization",
+        "type": "complex"
+      },
+      "license": "Proprietary. LICENSE.txt has complete terms"
+    },
+    {
+      "name": "cheat-sheet",
+      "directory": "cheat-sheet",
+      "category": "writing",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "将 PDF/Word/Markdown 学习资料转化为精炼的知识浓缩卡文档。支持三种风格（知识点速查卡/思维导图式/Q&A式），输出双栏小字 PDF。当用户说\"生成知识浓缩卡\"、\"生成 Cheatsheet\"、\"帮我做个速查表\"、\"把这个资料整理成一页纸\"、\"做个知识卡片\"时触发。**不处理**：基于材料出题（→ quiz-mastery）、长期学习项目（→ study-buddy）。\n",
+      "metadata": {
+        "category": "writing",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "contentanalysis",
+      "directory": "contentanalysis",
+      "category": "writing",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [
+        "ExtractWisdom"
+      ],
+      "description": "Content extraction and analysis — wisdom extraction from videos, podcasts, articles, and YouTube. USE WHEN extract wisdom, content analysis, analyze content, insight report, analyze video, analyze podcast, extract insights, key takeaways, what did I miss, extract from YouTube.\n",
+      "metadata": {
+        "category": "writing",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "context-compressor",
+      "directory": "context-compressor",
+      "category": "writing",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with context compressor related tasks.",
+      "metadata": {
+        "category": "writing",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "explained-code",
+      "directory": "explained-code",
+      "category": "writing",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with explained code related tasks.",
+      "metadata": {
+        "category": "writing",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "humanizer",
+      "directory": "humanizer",
+      "category": "writing",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with humanizer related tasks.",
+      "metadata": {
+        "category": "writing",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "output-formatter",
+      "directory": "output-formatter",
+      "category": "writing",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when the user needs help with output formatter related tasks.",
+      "metadata": {
+        "category": "writing",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "writing-plans",
+      "directory": "writing-plans",
+      "category": "writing",
+      "type": "instruction",
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false,
+      "files": [
+        "_meta.json",
+        "SKILL.md"
+      ],
+      "subdirs": [],
+      "description": "Use when you have a spec or requirements for a multi-step task, before touching code",
+      "metadata": {
+        "category": "writing",
+        "type": "instruction",
+        "version": "1.0.0"
+      }
+    }
+  ]
+}

@@ -1,22 +1,27 @@
-# Browser-Use Skill
+---
+name: browser-use
+description: Headless and headful browser automation with natural language control. Saves tokens by delegating all Playwright logic to a dedicated browser automation layer.
+version: "1.0.0"
+category: Development
+---
 
-## Purpose
-Automates browser interactions for web testing, form filling, screenshots, data extraction, and complex multi-step web workflows. Fast persistent browser automation with session continuity across sequential agent commands.
+# browser-use
 
-## Install
-```bash
-npx skills add browser-use/browser-use@browser-use -g -y
-```
+## context
+Use this skill whenever you need to browse the web, test a UI, scrape data, or perform any action that a real user would do in a browser. It saves 80% of the tokens normally spent on raw Playwright scripts by letting you control the browser with natural language.
 
-## Key Features
-- Background daemon keeps browser open (~50ms latency per call)
-- Three browser modes: headless Chromium, real Chrome with profile, cloud-hosted remote
-- 20+ command categories: navigation, inspection, interaction, extraction, cookies, JS execution
-- Core workflow: Navigate → Inspect (state) → Interact (by element index) → Verify → Repeat
-- Cloud API for remote browsers and task automation
-- Cloudflare tunneling for local dev servers
-- Multi-session support for parallel workflows
-- CLI aliases: bu, browser, browseruse
+## instructions
+1. Describe briefly the task (e.g., "Go to example.com, log in, click the dashboard link, and return the text of the first widget").
+2. Invoke `browser-use` by prefixing your request with "Use browser to ...".
+3. The skill will automatically launch a headful browser (or headless if configured) and execute your task.
+4. It returns the result (HTML text, screenshots, or extracted data) without exposing the raw automation code.
+5. If you need to do multi‑step flows, you can chain commands: "Now click the 'settings' icon and tell me what appears."
 
-## Architecture
-Agent → Browser Daemon (persistent) → Chromium/Chrome → Target Website
+## constraints
+- No manual Playwright code; always delegate to browser‑use.
+- Browser sessions are isolated — state is not shared between commands unless explicitly saved.
+- Always assume a 10‑second timeout for page loads; if a page is slow, wait but don't retry more than twice.
+
+## examples
+1. "Use browser to open https://news.ycombinator.com and return the top 5 story titles."
+2. "Use browser to log into our staging dashboard with email test@example.com, click on 'Reports', and tell me if the revenue chart is visible."

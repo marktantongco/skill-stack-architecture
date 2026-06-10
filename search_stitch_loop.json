@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://github.com/google-labs-code/stitch-skills",
+    "name": "GitHub - google-labs-code/stitch-skills",
+    "snippet": "A library of Agent Skills designed to work with the Stitch MCP server. Each skill follows the Agent Skills open standard, for compatibility ...",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "Jun 5, 2026",
+    "favicon": ""
+  },
+  {
+    "url": "https://officialskills.sh/google-labs-code/skills/stitch-loop",
+    "name": "Google Labs/stitch-loop — Agent Skills | officialskills.sh",
+    "snippet": "A skill that teaches agents to build multi-page websites using Stitch through a self-sustaining loop. Each iteration reads a task from a baton file, ...",
+    "host_name": "officialskills.sh",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://mcpservers.org/agent-skills/google-labs-code/stitch-loop",
+    "name": "stitch-loop | Agent Skills Library - Awesome MCP Servers",
+    "snippet": "This skill implements a structural framework for AI-assisted programming to ensure every line of code is verifiable, typed, and purposeful. typed-service- ...",
+    "host_name": "mcpservers.org",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/StitchAI/comments/1r1yf7a/stitch_agent_skills_repo_for_designtocode",
+    "name": "Stitch Agent Skills repo for design-to-code automation : r/StitchAI",
+    "snippet": "Stitch has introduced Stitch Agent Skills, a modular skill library built for the Stitch MCP server and compatible with coding agents like ...",
+    "host_name": "www.reddit.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.classmethod.jp/en/articles/new-stitch-ai-design",
+    "name": "I tried Google's evolved Stitch from design generation to MCP/Skills",
+    "snippet": "A library of Agent Skills designed to work with the Stitch MCP server. Each skill follows the Agent Skills open standard, for compatibility with ...",
+    "host_name": "dev.classmethod.jp",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=b0lwCDNOFUY&vl=en",
+    "name": "How to Use Google Stitch to Make Sites 10X More Beautiful - YouTube",
+    "snippet": "How to use Google Stitch with Claude Code to build apps that don't look AI-generated. Covers design systems, the google stitch tutorial for ...",
+    "host_name": "www.youtube.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=AUNzWyjYIi0",
+    "name": "AntiGravity + Stitch NEW Agent Skills LOOP Builds Sites  - YouTube",
+    "snippet": "... labs-code/stitch-skills/tree/main/skills/stitch-loop - react-components: https://github.com/google-labs-code/stitch-skills/tree/main/skills ...",
+    "host_name": "www.youtube.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://claudemarketplaces.com/skills/google-labs-code/stitch-skills",
+    "name": "google-labs-code/stitch-skills - Claude Code Marketplaces",
+    "snippet": "Browse 8 skills from google-labs-code/stitch-skills for Claude Code.",
+    "host_name": "claudemarketplaces.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://juliangoldie.com/google-stitch-agent-skills",
+    "name": "Google Stitch Agent Skills: Build Apps in Minutes, Not Weeks",
+    "snippet": "What is Google Stitch Agent Skills? It's a new update that lets Google's Stitch AI generate design docs and production-ready code automatically. Can I use it ...",
+    "host_name": "juliangoldie.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://codelabs.developers.google.com/design-to-code-with-antigravity-stitch",
+    "name": "Design-to-Code with Antigravity and Stitch MCP - Google Codelabs",
+    "snippet": "Build a professional web application by bridging AI design and autonomous coding. You will use Google Stitch to generate a high-fidelity UI, ...",
+    "host_name": "codelabs.developers.google.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]
