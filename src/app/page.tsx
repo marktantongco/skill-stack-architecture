@@ -12,6 +12,7 @@ import { TierArchitecture } from "@/components/TierArchitecture";
 import { DecisionTree } from "@/components/DecisionTree";
 import { SectionMapping } from "@/components/SectionMapping";
 import { VisualGallery } from "@/components/VisualGallery";
+import { SkillMarketplace } from "@/components/SkillMarketplace";
 import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { motion, AnimatePresence, useScroll, useSpring, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -20,6 +21,7 @@ import { dividerVariant, hoverNavItem } from "@/lib/animation-variants";
 
 const navItems = [
   { id: "skill-reference", label: "Registry", num: "01" },
+  { id: "skill-marketplace", label: "Marketplace", num: "12" },
   { id: "algorithm", label: "Algorithm", num: "02" },
   { id: "options", label: "Options", num: "03" },
   { id: "comparative", label: "Analysis", num: "04" },
@@ -350,6 +352,10 @@ export default function Home() {
 
         {/* 01 — Skill Reference */}
         <SkillReference />
+        <EditorialDivider />
+
+        {/* 12 — KDI Skill Marketplace */}
+        <SkillMarketplace />
         <EditorialDivider />
 
         {/* 02 — Design Algorithm */}
