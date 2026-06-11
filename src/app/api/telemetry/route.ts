@@ -7,15 +7,15 @@ import { NextRequest, NextResponse } from 'next/server';
  * GET  /api/telemetry  — Query metrics (aggregate stats)
  *
  * In production, this would write to the Prisma database (SkillInvocation,
- * PipelineExecution, PipelineStage models). Currently uses an in-memory
- * store for demonstration, with a clear path to database migration.
+ * BatchInvocation models). Currently uses an in-memory store for
+ * demonstration, with a clear path to database migration.
  */
 
 interface TelemetryRecord {
   id: string;
-  type: 'skill_invocation' | 'pipeline_execution' | 'pipeline_stage';
+  type: 'skill_invocation' | 'batch_invocation';
   skillId?: string;
-  pipelineId?: string;
+  batchId?: string;
   status: string;
   durationMs?: number;
   errorMsg?: string;
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const validTypes = ['skill_invocation', 'pipeline_execution', 'pipeline_stage'];
+    const validTypes = ['skill_invocation', 'batch_invocation'];
     if (!validTypes.includes(body.type)) {
       return NextResponse.json(
         { error: `Invalid type. Must be one of: ${validTypes.join(', ')}` },
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       id: `tel-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       type: body.type,
       skillId: body.skillId,
-      pipelineId: body.pipelineId,
+      batchId: body.batchId,
       status: body.status,
       durationMs: body.durationMs,
       errorMsg: body.errorMsg,
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
  * Query params:
  *   type       — Filter by event type
  *   skillId    — Filter by skill ID
- *   pipelineId — Filter by pipeline ID
+ *   batchId    — Filter by batch ID
  *   status     — Filter by status
  *   limit      — Max records to return (default 100, max 1000)
  *   aggregate  — If "true", return aggregate stats instead of raw records
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
 
   const type = searchParams.get('type');
   const skillId = searchParams.get('skillId');
-  const pipelineId = searchParams.get('pipelineId');
+  const batchId = searchParams.get('batchId');
   const status = searchParams.get('status');
   const limit = Math.min(
     Math.max(parseInt(searchParams.get('limit') ?? '100', 10), 1),
@@ -116,8 +116,7 @@ export async function GET(request: NextRequest) {
 
   if (type) filtered = filtered.filter((r) => r.type === type);
   if (skillId) filtered = filtered.filter((r) => r.skillId === skillId);
-  if (pipelineId)
-    filtered = filtered.filter((r) => r.pipelineId === pipelineId);
+  if (batchId) filtered = filtered.filter((r) => r.batchId === batchId);
   if (status) filtered = filtered.filter((r) => r.status === status);
 
   if (aggregate) {
@@ -130,9 +129,6 @@ export async function GET(request: NextRequest) {
     ).length;
     const failureCount = filtered.filter(
       (r) => r.status === 'failed'
-    ).length;
-    const rollbackCount = filtered.filter(
-      (r) => r.status === 'rolled_back'
     ).length;
 
     const durations = filtered
@@ -188,7 +184,6 @@ export async function GET(request: NextRequest) {
         totalInvocations,
         successCount,
         failureCount,
-        rollbackCount,
         successRate:
           totalInvocations > 0
             ? Math.round((successCount / totalInvocations) * 100)

@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { skills, skillCategories, Skill } from '@/lib/skill-data';
 import { useSkillStore } from '@/lib/skill-store';
+import { detectConflicts, generateInstallScript } from '@/lib/skill-invoker';
 import { SkillCard } from './SkillCard';
 import { SkillDetailDrawer } from './SkillDetailDrawer';
 import { ClipboardPanel } from './ClipboardPanel';
@@ -12,7 +13,7 @@ import { SkillGraph } from './SkillGraph';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Copy, ShoppingBasket, ClipboardList, X, Search, LayoutGrid, GitBranch, Workflow, Play } from 'lucide-react';
+import { Copy, ShoppingBasket, ClipboardList, X, Search, LayoutGrid, GitBranch, Workflow, Play, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 const tierColors: Record<number, string> = {
   0: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
@@ -23,9 +24,9 @@ const tierColors: Record<number, string> = {
 
 type ViewMode = 'grid' | 'graph' | 'pipeline';
 
-/* ─── Pipeline View Subcomponent ─── */
-function PipelineView({ filteredSkills }: { filteredSkills: Skill[] }) {
-  const { basket, isInBasket } = useSkillStore();
+/* ─── Invocation View Subcomponent (replaces PipelineView) ─── */
+function InvocationView({ filteredSkills }: { filteredSkills: Skill[] }) {
+  const { basket, isInBasket, setDetectedConflicts, detectedConflicts } = useSkillStore();
   const [copied, setCopied] = useState(false);
 
   const tierGroups = [0, 1, 2, 3].map(tier => ({
@@ -35,17 +36,27 @@ function PipelineView({ filteredSkills }: { filteredSkills: Skill[] }) {
     skills: filteredSkills.filter(s => s.tier === tier),
   }));
 
-  const handleRunPipeline = async () => {
-    const basketSkills = skills.filter(s => isInBasket(s.id));
-    if (basketSkills.length === 0) return;
-    const script = basketSkills.map(s => `# ${s.name} (T${s.tier} ${s.tierName})\n${s.installCommand}`).join('\n\n');
-    const fullScript = `#!/bin/bash\n# Skill Stack Pipeline — ${basketSkills.length} skills\n# Generated at ${new Date().toISOString()}\n\nset -e\n\n${script}\n\necho "✅ Pipeline complete: ${basketSkills.length} skills installed"`;
+  // Detect conflicts when basket changes
+  const conflictResult = useMemo(() => {
+    const basketIds = basket.map(b => b.skillId);
+    return detectConflicts(basketIds);
+  }, [basket]);
+
+  // Update store with detected conflicts
+  useMemo(() => {
+    setDetectedConflicts([...conflictResult.critical, ...conflictResult.warnings, ...conflictResult.info]);
+  }, [conflictResult, setDetectedConflicts]);
+
+  const handleCopyInstall = useCallback(async () => {
+    const basketIds = basket.map(b => b.skillId);
+    const script = generateInstallScript(basketIds);
+    if (!script) return;
     try {
-      await navigator.clipboard.writeText(fullScript);
+      await navigator.clipboard.writeText(script);
     } catch {
       // Fallback for insecure contexts (HTTP, iframe restrictions)
       const textarea = document.createElement('textarea');
-      textarea.value = fullScript;
+      textarea.value = script;
       textarea.style.position = 'fixed';
       textarea.style.left = '-9999px';
       document.body.appendChild(textarea);
@@ -55,12 +66,45 @@ function PipelineView({ filteredSkills }: { filteredSkills: Skill[] }) {
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }, [basket]);
 
   const basketCount = basket.length;
+  const hasConflicts = conflictResult.critical.length > 0 || conflictResult.warnings.length > 0;
 
   return (
     <div className="space-y-6">
+      {/* Conflict Warnings */}
+      {hasConflicts && (
+        <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
+              Conflict Detection
+            </span>
+          </div>
+          <ul className="space-y-1">
+            {conflictResult.critical.map((c, i) => (
+              <li key={`crit-${i}`} className="text-xs text-red-700 dark:text-red-300">
+                CRITICAL: {c.reason}
+              </li>
+            ))}
+            {conflictResult.warnings.map((c, i) => (
+              <li key={`warn-${i}`} className="text-xs text-amber-700 dark:text-amber-300">
+                WARNING: {c.reason}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* No conflicts indicator */}
+      {basketCount > 0 && !hasConflicts && (
+        <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 className="h-4 w-4" />
+          <span className="text-xs font-medium">No conflicts detected between selected skills</span>
+        </div>
+      )}
+
       {tierGroups.map((group, i) => (
         <div key={group.tier}>
           {i > 0 && (
@@ -104,21 +148,21 @@ function PipelineView({ filteredSkills }: { filteredSkills: Skill[] }) {
         </div>
       ))}
 
-      {/* Run Pipeline Button */}
+      {/* Copy Install Script Button */}
       <div className="flex items-center gap-3 pt-4 border-t border-border">
         <Button
           size="sm"
           variant={copied ? 'default' : 'outline'}
           className="gap-1.5"
-          onClick={handleRunPipeline}
+          onClick={handleCopyInstall}
           disabled={basketCount === 0}
         >
           <Play className="h-3.5 w-3.5" />
-          {copied ? 'Copied!' : 'Run Pipeline'}
+          {copied ? 'Copied!' : 'Copy Install Script'}
         </Button>
         <span className="text-xs text-muted-foreground">
           {basketCount > 0
-            ? `${basketCount} skill${basketCount > 1 ? 's' : ''} in basket — copies install script`
+            ? `${basketCount} skill${basketCount > 1 ? 's' : ''} — copies install script to clipboard`
             : 'Add skills to basket first'}
         </span>
       </div>
@@ -323,7 +367,7 @@ export function SkillMarketplace() {
       {/* View: Grid, Graph, or Pipeline */}
       <div className="max-w-7xl mx-auto">
         {viewMode === 'pipeline' ? (
-          <PipelineView filteredSkills={filtered} />
+          <InvocationView filteredSkills={filtered} />
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <AnimatePresence mode="popLayout">

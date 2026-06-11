@@ -24,64 +24,42 @@ export interface SkillCategory {
   skills: Skill[];
 }
 
-// ─── Pipeline Types (Replaces flat stack model) ───
+// ─── Skill Invocation Types (Replaces pipeline orchestration model) ───
 
-/** A single stage in a skill pipeline with I/O piping. */
-export interface PipelineStage {
-  /** Unique stage identifier. */
+/** A single skill invocation with standard I/O. */
+export interface SkillInvocation {
+  /** Unique invocation identifier. */
   id: string;
-  /** The skill executed at this stage. */
+  /** The skill being invoked. */
   skillId: string;
-  /** Stage execution order (0-based). */
-  index: number;
-  /** JSON schema describing expected inputs. */
-  inputs: Record<string, unknown>;
-  /** JSON schema describing expected outputs. */
-  outputs: Record<string, unknown>;
-  /** Rollback instructions if this stage needs to be undone. */
-  rollback?: {
-    command: string;
-    description: string;
-  };
+  /** JSON input to the skill (piped from previous invocation or provided by user). */
+  input: Record<string, unknown>;
+  /** JSON output from the skill (piped to next invocation). */
+  output?: Record<string, unknown>;
   /** Current execution status. */
-  status: 'pending' | 'running' | 'success' | 'failed' | 'skipped' | 'rolled_back';
+  status: 'pending' | 'running' | 'success' | 'failed';
   /** Execution duration in milliseconds. */
   durationMs?: number;
-  /** Error message if stage failed. */
+  /** Error message if invocation failed. */
   errorMsg?: string;
-  /** Result of rollback operation if this stage was rolled back. */
-  rollbackResult?: string;
+  /** Timestamp of invocation start. */
+  invokedAt: number;
+  /** Timestamp of invocation completion. */
+  completedAt?: number;
 }
 
-/** A pipeline of skills with I/O piping between stages. */
-export interface SkillPipeline {
-  /** Unique pipeline identifier. */
-  id: string;
-  /** Optional user-provided name. */
-  name?: string;
-  /** Ordered stages in the pipeline. */
-  stages: PipelineStage[];
-  /** Overall pipeline status. */
-  status: 'pending' | 'running' | 'success' | 'partial_failure' | 'failed';
-  /** Skills that can execute in parallel (same index = parallel group). */
-  parallelGroups: number[][];
-  /** Total pipeline duration in milliseconds. */
-  totalDurationMs?: number;
-  /** Number of stages that completed successfully. */
+/** Result of piping multiple skills together. */
+export interface PipeResult {
+  /** Ordered invocations — each skill's output fed to the next. */
+  invocations: SkillInvocation[];
+  /** Final output from the last successful skill. */
+  finalOutput: Record<string, unknown>;
+  /** Number of successful invocations. */
   successCount: number;
-  /** Number of stages that failed. */
+  /** Number of failed invocations. */
   failureCount: number;
-  /** Number of stages that were rolled back. */
-  rollbackCount: number;
-  /** Cost/latency budget for the pipeline. */
-  budget?: {
-    maxDurationMs: number;
-    maxStages: number;
-  };
-  /** Timestamp of pipeline creation. */
-  createdAt: number;
-  /** Timestamp of pipeline completion. */
-  completedAt?: number;
+  /** Total pipe duration in milliseconds. */
+  totalDurationMs: number;
 }
 
 // ─── Conflict Detection ───
@@ -110,9 +88,9 @@ export interface SkillDependency {
 
 /** Telemetry event for skill execution observability. */
 export interface TelemetryEvent {
-  type: 'skill_invocation' | 'pipeline_execution' | 'pipeline_stage';
+  type: 'skill_invocation' | 'batch_invocation';
   skillId?: string;
-  pipelineId?: string;
+  batchId?: string;
   status: string;
   durationMs?: number;
   errorMsg?: string;

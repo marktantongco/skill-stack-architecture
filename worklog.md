@@ -221,3 +221,67 @@ Stage Summary:
 - Modified: src/lib/skill-store.ts — Added pipeline state, telemetry buffer, conflict tracking
 - Modified: prisma/schema.prisma — Added SkillInvocation, PipelineExecution, PipelineStage, SkillVersion models
 - Build and lint pass clean
+
+---
+Task ID: production-refactor
+Agent: Main Agent
+Task: Execute 80/20 recommendation — delete pipeline abstraction, replace with I/O piping; visualize architecture discussion
+
+Work Log:
+- Explored complete codebase mapping: skill-data.ts (types + 64 skills), pipeline-executor.ts (buildPipeline/executePipeline), skill-store.ts (Zustand store), SkillMarketplace.tsx (PipelineView), stacks.json (8 MCP stacks), telemetry API
+- Key finding: SkillPipeline/PipelineStage types existed but were NEVER wired to UI — PipelineView just generated bash scripts
+- Created 4 architecture visualization images:
+  1. architecture-decision-matrix.png — Horizontal grouped bar chart comparing 3 approaches (Event-Sourced DAG, Market-Driven, Minimal Flat Registry) across 4 metrics
+  2. severity-matrix.png — Professional table with 8 findings, color-coded severity badges and status indicators
+  3. data-model-evolution.png — Side-by-side before/after diagram (Pipeline Orchestration → I/O Piping)
+  4. io-piping-flow.png — Horizontal flow diagram showing skill piping: S01 → S03 → S10 with validation gate
+- Deleted: src/lib/pipeline-executor.ts (entire file removed)
+- Created: src/lib/skill-invoker.ts — New I/O piping model:
+  - invokeSkill() — independent single skill invocation
+  - pipeSkills() — shell pipeline model (output of N → input of N+1)
+  - detectConflicts() — preserved from old executor
+  - checkVersionCompatibility() — preserved from old executor
+  - generateInstallScript() — extracted from PipelineView for clipboard use
+- Modified: src/lib/skill-data.ts — Type refactoring:
+  - DELETED: SkillPipeline interface (6 states, parallel groups, budget, rollback counts)
+  - DELETED: PipelineStage interface (6 states, rollback, rollbackResult)
+  - ADDED: SkillInvocation interface (4 states: pending/running/success/failed, I/O piping, no rollback)
+  - ADDED: PipeResult interface (invocations[], finalOutput, success/failure counts)
+  - CHANGED: TelemetryEvent.type — 'skill_invocation' | 'batch_invocation' (was 'pipeline_execution' | 'pipeline_stage')
+  - CHANGED: TelemetryEvent.pipelineId → batchId
+  - KEPT: Skill, SkillCategory, SkillConflict, SkillDependency (unchanged)
+- Modified: src/lib/skill-store.ts — Zustand store simplified:
+  - DELETED: activePipeline, pipelineHistory, pipelineConflicts
+  - DELETED: setActivePipeline, updatePipelineStage, completePipeline
+  - ADDED: invocationHistory, activeBatchId, addInvocation, clearInvocationHistory, setActiveBatchId
+  - ADDED: detectedConflicts, setDetectedConflicts
+  - KEPT: clipboardHistory, basket, telemetryBuffer, UI state (unchanged)
+- Modified: src/components/SkillMarketplace.tsx — PipelineView → InvocationView:
+  - Renamed PipelineView to InvocationView
+  - Added real-time conflict detection (detectConflicts on basket change)
+  - Conflict warnings displayed in amber/red banners
+  - Green checkmark when no conflicts detected
+  - "Copy Install Script" button (was "Run Pipeline") — uses generateInstallScript()
+  - Clipboard fallback pattern preserved (try/catch with textarea)
+  - All other marketplace functionality unchanged
+- Modified: src/app/api/telemetry/route.ts — Updated for new model:
+  - TelemetryRecord.type: 'skill_invocation' | 'batch_invocation'
+  - pipelineId → batchId in record and query params
+  - Removed rollback count from aggregate stats
+  - All other API functionality preserved
+
+Build verification:
+- TypeScript: ✅ tsc --noEmit passes clean
+- ESLint: ✅ No errors on src/
+- Next.js build: ✅ Compiles successfully
+- All routes visible: /api/telemetry, /api/skill-content, /api/health
+
+Stage Summary:
+- 4 visualization PNGs in /download/: architecture-decision-matrix.png, severity-matrix.png, data-model-evolution.png, io-piping-flow.png
+- DELETED: src/lib/pipeline-executor.ts
+- NEW: src/lib/skill-invoker.ts — invokeSkill(), pipeSkills(), detectConflicts(), checkVersionCompatibility(), generateInstallScript()
+- MODIFIED: src/lib/skill-data.ts — SkillInvocation + PipeResult replace SkillPipeline + PipelineStage
+- MODIFIED: src/lib/skill-store.ts — invocationHistory replaces pipeline state
+- MODIFIED: src/components/SkillMarketplace.tsx — InvocationView with conflict detection replaces PipelineView
+- MODIFIED: src/app/api/telemetry/route.ts — batch_invocation replaces pipeline_execution
+- All builds and type checks pass clean

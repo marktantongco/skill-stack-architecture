@@ -1,7 +1,7 @@
 'use client';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { SkillPipeline, TelemetryEvent, SkillConflict } from './skill-data';
+import type { SkillInvocation, TelemetryEvent, SkillConflict } from './skill-data';
 
 export interface ClipboardItem {
   id: string;
@@ -33,15 +33,18 @@ interface SkillStore {
   selectedSkillId: string | null;
   setSelectedSkill: (id: string | null) => void;
 
-  // Pipeline (NEW — replaces flat stack execution)
-  activePipeline: SkillPipeline | null;
-  pipelineHistory: SkillPipeline[];
-  pipelineConflicts: SkillConflict[];
-  setActivePipeline: (pipeline: SkillPipeline | null) => void;
-  updatePipelineStage: (stageId: string, update: Partial<SkillPipeline['stages'][0]>) => void;
-  completePipeline: (pipeline: SkillPipeline) => void;
+  // Invocation history (replaces pipeline state)
+  invocationHistory: SkillInvocation[];
+  activeBatchId: string | null;
+  addInvocation: (invocation: SkillInvocation) => void;
+  clearInvocationHistory: () => void;
+  setActiveBatchId: (batchId: string | null) => void;
 
-  // Telemetry (NEW — execution observability)
+  // Conflict detection cache
+  detectedConflicts: SkillConflict[];
+  setDetectedConflicts: (conflicts: SkillConflict[]) => void;
+
+  // Telemetry (execution observability)
   telemetryBuffer: TelemetryEvent[];
   recordTelemetry: (event: TelemetryEvent) => void;
   flushTelemetry: () => Promise<void>;
@@ -84,28 +87,19 @@ export const useSkillStore = create<SkillStore>()(
       selectedSkillId: null,
       setSelectedSkill: (id) => set({ selectedSkillId: id }),
 
-      // ─── Pipeline State ───
-      activePipeline: null,
-      pipelineHistory: [],
-      pipelineConflicts: [],
-      setActivePipeline: (pipeline) => set({ activePipeline: pipeline }),
-      updatePipelineStage: (stageId, update) =>
-        set((s) => {
-          if (!s.activePipeline) return s;
-          return {
-            activePipeline: {
-              ...s.activePipeline,
-              stages: s.activePipeline.stages.map((stage) =>
-                stage.id === stageId ? { ...stage, ...update } : stage
-              ),
-            },
-          };
-        }),
-      completePipeline: (pipeline) =>
+      // ─── Invocation History ───
+      invocationHistory: [],
+      activeBatchId: null,
+      addInvocation: (invocation) =>
         set((s) => ({
-          activePipeline: null,
-          pipelineHistory: [pipeline, ...s.pipelineHistory].slice(0, 50),
+          invocationHistory: [invocation, ...s.invocationHistory].slice(0, 100),
         })),
+      clearInvocationHistory: () => set({ invocationHistory: [] }),
+      setActiveBatchId: (batchId) => set({ activeBatchId: batchId }),
+
+      // ─── Conflict Cache ───
+      detectedConflicts: [],
+      setDetectedConflicts: (conflicts) => set({ detectedConflicts: conflicts }),
 
       // ─── Telemetry Buffer ───
       telemetryBuffer: [],
@@ -145,7 +139,7 @@ export const useSkillStore = create<SkillStore>()(
       partialize: (state) => ({
         clipboardHistory: state.clipboardHistory,
         basket: state.basket,
-        pipelineHistory: state.pipelineHistory,
+        invocationHistory: state.invocationHistory,
       }),
     }
   )
