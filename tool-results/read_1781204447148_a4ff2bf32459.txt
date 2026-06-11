@@ -1,0 +1,630 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import { motion, useReducedMotion } from 'framer-motion';
+     4→     4→import { fadeInUp, staggerContainer } from '@/lib/animation-variants';
+     5→     5→import { Badge } from '@/components/ui/badge';
+     6→     6→import { Button } from '@/components/ui/button';
+     7→     7→import { useState, useMemo } from 'react';
+     8→     8→import { Copy, Check, ArrowRight, Zap, Shield, Globe, Layers, TrendingUp, Fingerprint, Radar } from 'lucide-react';
+     9→     9→import {
+    10→    10→  RadarChart,
+    11→    11→  PolarGrid,
+    12→    12→  PolarAngleAxis,
+    13→    13→  PolarRadiusAxis,
+    14→    14→  Radar as RechartsRadar,
+    15→    15→  ResponsiveContainer,
+    16→    16→  Tooltip,
+    17→    17→  Legend,
+    18→    18→} from 'recharts';
+    19→    19→
+    20→    20→/* ─── Proxy Type Definitions ─── */
+    21→    21→interface ProxyType {
+    22→    22→  id: string;
+    23→    23→  name: string;
+    24→    24→  tagline: string;
+    25→    25→  icon: React.ReactNode;
+    26→    26→  color: string;
+    27→    27→  bgClass: string;
+    28→    28→  psychology: string;
+    29→    29→  economics: string;
+    30→    30→  science: string;
+    31→    31→  strengths: string[];
+    32→    32→  weaknesses: string[];
+    33→    33→  howWeStandOut: string;
+    34→    34→  installHint: string;
+    35→    35→}
+    36→    36→
+    37→    37→const proxyTypes: ProxyType[] = [
+    38→    38→  {
+    39→    39→    id: 'transparent',
+    40→    40→    name: 'Transparent Proxy',
+    41→    41→    tagline: 'Passes requests through with full visibility',
+    42→    42→    icon: <Globe className="h-5 w-5" />,
+    43→    43→    color: '#10b981',
+    44→    44→    bgClass: 'bg-emerald-100 dark:bg-emerald-900/30',
+    45→    45→    psychology: 'Like an open-plan office — everyone sees everything. Builds trust through radical transparency, but creates self-monitoring anxiety (panopticon effect). Users behave differently when they know they\'re observed.',
+    46→    46→    economics: 'Low switching costs, low vendor lock-in. Like a commodity market — price competition dominates, margins compress. Value comes from volume, not differentiation.',
+    47→    47→    science: 'Functions like a control variable in an experiment. It holds everything constant so you can measure what changes. But you can\'t discover emergent properties if everything is visible.',
+    48→    48→    strengths: ['Zero config required', 'Full request visibility', 'Easy debugging', 'No trust boundary needed', 'Compliant with most regulations'],
+    49→    49→    weaknesses: ['No privacy protection', 'Vulnerable to interception', 'Cannot bypass geo-restrictions', 'Zero competitive moat', 'Single point of failure'],
+    50→    50→    howWeStandOut: 'Our skill stack operates as a transparent proxy for AI agent intent — every routing decision is visible, auditable, and reversible. Unlike network proxies that merely forward packets, we forward understanding.',
+    51→    51→    installHint: 'npx skills add marktantongco/skill-stack-architecture --skill ai-portal-redirect',
+    52→    52→  },
+    53→    53→  {
+    54→    54→    id: 'reverse',
+    55→    55→    name: 'Reverse Proxy',
+    56→    56→    tagline: 'Intercepts and controls traffic to backend services',
+    57→    57→    icon: <Shield className="h-5 w-5" />,
+    58→    58→    color: '#3b82f6',
+    59→    59→    bgClass: 'bg-blue-100 dark:bg-blue-900/30',
+    60→    60→    psychology: 'Like a bouncer at an exclusive club — controls who enters, creates perceived scarcity and desirability. The gatekeeper role confers authority, but also creates resentment when access is denied unfairly.',
+    61→    61→    economics: 'High switching costs once integrated. Creates a natural monopoly position — like AWS being the reverse proxy for millions of services. Value accrues to the intermediary, not the endpoints.',
+    62→    62→    science: 'Acts as a membrane in cell biology — selectively permeable. It doesn\'t just filter; it actively transports specific molecules (requests) while blocking others, consuming energy (compute) to maintain the gradient.',
+    63→    63→    strengths: ['Load balancing', 'SSL termination', 'Caching layer', 'Security hardening', 'Rate limiting'],
+    64→    64→    weaknesses: ['Single point of failure', 'Added latency', 'Complex configuration', 'Debugging difficulty', 'Vendor dependency'],
+    65→    65→    howWeStandOut: 'Our SP-7 scoring algorithm acts as a reverse proxy for design decisions — it intercepts raw skill selections and routes them through 7 validation dimensions before they reach the implementation layer.',
+    66→    66→    installHint: 'npx skills add marktantongco/skill-stack-architecture --skill stack-prioritizer',
+    67→    67→  },
+    68→    68→  {
+    69→    69→    id: 'forward',
+    70→    70→    name: 'Forward Proxy',
+    71→    71→    tagline: 'Routes outbound traffic through an intermediary',
+    72→    72→    icon: <ArrowRight className="h-5 w-5" />,
+    73→    73→    color: '#f59e0b',
+    74→    74→    bgClass: 'bg-amber-100 dark:bg-amber-900/30',
+    75→    75→    psychology: 'Like sending mail through a trusted intermediary — you reveal your message but not your address. Creates plausible deniability and psychological safety, but also enables moral hazard (what would you do if nobody could trace it back?).',
+    76→    76→    economics: 'Creates a marketplace for anonymity. Like a VPN market — the product is trust, not throughput. Premium pricing for premium trust, commodity pricing for basic forwarding.',
+    77→    77→    science: 'Functions like a catalyst in chemistry — it enables reactions that wouldn\'t otherwise occur by lowering the activation energy (access barrier), but isn\'t consumed in the process.',
+    78→    78→    strengths: ['Privacy protection', 'Geo-bypass capability', 'Access control', 'Content filtering', 'Bandwidth optimization'],
+    79→    79→    weaknesses: ['Trust in intermediary required', 'Potential for MITM', 'Performance overhead', 'Legal gray areas', 'Black-box routing'],
+    80→    80→    howWeStandOut: 'Our AI Portal Gateway acts as a forward proxy for skill discovery — you describe your intent, and we route you to the optimal skill without exposing your full workflow to every provider.',
+    81→    81→    installHint: 'npx skills add marktantongco/opencode-accomplishments --skill skill-finder',
+    82→    82→  },
+    83→    83→  {
+    84→    84→    id: 'mesh',
+    85→    85→    name: 'Service Mesh',
+    86→    86→    tagline: 'Sidecar proxies that manage service-to-service communication',
+    87→    87→    icon: <Layers className="h-5 w-5" />,
+    88→    88→    color: '#a855f7',
+    89→    89→    bgClass: 'bg-purple-100 dark:bg-purple-900/30',
+    90→    90→    psychology: 'Like a diplomatic corps between nations — each sidecar speaks for its service, creating protocol where there was only chaos. The overhead is justified by the reduction in diplomatic incidents (runtime errors). But too many diplomats and nothing gets done.',
+    91→    91→    economics: 'High infrastructure cost, massive operational leverage. Like the interstate highway system — enormous upfront investment, but it unlocks economic activity worth 100x the cost. The mesh becomes the economy.',
+    92→    92→    science: 'Functions like the extracellular matrix in biology — the non-cellular material that provides structural and biochemical support to surrounding cells. It\'s not the cell itself, but without it, multicellular life is impossible.',
+    93→    93→    strengths: ['Zero-trust security', 'Observability', 'Traffic management', 'Circuit breaking', 'Gradual rollouts'],
+    94→    94→    weaknesses: ['Massive complexity', 'Performance overhead', 'Steep learning curve', 'Debugging nightmare', 'Overkill for small systems'],
+    95→    95→    howWeStandOut: 'Our 4-tier architecture (T0-T3) acts as a service mesh for AI skills — each tier provides sidecar-like capabilities (validation, routing, scoring) without the operational burden of a full Istio/Linkerd deployment.',
+    96→    96→    installHint: 'npx skills add marktantongco/skill-stack-architecture --skill matrix-engine',
+    97→    97→  },
+    98→    98→  {
+    99→    99→    id: 'circuit',
+   100→   100→    name: 'Circuit Breaker Proxy',
+   101→   101→    tagline: 'Fails fast and recovers gracefully under stress',
+   102→   102→    icon: <Zap className="h-5 w-5" />,
+   103→   103→    color: '#ef4444',
+   104→   104→    bgClass: 'bg-red-100 dark:bg-red-900/30',
+   105→   105→    psychology: 'Like a fuse box in your house — it sacrifices itself to protect the system. Creates psychological safety through guaranteed bounded failure. But constant tripping creates learned helplessness — "why try if it\'s just going to fail again?"',
+   106→   106→    economics: 'Prevents cascade failures that cost millions. Like insurance — you pay a small premium (latency) to avoid catastrophic loss (outage). The ROI is invisible until the crisis hits, making it chronically underfunded.',
+   107→   107→    science: 'Functions like action potential thresholds in neurons — they fire only when stimulation exceeds a threshold, and then enter a refractory period. This prevents signal amplification into seizures (cascading failures).',
+   108→   108→    strengths: ['Prevents cascade failures', 'Graceful degradation', 'Fast recovery', 'Observable failure modes', 'Self-healing'],
+   109→   109→    weaknesses: ['Premature trip risk', 'Configuration complexity', 'Cold start problems', 'Monitoring overhead', 'Difficult to test'],
+   110→   110→    howWeStandOut: 'Our basket export system includes circuit-breaker logic — if a skill install fails, the pipeline documents the failure and continues rather than halting the entire installation sequence.',
+   111→   111→    installHint: 'npx skills add marktantongco/opencode-accomplishments --skill deployment-manager',
+   112→   112→  },
+   113→   113→  {
+   114→   114→    id: 'identity',
+   115→   115→    name: 'Identity-Aware Proxy',
+   116→   116→    tagline: 'Authenticates and authorizes every request by identity',
+   117→   117→    icon: <Fingerprint className="h-5 w-5" />,
+   118→   118→    color: '#06b6d4',
+   119→   119→    bgClass: 'bg-cyan-100 dark:bg-cyan-900/30',
+   120→   120→    psychology: 'Like a passport control — your identity determines your access. Creates belonging and status hierarchies. In-group members get fast lanes; out-group members face scrutiny. This is psychologically efficient but morally fraught.',
+   121→   121→    economics: 'Creates a two-sided market between identity providers and service consumers. Like credit scores — the scoring itself becomes the product, more valuable than the underlying service it protects.',
+   122→   122→    science: 'Functions like MHC molecules in the immune system — they present protein fragments (identity tokens) to T-cells (authorization services) to determine self vs. non-self. Misidentification causes autoimmune disorders (false positives) or infections (false negatives).',
+   123→   123→    strengths: ['Zero-trust architecture', 'Fine-grained access', 'Audit trail', 'Compliance ready', 'Context-aware routing'],
+   124→   124→    weaknesses: ['Identity sprawl', 'Single sign-on risk', 'Privacy trade-offs', 'Token management', 'Revocation latency'],
+   125→   125→    howWeStandOut: 'Our skill tagging system acts as an identity layer — each skill\'s tag profile determines its access to routing decisions, compatibility scoring, and dependency resolution. Tags ARE the identity tokens.',
+   126→   126→    installHint: 'npx skills add marktantongco/opencode-accomplishments --skill mcp-security-scanner',
+   127→   127→  },
+   128→   128→];
+   129→   129→
+   130→   130→const comparisonDimensions = [
+   131→   131→  { id: 'trust', label: 'Trust Model', desc: 'How trust is established and maintained' },
+   132→   132→  { id: 'latency', label: 'Latency Impact', desc: 'Performance overhead introduced' },
+   133→   133→  { id: 'complexity', label: 'Complexity', desc: 'Operational and cognitive load' },
+   134→   134→  { id: 'resilience', label: 'Resilience', desc: 'Ability to withstand failures' },
+   135→   135→  { id: 'visibility', label: 'Observability', desc: 'Insight into traffic and decisions' },
+   136→   136→  { id: 'fit', label: 'Skill Stack Fit', desc: 'How well this maps to our architecture' },
+   137→   137→];
+   138→   138→
+   139→   139→// Comparative scores (1-5) for each proxy type × dimension
+   140→   140→const scores: Record<string, Record<string, number>> = {
+   141→   141→  transparent: { trust: 5, latency: 1, complexity: 1, resilience: 2, visibility: 5, fit: 4 },
+   142→   142→  reverse:     { trust: 4, latency: 2, complexity: 3, resilience: 4, visibility: 4, fit: 5 },
+   143→   143→  forward:     { trust: 3, latency: 3, complexity: 2, resilience: 3, visibility: 2, fit: 4 },
+   144→   144→  mesh:        { trust: 5, latency: 4, complexity: 5, resilience: 5, visibility: 5, fit: 3 },
+   145→   145→  circuit:     { trust: 3, latency: 2, complexity: 3, resilience: 5, visibility: 3, fit: 4 },
+   146→   146→  identity:    { trust: 5, latency: 3, complexity: 4, resilience: 4, visibility: 4, fit: 5 },
+   147→   147→};
+   148→   148→
+   149→   149→export function ProxyComparison() {
+   150→   150→  const [selectedProxy, setSelectedProxy] = useState<string | null>(null);
+   151→   151→  const [copiedId, setCopiedId] = useState<string | null>(null);
+   152→   152→  const [activeTab, setActiveTab] = useState<'overview' | 'compare' | 'radar' | 'insights'>('overview');
+   153→   153→  const [radarProxyA, setRadarProxyA] = useState<string>('reverse');
+   154→   154→  const [radarProxyB, setRadarProxyB] = useState<string>('identity');
+   155→   155→  const shouldReduce = useReducedMotion();
+   156→   156→  const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
+   157→   157→
+   158→   158→  // Build radar chart data for the two selected proxies
+   159→   159→  const radarData = useMemo(() => {
+   160→   160→    return comparisonDimensions.map((dim) => ({
+   161→   161→      dimension: dim.label,
+   162→   162→      [proxyTypes.find(p => p.id === radarProxyA)?.name.replace(' Proxy', '') || 'A']: scores[radarProxyA]?.[dim.id] || 0,
+   163→   163→      [proxyTypes.find(p => p.id === radarProxyB)?.name.replace(' Proxy', '') || 'B']: scores[radarProxyB]?.[dim.id] || 0,
+   164→   164→    }));
+   165→   165→  }, [radarProxyA, radarProxyB]);
+   166→   166→
+   167→   167→  const radarColorA = proxyTypes.find(p => p.id === radarProxyA)?.color || '#3b82f6';
+   168→   168→  const radarColorB = proxyTypes.find(p => p.id === radarProxyB)?.color || '#06b6d4';
+   169→   169→  const radarNameA = proxyTypes.find(p => p.id === radarProxyA)?.name.replace(' Proxy', '') || 'A';
+   170→   170→  const radarNameB = proxyTypes.find(p => p.id === radarProxyB)?.name.replace(' Proxy', '') || 'B';
+   171→   171→
+   172→   172→  const handleCopy = async (id: string, text: string) => {
+   173→   173→    try {
+   174→   174→      await navigator.clipboard.writeText(text);
+   175→   175→      setCopiedId(id);
+   176→   176→      setTimeout(() => setCopiedId(null), 1500);
+   177→   177→    } catch {
+   178→   178→      // Fallback
+   179→   179→      const textarea = document.createElement('textarea');
+   180→   180→      textarea.value = text;
+   181→   181→      textarea.style.position = 'fixed';
+   182→   182→      textarea.style.left = '-9999px';
+   183→   183→      document.body.appendChild(textarea);
+   184→   184→      textarea.select();
+   185→   185→      document.execCommand('copy');
+   186→   186→      document.body.removeChild(textarea);
+   187→   187→      setCopiedId(id);
+   188→   188→      setTimeout(() => setCopiedId(null), 1500);
+   189→   189→    }
+   190→   190→  };
+   191→   191→
+   192→   192→  return (
+   193→   193→    <section id="proxy-comparison" className="py-20 md:py-28 px-6" aria-label="Proxy Architecture Comparison">
+   194→   194→      <div className="max-w-[1200px] mx-auto">
+   195→   195→        {/* Section Header */}
+   196→   196→        <motion.div
+   197→   197→          className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-14"
+   198→   198→          initial={{ opacity: 0, y: 40 }}
+   199→   199→          whileInView={{ opacity: 1, y: 0 }}
+   200→   200→          viewport={{ once: true, margin: '-100px' }}
+   201→   201→          transition={{ duration: 0.6 }}
+   202→   202→        >
+   203→   203→          <div className="md:col-span-8">
+   204→   204→            <div className="flex items-baseline gap-4 mb-3">
+   205→   205→              <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">
+   206→   206→                13
+   207→   207→              </span>
+   208→   208→              <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">
+   209→   209→                Proxy Architecture Comparison
+   210→   210→              </h2>
+   211→   211→            </div>
+   212→   212→            <div className="editorial-pullquote ml-0 md:ml-20">
+   213→   213→              Six proxy paradigms examined through psychology, economics, and science — and how this skill stack stands apart from each.
+   214→   214→            </div>
+   215→   215→          </div>
+   216→   216→        </motion.div>
+   217→   217→
+   218→   218→        <hr className="editorial-rule-thick mb-8" />
+   219→   219→
+   220→   220→        {/* Tab Navigation */}
+   221→   221→        <div className="flex gap-0 mb-8 border-b border-border" role="tablist">
+   222→   222→          {[
+   223→   223→            { id: 'overview' as const, label: 'Overview' },
+   224→   224→            { id: 'compare' as const, label: 'Compare' },
+   225→   225→            { id: 'radar' as const, label: 'Radar' },
+   226→   226→            { id: 'insights' as const, label: 'Cross-Field' },
+   227→   227→          ].map((tab) => (
+   228→   228→            <button
+   229→   229→              key={tab.id}
+   230→   230→              onClick={() => setActiveTab(tab.id)}
+   231→   231→              role="tab"
+   232→   232→              aria-selected={activeTab === tab.id}
+   233→   233→              className={`min-h-[44px] px-4 py-2 text-[11px] tracking-[0.15em] uppercase font-medium border-b-2 -mb-px cursor-pointer ${
+   234→   234→                activeTab === tab.id ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground'
+   235→   235→              }`}
+   236→   236→            >
+   237→   237→              {tab.label}
+   238→   238→            </button>
+   239→   239→          ))}
+   240→   240→        </div>
+   241→   241→
+   242→   242→        {/* ─── Overview Tab ─── */}
+   243→   243→        {activeTab === 'overview' && (
+   244→   244→          <motion.div
+   245→   245→            variants={noMotion || staggerContainer}
+   246→   246→            initial="hidden"
+   247→   247→            whileInView="visible"
+   248→   248→            viewport={{ once: true }}
+   249→   249→            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+   250→   250→          >
+   251→   251→            {proxyTypes.map((proxy) => (
+   252→   252→              <motion.div
+   253→   253→                key={proxy.id}
+   254→   254→                variants={noMotion || fadeInUp}
+   255→   255→                whileHover={shouldReduce ? undefined : { y: -2 }}
+   256→   256→                className={`group rounded-xl border border-border/50 p-5 cursor-pointer transition-all hover:border-border hover:shadow-md ${
+   257→   257→                  selectedProxy === proxy.id ? 'ring-2 ring-primary border-primary' : ''
+   258→   258→                }`}
+   259→   259→                onClick={() => setSelectedProxy(selectedProxy === proxy.id ? null : proxy.id)}
+   260→   260→              >
+   261→   261→                <div className="flex items-center gap-3 mb-3">
+   262→   262→                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${proxy.bgClass}`} style={{ color: proxy.color }}>
+   263→   263→                    {proxy.icon}
+   264→   264→                  </div>
+   265→   265→                  <div>
+   266→   266→                    <h3 className="text-sm font-semibold text-foreground">{proxy.name}</h3>
+   267→   267→                    <p className="text-[10px] text-muted-foreground">{proxy.tagline}</p>
+   268→   268→                  </div>
+   269→   269→                </div>
+   270→   270→
+   271→   271→                <p className="text-xs text-muted-foreground leading-relaxed mb-3 line-clamp-3">
+   272→   272→                  {proxy.howWeStandOut}
+   273→   273→                </p>
+   274→   274→
+   275→   275→                <div className="flex flex-wrap gap-1 mb-3">
+   276→   276→                  {proxy.strengths.slice(0, 3).map((s) => (
+   277→   277→                    <Badge key={s} variant="secondary" className="text-[9px] h-5">{s}</Badge>
+   278→   278→                  ))}
+   279→   279→                </div>
+   280→   280→
+   281→   281→                {/* Mini score bars */}
+   282→   282→                <div className="space-y-1.5">
+   283→   283→                  {comparisonDimensions.slice(0, 4).map((dim) => (
+   284→   284→                    <div key={dim.id} className="flex items-center gap-2">
+   285→   285→                      <span className="text-[9px] text-muted-foreground w-14 shrink-0">{dim.label}</span>
+   286→   286→                      <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+   287→   287→                        <div
+   288→   288→                          className="h-full rounded-full transition-all"
+   289→   289→                          style={{
+   290→   290→                            width: `${(scores[proxy.id][dim.id] / 5) * 100}%`,
+   291→   291→                            backgroundColor: proxy.color,
+   292→   292→                          }}
+   293→   293→                        />
+   294→   294→                      </div>
+   295→   295→                      <span className="text-[9px] font-mono text-muted-foreground w-3">{scores[proxy.id][dim.id]}</span>
+   296→   296→                    </div>
+   297→   297→                  ))}
+   298→   298→                </div>
+   299→   299→
+   300→   300→                {/* Expanded detail */}
+   301→   301→                {selectedProxy === proxy.id && (
+   302→   302→                  <motion.div
+   303→   303→                    initial={{ opacity: 0, height: 0 }}
+   304→   304→                    animate={{ opacity: 1, height: 'auto' }}
+   305→   305→                    exit={{ opacity: 0, height: 0 }}
+   306→   306→                    className="mt-4 pt-4 border-t border-border/50 space-y-3"
+   307→   307→                  >
+   308→   308→                    <div>
+   309→   309→                      <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Strengths</h4>
+   310→   310→                      <div className="flex flex-wrap gap-1">
+   311→   311→                        {proxy.strengths.map((s) => (
+   312→   312→                          <Badge key={s} variant="outline" className="text-[9px] h-5 border-emerald-300 text-emerald-700 dark:text-emerald-300">{s}</Badge>
+   313→   313→                        ))}
+   314→   314→                      </div>
+   315→   315→                    </div>
+   316→   316→                    <div>
+   317→   317→                      <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Weaknesses</h4>
+   318→   318→                      <div className="flex flex-wrap gap-1">
+   319→   319→                        {proxy.weaknesses.map((w) => (
+   320→   320→                          <Badge key={w} variant="outline" className="text-[9px] h-5 border-red-300 text-red-700 dark:text-red-300">{w}</Badge>
+   321→   321→                        ))}
+   322→   322→                      </div>
+   323→   323→                    </div>
+   324→   324→                    <Button
+   325→   325→                      size="sm"
+   326→   326→                      variant={copiedId === proxy.id ? 'default' : 'outline'}
+   327→   327→                      className="w-full h-7 text-xs gap-1"
+   328→   328→                      onClick={(e) => {
+   329→   329→                        e.stopPropagation();
+   330→   330→                        handleCopy(proxy.id, proxy.installHint);
+   331→   331→                      }}
+   332→   332→                    >
+   333→   333→                      {copiedId === proxy.id ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+   334→   334→                      {copiedId === proxy.id ? 'Copied!' : 'Copy Install Command'}
+   335→   335→                    </Button>
+   336→   336→                  </motion.div>
+   337→   337→                )}
+   338→   338→              </motion.div>
+   339→   339→            ))}
+   340→   340→          </motion.div>
+   341→   341→        )}
+   342→   342→
+   343→   343→        {/* ─── Compare Tab ─── */}
+   344→   344→        {activeTab === 'compare' && (
+   345→   345→          <div className="overflow-x-auto custom-scrollbar">
+   346→   346→            <table className="w-full text-sm" role="table">
+   347→   347→              <thead>
+   348→   348→                <tr className="border-b-2 border-foreground bg-muted/10">
+   349→   349→                  <th className="text-left p-3 text-[10px] tracking-[0.2em] uppercase font-semibold text-muted-foreground sticky left-0 bg-muted/10 min-w-[120px]">
+   350→   350→                    Dimension
+   351→   351→                  </th>
+   352→   352→                  {proxyTypes.map((p) => (
+   353→   353→                    <th key={p.id} className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold min-w-[100px]" style={{ color: p.color }}>
+   354→   354→                      {p.name.replace(' Proxy', '')}
+   355→   355→                    </th>
+   356→   356→                  ))}
+   357→   357→                </tr>
+   358→   358→              </thead>
+   359→   359→              <tbody>
+   360→   360→                {comparisonDimensions.map((dim) => (
+   361→   361→                  <tr key={dim.id} className="border-b border-border/40 hover:bg-muted/10 transition-colors">
+   362→   362→                    <td className="p-3 text-xs font-medium text-foreground sticky left-0 bg-background">
+   363→   363→                      {dim.label}
+   364→   364→                      <p className="text-[9px] text-muted-foreground font-normal mt-0.5">{dim.desc}</p>
+   365→   365→                    </td>
+   366→   366→                    {proxyTypes.map((p) => {
+   367→   367→                      const score = scores[p.id][dim.id];
+   368→   368→                      return (
+   369→   369→                        <td key={p.id} className="p-3 text-center">
+   370→   370→                          <div className="flex items-center justify-center gap-1">
+   371→   371→                            <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+   372→   372→                              <div
+   373→   373→                                className="h-full rounded-full"
+   374→   374→                                style={{
+   375→   375→                                  width: `${(score / 5) * 100}%`,
+   376→   376→                                  backgroundColor: p.color,
+   377→   377→                                }}
+   378→   378→                              />
+   379→   379→                            </div>
+   380→   380→                            <span className="text-[10px] font-mono text-muted-foreground">{score}</span>
+   381→   381→                          </div>
+   382→   382→                        </td>
+   383→   383→                      );
+   384→   384→                    })}
+   385→   385→                  </tr>
+   386→   386→                ))}
+   387→   387→              </tbody>
+   388→   388→            </table>
+   389→   389→          </div>
+   390→   390→        )}
+   391→   391→
+   392→   392→        {/* ─── Radar Comparison Tab ─── */}
+   393→   393→        {activeTab === 'radar' && (
+   394→   394→          <div className="space-y-6">
+   395→   395→            <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
+   396→   396→              Select two proxy types to overlay on a radar chart. The visual shape reveals
+   397→   397→              architectural philosophy at a glance — where each paradigm invests its capability budget,
+   398→   398→              and where it deliberately accepts trade-offs.
+   399→   399→            </p>
+   400→   400→
+   401→   401→            {/* Proxy Selectors */}
+   402→   402→            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   403→   403→              <div>
+   404→   404→                <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 block">
+   405→   405→                  Proxy A
+   406→   406→                </label>
+   407→   407→                <div className="flex flex-wrap gap-1.5">
+   408→   408→                  {proxyTypes.map((p) => (
+   409→   409→                    <button
+   410→   410→                      key={p.id}
+   411→   411→                      onClick={() => setRadarProxyA(p.id)}
+   412→   412→                      className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all border cursor-pointer ${
+   413→   413→                        radarProxyA === p.id
+   414→   414→                          ? 'border-foreground text-foreground'
+   415→   415→                          : 'border-border/50 text-muted-foreground hover:border-border hover:text-foreground'
+   416→   416→                      }`}
+   417→   417→                      style={radarProxyA === p.id ? { backgroundColor: p.color + '20', borderColor: p.color } : {}}
+   418→   418→                    >
+   419→   419→                      {p.name.replace(' Proxy', '')}
+   420→   420→                    </button>
+   421→   421→                  ))}
+   422→   422→                </div>
+   423→   423→              </div>
+   424→   424→              <div>
+   425→   425→                <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 block">
+   426→   426→                  Proxy B
+   427→   427→                </label>
+   428→   428→                <div className="flex flex-wrap gap-1.5">
+   429→   429→                  {proxyTypes.map((p) => (
+   430→   430→                    <button
+   431→   431→                      key={p.id}
+   432→   432→                      onClick={() => setRadarProxyB(p.id)}
+   433→   433→                      className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all border cursor-pointer ${
+   434→   434→                        radarProxyB === p.id
+   435→   435→                          ? 'border-foreground text-foreground'
+   436→   436→                          : 'border-border/50 text-muted-foreground hover:border-border hover:text-foreground'
+   437→   437→                      }`}
+   438→   438→                      style={radarProxyB === p.id ? { backgroundColor: p.color + '20', borderColor: p.color } : {}}
+   439→   439→                    >
+   440→   440→                      {p.name.replace(' Proxy', '')}
+   441→   441→                    </button>
+   442→   442→                  ))}
+   443→   443→                </div>
+   444→   444→              </div>
+   445→   445→            </div>
+   446→   446→
+   447→   447→            {/* Radar Chart */}
+   448→   448→            <div className="border border-border/50 rounded-xl p-6 bg-muted/10">
+   449→   449→              <div className="w-full aspect-square max-w-lg mx-auto">
+   450→   450→                <ResponsiveContainer width="100%" height="100%">
+   451→   451→                  <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
+   452→   452→                    <PolarGrid stroke="currentColor" strokeOpacity={0.15} />
+   453→   453→                    <PolarAngleAxis
+   454→   454→                      dataKey="dimension"
+   455→   455→                      tick={{ fontSize: 10, fill: 'currentColor', fillOpacity: 0.6 }}
+   456→   456→                    />
+   457→   457→                    <PolarRadiusAxis
+   458→   458→                      angle={90}
+   459→   459→                      domain={[0, 5]}
+   460→   460→                      tick={{ fontSize: 8, fill: 'currentColor', fillOpacity: 0.4 }}
+   461→   461→                      tickCount={6}
+   462→   462→                    />
+   463→   463→                    <Tooltip
+   464→   464→                      contentStyle={{
+   465→   465→                        backgroundColor: 'hsl(var(--popover))',
+   466→   466→                        borderColor: 'hsl(var(--border))',
+   467→   467→                        borderRadius: '8px',
+   468→   468→                        fontSize: '12px',
+   469→   469→                      }}
+   470→   470→                    />
+   471→   471→                    <Legend
+   472→   472→                      wrapperStyle={{ fontSize: '11px', paddingTop: '12px' }}
+   473→   473→                    />
+   474→   474→                    <RechartsRadar
+   475→   475→                      name={radarNameA}
+   476→   476→                      dataKey={radarNameA}
+   477→   477→                      stroke={radarColorA}
+   478→   478→                      fill={radarColorA}
+   479→   479→                      fillOpacity={0.15}
+   480→   480→                      strokeWidth={2}
+   481→   481→                    />
+   482→   482→                    <RechartsRadar
+   483→   483→                      name={radarNameB}
+   484→   484→                      dataKey={radarNameB}
+   485→   485→                      stroke={radarColorB}
+   486→   486→                      fill={radarColorB}
+   487→   487→                      fillOpacity={0.15}
+   488→   488→                      strokeWidth={2}
+   489→   489→                    />
+   490→   490→                  </RadarChart>
+   491→   491→                </ResponsiveContainer>
+   492→   492→              </div>
+   493→   493→            </div>
+   494→   494→
+   495→   495→            {/* Dimension Delta Table */}
+   496→   496→            <div className="rounded-lg border border-border/50 overflow-hidden">
+   497→   497→              <table className="w-full text-xs" role="table" aria-label="Proxy comparison delta">
+   498→   498→                <thead>
+   499→   499→                  <tr className="bg-muted/50">
+   500→   500→                    <th className="text-left p-2.5 font-semibold">Dimension</th>
+   501→   501→                    <th className="text-center p-2.5 font-semibold" style={{ color: radarColorA }}>
+   502→   502→                      {radarNameA}
+   503→   503→                    </th>
+   504→   504→                    <th className="text-center p-2.5 font-semibold" style={{ color: radarColorB }}>
+   505→   505→                      {radarNameB}
+   506→   506→                    </th>
+   507→   507→                    <th className="text-center p-2.5 font-semibold">Delta</th>
+   508→   508→                  </tr>
+   509→   509→                </thead>
+   510→   510→                <tbody>
+   511→   511→                  {comparisonDimensions.map((dim) => {
+   512→   512→                    const a = scores[radarProxyA]?.[dim.id] || 0;
+   513→   513→                    const b = scores[radarProxyB]?.[dim.id] || 0;
+   514→   514→                    const delta = a - b;
+   515→   515→                    return (
+   516→   516→                      <tr key={dim.id} className="border-t border-border/30">
+   517→   517→                        <td className="p-2.5 font-medium">{dim.label}</td>
+   518→   518→                        <td className="p-2.5 text-center">
+   519→   519→                          <div className="flex items-center justify-center gap-1">
+   520→   520→                            <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">
+   521→   521→                              <div className="h-full rounded-full" style={{ width: `${(a / 5) * 100}%`, backgroundColor: radarColorA }} />
+   522→   522→                            </div>
+   523→   523→                            <span className="font-mono text-muted-foreground w-3">{a}</span>
+   524→   524→                          </div>
+   525→   525→                        </td>
+   526→   526→                        <td className="p-2.5 text-center">
+   527→   527→                          <div className="flex items-center justify-center gap-1">
+   528→   528→                            <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">
+   529→   529→                              <div className="h-full rounded-full" style={{ width: `${(b / 5) * 100}%`, backgroundColor: radarColorB }} />
+   530→   530→                            </div>
+   531→   531→                            <span className="font-mono text-muted-foreground w-3">{b}</span>
+   532→   532→                          </div>
+   533→   533→                        </td>
+   534→   534→                        <td className="p-2.5 text-center">
+   535→   535→                          <span className={`font-mono font-semibold ${delta > 0 ? 'text-emerald-600 dark:text-emerald-400' : delta < 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
+   536→   536→                            {delta > 0 ? '+' : ''}{delta}
+   537→   537→                          </span>
+   538→   538→                        </td>
+   539→   539→                      </tr>
+   540→   540→                    );
+   541→   541→                  })}
+   542→   542→                  {/* Total score row */}
+   543→   543→                  <tr className="border-t-2 border-border bg-muted/30">
+   544→   544→                    <td className="p-2.5 font-bold">Total</td>
+   545→   545→                    <td className="p-2.5 text-center font-mono font-bold" style={{ color: radarColorA }}>
+   546→   546→                      {Object.values(scores[radarProxyA] || {}).reduce((a, b) => a + b, 0)}
+   547→   547→                    </td>
+   548→   548→                    <td className="p-2.5 text-center font-mono font-bold" style={{ color: radarColorB }}>
+   549→   549→                      {Object.values(scores[radarProxyB] || {}).reduce((a, b) => a + b, 0)}
+   550→   550→                    </td>
+   551→   551→                    <td className="p-2.5 text-center font-mono font-bold">
+   552→   552→                      {(() => {
+   553→   553→                        const totalA = Object.values(scores[radarProxyA] || {}).reduce((a, b) => a + b, 0);
+   554→   554→                        const totalB = Object.values(scores[radarProxyB] || {}).reduce((a, b) => a + b, 0);
+   555→   555→                        const d = totalA - totalB;
+   556→   556→                        return <span className={d > 0 ? 'text-emerald-600 dark:text-emerald-400' : d < 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}>{d > 0 ? '+' : ''}{d}</span>;
+   557→   557→                      })()}
+   558→   558→                    </td>
+   559→   559→                  </tr>
+   560→   560→                </tbody>
+   561→   561→              </table>
+   562→   562→            </div>
+   563→   563→          </div>
+   564→   564→        )}
+   565→   565→
+   566→   566→        {/* ─── Cross-Field Insights Tab ─── */}
+   567→   567→        {activeTab === 'insights' && (
+   568→   568→          <motion.div
+   569→   569→            variants={noMotion || staggerContainer}
+   570→   570→            initial="hidden"
+   571→   571→            whileInView="visible"
+   572→   572→            viewport={{ once: true }}
+   573→   573→            className="space-y-6"
+   574→   574→          >
+   575→   575→            <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
+   576→   576→              Every proxy pattern maps onto principles from other fields. Understanding these cross-field connections reveals
+   577→   577→              why certain architectures fail in unexpected ways — and how to design systems that transcend the limitations
+   578→   578→              of any single paradigm.
+   579→   579→            </p>
+   580→   580→
+   581→   581→            {proxyTypes.map((proxy) => (
+   582→   582→              <motion.div
+   583→   583→                key={proxy.id}
+   584→   584→                variants={noMotion || fadeInUp}
+   585→   585→                className="rounded-xl border border-border/50 p-6 space-y-4"
+   586→   586→              >
+   587→   587→                <div className="flex items-center gap-3">
+   588→   588→                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${proxy.bgClass}`} style={{ color: proxy.color }}>
+   589→   589→                    {proxy.icon}
+   590→   590→                  </div>
+   591→   591→                  <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">{proxy.name}</h3>
+   592→   592→                </div>
+   593→   593→
+   594→   594→                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+   595→   595→                  <div className="space-y-1.5">
+   596→   596→                    <h4 className="text-[10px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+   597→   597→                      Psychology
+   598→   598→                    </h4>
+   599→   599→                    <p className="text-xs text-muted-foreground leading-relaxed">{proxy.psychology}</p>
+   600→   600→                  </div>
+   601→   601→                  <div className="space-y-1.5">
+   602→   602→                    <h4 className="text-[10px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+   603→   603→                      Economics
+   604→   604→                    </h4>
+   605→   605→                    <p className="text-xs text-muted-foreground leading-relaxed">{proxy.economics}</p>
+   606→   606→                  </div>
+   607→   607→                  <div className="space-y-1.5">
+   608→   608→                    <h4 className="text-[10px] font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+   609→   609→                      Science
+   610→   610→                    </h4>
+   611→   611→                    <p className="text-xs text-muted-foreground leading-relaxed">{proxy.science}</p>
+   612→   612→                  </div>
+   613→   613→                </div>
+   614→   614→
+   615→   615→                <div className="pt-3 border-t border-border/30">
+   616→   616→                  <h4 className="text-[10px] font-semibold uppercase tracking-wider text-primary mb-1 flex items-center gap-1">
+   617→   617→                    <TrendingUp className="h-3 w-3" />
+   618→   618→                    How This Skill Stack Stands Out
+   619→   619→                  </h4>
+   620→   620→                  <p className="text-xs text-foreground leading-relaxed">{proxy.howWeStandOut}</p>
+   621→   621→                </div>
+   622→   622→              </motion.div>
+   623→   623→            ))}
+   624→   624→          </motion.div>
+   625→   625→        )}
+   626→   626→      </div>
+   627→   627→    </section>
+   628→   628→  );
+   629→   629→}
+   630→   630→

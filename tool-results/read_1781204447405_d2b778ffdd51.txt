@@ -1,0 +1,467 @@
+     1→     1→// ─── Core Data Types ───
+     2→     2→export interface Skill {
+     3→     3→  id: string;
+     4→     4→  name: string;
+     5→     5→  tier: number;
+     6→     6→  tierName: string;
+     7→     7→  installCommand: string;
+     8→     8→  primaryRole: string;
+     9→     9→  isCustom: boolean;
+    10→    10→  category: string;
+    11→    11→  color: string;
+    12→    12→  emoji: string;
+    13→    13→  tags: string[];
+    14→    14→  /** Skill version (semver). Enables version pinning in pipelines. */
+    15→    15→  version: string;
+    16→    16→  /** Hash of the skill definition for change detection across versions. */
+    17→    17→  schemaHash?: string;
+    18→    18→}
+    19→    19→
+    20→    20→export interface SkillCategory {
+    21→    21→  name: string;
+    22→    22→  color: string;
+    23→    23→  emoji: string;
+    24→    24→  skills: Skill[];
+    25→    25→}
+    26→    26→
+    27→    27→// ─── Skill Invocation Types (Replaces pipeline orchestration model) ───
+    28→    28→
+    29→    29→/** A single skill invocation with standard I/O. */
+    30→    30→export interface SkillInvocation {
+    31→    31→  /** Unique invocation identifier. */
+    32→    32→  id: string;
+    33→    33→  /** The skill being invoked. */
+    34→    34→  skillId: string;
+    35→    35→  /** JSON input to the skill (piped from previous invocation or provided by user). */
+    36→    36→  input: Record<string, unknown>;
+    37→    37→  /** JSON output from the skill (piped to next invocation). */
+    38→    38→  output?: Record<string, unknown>;
+    39→    39→  /** Current execution status. */
+    40→    40→  status: 'pending' | 'running' | 'success' | 'failed';
+    41→    41→  /** Execution duration in milliseconds. */
+    42→    42→  durationMs?: number;
+    43→    43→  /** Error message if invocation failed. */
+    44→    44→  errorMsg?: string;
+    45→    45→  /** Timestamp of invocation start. */
+    46→    46→  invokedAt: number;
+    47→    47→  /** Timestamp of invocation completion. */
+    48→    48→  completedAt?: number;
+    49→    49→}
+    50→    50→
+    51→    51→/** Result of piping multiple skills together. */
+    52→    52→export interface PipeResult {
+    53→    53→  /** Ordered invocations — each skill's output fed to the next. */
+    54→    54→  invocations: SkillInvocation[];
+    55→    55→  /** Final output from the last successful skill. */
+    56→    56→  finalOutput: Record<string, unknown>;
+    57→    57→  /** Number of successful invocations. */
+    58→    58→  successCount: number;
+    59→    59→  /** Number of failed invocations. */
+    60→    60→  failureCount: number;
+    61→    61→  /** Total pipe duration in milliseconds. */
+    62→    62→  totalDurationMs: number;
+    63→    63→}
+    64→    64→
+    65→    65→// ─── Conflict Detection ───
+    66→    66→
+    67→    67→/** Conflict between two skills that should not be composed together. */
+    68→    68→export interface SkillConflict {
+    69→    69→  skillA: string;
+    70→    70→  skillB: string;
+    71→    71→  severity: 'critical' | 'warning' | 'info';
+    72→    72→  reason: string;
+    73→    73→  /** Suggested alternative to skillB if conflict is critical. */
+    74→    74→  alternative?: string;
+    75→    75→}
+    76→    76→
+    77→    77→// ─── Skill Dependency ───
+    78→    78→
+    79→    79→/** Directed edge in the skill dependency graph. */
+    80→    80→export interface SkillDependency {
+    81→    81→  skillId: string;
+    82→    82→  dependsOnSkillId: string;
+    83→    83→  /** Type of dependency relationship. */
+    84→    84→  relationship: 'requires' | 'enhances' | 'conflicts';
+    85→    85→}
+    86→    86→
+    87→    87→// ─── Telemetry Event ───
+    88→    88→
+    89→    89→/** Telemetry event for skill execution observability. */
+    90→    90→export interface TelemetryEvent {
+    91→    91→  type: 'skill_invocation' | 'batch_invocation';
+    92→    92→  skillId?: string;
+    93→    93→  batchId?: string;
+    94→    94→  status: string;
+    95→    95→  durationMs?: number;
+    96→    96→  errorMsg?: string;
+    97→    97→  timestamp: number;
+    98→    98→}
+    99→    99→
+   100→   100→// ─── Design Options ───
+   101→   101→export interface DesignOption {
+   102→   102→  id: string;
+   103→   103→  name: string;
+   104→   104→  tagline: string;
+   105→   105→  dominantSkill: string;
+   106→   106→  dominantSkillId: string;
+   107→   107→  philosophy: string;
+   108→   108→  skillWeights: Record<string, number>;
+   109→   109→  sp7Vector: number[];
+   110→   110→  sp7Weighted: number;
+   111→   111→  colorFrom: string;
+   112→   112→  colorTo: string;
+   113→   113→  accentColor: string;
+   114→   114→  motionStyle: string;
+   115→   115→  colorStrategy: string;
+   116→   116→  typography: string;
+   117→   117→  mobileApproach: string;
+   118→   118→  recommended: string;
+   119→   119→}
+   120→   120→
+   121→   121→export interface SP7Dimension {
+   122→   122→  id: string;
+   123→   123→  name: string;
+   124→   124→  shortName: string;
+   125→   125→  description: string;
+   126→   126→}
+   127→   127→
+   128→   128→export interface WeightProfile {
+   129→   129→  name: string;
+   130→   130→  weights: number[];
+   131→   131→}
+   132→   132→
+   133→   133→export interface IntentRoute {
+   134→   134→  category: string;
+   135→   135→  keywords: string[];
+   136→   136→  targetSection: string;
+   137→   137→  confidence: number;
+   138→   138→  fallback: string;
+   139→   139→}
+   140→   140→
+   141→   141→// ─── Category Definitions ───
+   142→   142→const CATEGORIES: Record<string, { color: string; emoji: string }> = {
+   143→   143→  'Design & UI': { color: '#BFFF00', emoji: '🎨' },
+   144→   144→  'Reasoning': { color: '#08F7FE', emoji: '🧠' },
+   145→   145→  'Development': { color: '#00FF9D', emoji: '⚡' },
+   146→   146→  'Content': { color: '#FF2E63', emoji: '✍️' },
+   147→   147→  'Strategy': { color: '#FFE600', emoji: '🎯' },
+   148→   148→  'System': { color: '#A8B2D8', emoji: '⚙️' },
+   149→   149→  'Data & Web': { color: '#64FFDA', emoji: '🌐' },
+   150→   150→  'Creative': { color: '#FF9FF3', emoji: '🎭' },
+   151→   151→  'MCP Servers': { color: '#C77DFF', emoji: '🔌' },
+   152→   152→  'Agent Modes': { color: '#FF6B35', emoji: '🦊' },
+   153→   153→  'Utility': { color: '#A8B2D8', emoji: '🔧' },
+   154→   154→};
+   155→   155→
+   156→   156→// ─── Core + OpenCode Skills (61 total) ───
+   157→   157→export const skills: Skill[] = [
+   158→   158→  // ─── T0: Foundation (Third-Party) ─── Design & UI
+   159→   159→  { id: 'S01', name: 'Stitch Design', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill stitch-design', primaryRole: 'Autonomous iterative website generation with baton-passing design loop', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'generation', 'iterative', 'autonomous'] , version: '1.0.0' },
+   160→   160→  { id: 'S02', name: 'Framer Motion Animator', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill framer-motion-animator', primaryRole: 'Production-ready React animations, micro-interactions, spring physics', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'animation', 'motion', 'react', 'spring-physics'] , version: '1.0.0' },
+   161→   161→  { id: 'S03', name: 'UI/UX Pro Max v7', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill ui-ux-pro-max-v7', primaryRole: 'AI design intelligence — 60 styles, 48 palettes, 36 fonts, 24 industry rules, production-grade components', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'styles', 'palettes', 'fonts', 'components'] , version: '1.0.0' },
+   162→   162→  { id: 'S04', name: '21st.dev Registry', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill 21st-dev-registry', primaryRole: 'Community React component registry with shadcn CLI', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'components', 'registry', 'shadcn'] , version: '1.0.0' },
+   163→   163→
+   164→   164→  // ─── T1: Interactive (Third-Party) ─── Design & UI
+   165→   165→  { id: 'S05', name: 'GSAP Animations', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill gsap-animations', primaryRole: 'Production-grade GSAP animation patterns — 24 patterns, ScrollTrigger, Flip plugin, React integration', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'gsap', 'scrolltrigger', 'animation', 'flip'] , version: '1.0.0' },
+   166→   166→  { id: 'S06', name: 'Remotion Skills', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill remotion', primaryRole: 'Programmatic infographic-motion video generation', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'video', 'infographic', 'motion'] , version: '1.0.0' },
+   167→   167→  { id: 'S07', name: 'Mermaid Diagrams', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill mermaid-diagrams', primaryRole: 'Text-based schematic diagram rendering', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'diagrams', 'flowchart', 'schematic'] , version: '1.0.0' },
+   168→   168→  { id: 'S08', name: 'AntV Chart Viz', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill antv-chart-viz', primaryRole: '26+ interactive chart types, radar, heatmap, treemap', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'charts', 'visualization', 'data'] , version: '1.0.0' },
+   169→   169→
+   170→   170→  // ─── T2: Visual Asset (Third-Party) ─── Design & UI / Creative
+   171→   171→  { id: 'S09', name: 'AI Image Gen', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill ai-image-generation', primaryRole: '50+ AI models for hero images, mockups, visual assets', isCustom: false, category: 'Creative', color: '#FF9FF3', emoji: '🎭', tags: ['creative', 'image-gen', 'ai', 'visual', 'mockup'] , version: '1.0.0' },
+   172→   172→  { id: 'S10', name: 'shadcn/ui Skill', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill shadcn-ui', primaryRole: 'Interactive table, data table, component scaffolding', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'shadcn', 'components', 'table'] , version: '1.0.0' },
+   173→   173→  { id: 'S11', name: 'Playwright Visual', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill playwright-visual', primaryRole: 'Screenshot capture, visual regression, cross-browser testing', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '⚡', tags: ['development', 'testing', 'visual-regression', 'playwright'] , version: '1.0.0' },
+   174→   174→  { id: 'S12', name: 'Chart Visualization', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill chart-visualization', primaryRole: 'Custom interactive visualizations, radar charts, heatmaps, force graphs', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'charts', 'd3', 'visualization'] , version: '1.0.0' },
+   175→   175→
+   176→   176→  // ─── T3: Portal (Custom) ─── Strategy
+   177→   177→  { id: 'S13', name: 'AI Portal Redirect', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/skill-stack-architecture --skill ai-portal-redirect', primaryRole: 'AI agent intent classification, skill routing, guided navigation', isCustom: true, category: 'Strategy', color: '#FFE600', emoji: '🎯', tags: ['strategy', 'routing', 'intent', 'navigation'] , version: '1.0.0' },
+   178→   178→  { id: 'S14', name: 'Stack Prioritizer', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/skill-stack-architecture --skill stack-prioritizer', primaryRole: '7-dimension scoring algorithm, dependency resolver', isCustom: true, category: 'Strategy', color: '#FFE600', emoji: '🎯', tags: ['strategy', 'scoring', 'prioritization', 'dependency'] , version: '1.0.0' },
+   179→   179→  { id: 'S15', name: 'Matrix Engine', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/skill-stack-architecture --skill matrix-engine', primaryRole: 'Comparative matrix rendering, interactive filters, radar viz', isCustom: true, category: 'Strategy', color: '#FFE600', emoji: '🎯', tags: ['strategy', 'matrix', 'comparison', 'radar'] , version: '1.0.0' },
+   180→   180→  { id: 'S16', name: 'Design Algorithm', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/skill-stack-architecture --skill design-algorithm', primaryRole: 'Stack prioritization computation, result visualization, decision tree', isCustom: true, category: 'Strategy', color: '#FFE600', emoji: '🎯', tags: ['strategy', 'algorithm', 'visualization', 'decision-tree'] , version: '1.0.0' },
+   181→   181→
+   182→   182→  // ─── OpenCode-Accomplishments Skills: Design & UI ───
+   183→   183→  { id: 'S17', name: 'Anthropic Frontend Design', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill anthropic-frontend-design', primaryRole: 'Bold aesthetics for AI-native interfaces, conversational UI, trust-forward design', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'ai-native', 'conversational', 'trust'] , version: '1.0.0' },
+   184→   184→  { id: 'S18', name: 'Frontend Design', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill frontend-design', primaryRole: 'shadcn/ui + Tailwind + React component generation for production-ready UI', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'shadcn', 'tailwind', 'react'] , version: '1.0.0' },
+   185→   185→  { id: 'S19', name: 'Vercel Web Design Guidelines', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill vercel-web-design-guidelines', primaryRole: 'Comprehensive accessibility-first UX rules and performance budgets', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🎨', tags: ['design-ui', 'accessibility', 'ux', 'performance'] , version: '1.0.0' },
+   186→   186→
+   187→   187→  // ─── OpenCode-Accomplishments Skills: Reasoning ───
+   188→   188→  { id: 'S20', name: 'Chain of Thought', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill chain-of-thought', primaryRole: 'Step-by-step reasoning framework for complex problems', isCustom: false, category: 'Reasoning', color: '#08F7FE', emoji: '🧠', tags: ['reasoning', 'logic', 'step-by-step', 'analysis'] , version: '1.0.0' },
+   189→   189→  { id: 'S21', name: 'Socratic Method', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill socratic-method', primaryRole: 'Strategic questioning to uncover assumptions and guide discovery', isCustom: false, category: 'Reasoning', color: '#08F7FE', emoji: '🧠', tags: ['reasoning', 'questioning', 'assumptions', 'discovery'] , version: '1.0.0' },
+   190→   190→  { id: 'S22', name: 'Devils Advocate', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill devils-advocate', primaryRole: 'Argue against premises to strengthen arguments and prevent confirmation bias', isCustom: false, category: 'Reasoning', color: '#08F7FE', emoji: '🧠', tags: ['reasoning', 'debate', 'bias', 'arguments'] , version: '1.0.0' },
+   191→   191→  { id: 'S23', name: 'Simulation Sandbox', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill simulation-sandbox', primaryRole: 'Test scenarios in safe simulated environments without real-world consequences', isCustom: false, category: 'Reasoning', color: '#08F7FE', emoji: '🧠', tags: ['reasoning', 'simulation', 'testing', 'scenarios'] , version: '1.0.0' },
+   192→   192→
+   193→   193→  // ─── OpenCode-Accomplishments Skills: Development ───
+   194→   194→  { id: 'S24', name: 'MCP Builder', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill mcp-builder', primaryRole: 'Build MCP servers with TypeScript + Python, full lifecycle planning', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '⚡', tags: ['development', 'mcp', 'typescript', 'python'] , version: '1.0.0' },
+   195→   195→  { id: 'S25', name: 'Superpowers', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill superpowers', primaryRole: 'Spec-first development with TDD and sub-agent delegation', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '⚡', tags: ['development', 'tdd', 'spec-first', 'sub-agent'] , version: '1.0.0' },
+   196→   196→  { id: 'S26', name: 'Deployment Manager', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill deployment-manager', primaryRole: 'Deploy, monitor, update across GitHub Pages, Vercel, Netlify', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '⚡', tags: ['development', 'deployment', 'vercel', 'netlify'] , version: '1.0.0' },
+   197→   197→  { id: 'S27', name: 'Browser Use', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill browser-use', primaryRole: 'Headful browser automation with natural language control', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '⚡', tags: ['development', 'browser', 'automation', 'nlp'] , version: '1.0.0' },
+   198→   198→  { id: 'S28', name: 'Web Artifacts Builder', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill web-artifacts-builder', primaryRole: 'Single-file HTML artifacts with React + Tailwind, zero dependencies', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '⚡', tags: ['development', 'artifacts', 'html', 'zero-deps'] , version: '1.0.0' },
+   199→   199→  { id: 'S29', name: 'Vercel React Best Practices', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill vercel-react-best-practices', primaryRole: 'Production-grade React architecture, hooks patterns, SSR/SSG strategies', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '⚡', tags: ['development', 'react', 'ssr', 'architecture'] , version: '1.0.0' },
+   200→   200→  { id: 'S30', name: 'Explained Code', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill explained-code', primaryRole: 'Beginner-friendly code explanation with analogies and diagrams', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '⚡', tags: ['development', 'education', 'explanation', 'diagrams'] , version: '1.0.0' },
+   201→   201→
+   202→   202→  // ─── OpenCode-Accomplishments Skills: Content ───
+   203→   203→  { id: 'S31', name: 'SEO Content Writer', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill seo-content-writer', primaryRole: 'SEO-optimized content creation with GEO optimization for AI answer engines', isCustom: false, category: 'Content', color: '#FF2E63', emoji: '✍️', tags: ['content', 'seo', 'geo', 'writing'] , version: '1.0.0' },
+   204→   204→  { id: 'S32', name: 'Humanizer', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill humanizer', primaryRole: 'Strip AI writing patterns for human-like copy — anti-AI-detection rewriting', isCustom: false, category: 'Content', color: '#FF2E63', emoji: '✍️', tags: ['content', 'humanizer', 'anti-detection', 'rewriting'] , version: '1.0.0' },
+   205→   205→  { id: 'S33', name: 'Social Media Manager', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill social-media-manager', primaryRole: 'Platform-appropriate post generation for 30 days across LinkedIn, Twitter, Instagram, TikTok', isCustom: false, category: 'Content', color: '#FF2E63', emoji: '✍️', tags: ['content', 'social-media', 'post-generation', 'multi-platform'] , version: '1.0.0' },
+   206→   206→  { id: 'S34', name: 'Social Content Pillars', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill social-content-pillars', primaryRole: 'Monthly content calendar for multi-brand social media with 90-day editorial plan', isCustom: false, category: 'Content', color: '#FF2E63', emoji: '✍️', tags: ['content', 'calendar', 'editorial', 'multi-brand'] , version: '1.0.0' },
+   207→   207→
+   208→   208→  // ─── OpenCode-Accomplishments Skills: Strategy ───
+   209→   209→  { id: 'S35', name: 'JTBD Research', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill jtbd-research', primaryRole: '8-step Jobs to be Done product research methodology', isCustom: false, category: 'Strategy', color: '#FFE600', emoji: '🎯', tags: ['strategy', 'jtbd', 'research', 'product'] , version: '1.0.0' },
+   210→   210→  { id: 'S36', name: 'Gumroad Pipeline', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill gumroad-pipeline', primaryRole: 'Lead magnet to funnel to product launch workflow for digital products', isCustom: false, category: 'Strategy', color: '#FFE600', emoji: '🎯', tags: ['strategy', 'gumroad', 'funnel', 'product-launch'] , version: '1.0.0' },
+   211→   211→  { id: 'S37', name: 'Feature Research', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill feature-research', primaryRole: 'Research existing architecture before implementing a complex feature', isCustom: false, category: 'Strategy', color: '#FFE600', emoji: '🎯', tags: ['strategy', 'feature', 'research', 'architecture'] , version: '1.0.0' },
+   212→   212→  { id: 'S38', name: 'Skill Finder', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill skill-finder', primaryRole: 'Skill discovery, evaluation, and installation meta-skill with security vetting', isCustom: false, category: 'Strategy', color: '#FFE600', emoji: '🎯', tags: ['strategy', 'skill-finder', 'evaluation', 'security'] , version: '1.0.0' },
+   213→   213→
+   214→   214→  // ─── OpenCode-Accomplishments Skills: System ───
+   215→   215→  { id: 'S39', name: 'Persistent Memory', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill persistent-memory', primaryRole: 'Structured memory system for agent context continuity', isCustom: false, category: 'System', color: '#A8B2D8', emoji: '⚙️', tags: ['system', 'memory', 'context', 'continuity'] , version: '1.0.0' },
+   216→   216→  { id: 'S40', name: 'System Prompt Sync', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill system-prompt-sync', primaryRole: 'Auto-sync AGENTS.md across all git repos on version tags', isCustom: false, category: 'System', color: '#A8B2D8', emoji: '⚙️', tags: ['system', 'sync', 'agents', 'git'] , version: '1.0.0' },
+   217→   217→  { id: 'S41', name: 'Feedback Loop', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill feedback-loop', primaryRole: 'Iterative improvement cycles from metrics to research', isCustom: false, category: 'System', color: '#A8B2D8', emoji: '⚙️', tags: ['system', 'feedback', 'metrics', 'improvement'] , version: '1.0.0' },
+   218→   218→  { id: 'S42', name: 'Context Compressor', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill context-compressor', primaryRole: 'Compress long contexts preserving critical information', isCustom: false, category: 'System', color: '#A8B2D8', emoji: '⚙️', tags: ['system', 'compression', 'context', 'efficiency'] , version: '1.0.0' },
+   219→   219→  { id: 'S43', name: 'Agent Roles', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill agent-roles', primaryRole: 'Unified multi-agent role system — Builder, Coder, Council, Orchestrator, Plan, Researcher, Reviewer, Scribe', isCustom: false, category: 'System', color: '#A8B2D8', emoji: '⚙️', tags: ['system', 'agents', 'roles', 'orchestration'] , version: '1.0.0' },
+   220→   220→
+   221→   221→  // ─── OpenCode-Accomplishments Skills: Data & Web ───
+   222→   222→  { id: 'S44', name: 'Web Reader', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill web-reader', primaryRole: 'Web page extraction with site crawling and spidering capabilities', isCustom: false, category: 'Data & Web', color: '#64FFDA', emoji: '🌐', tags: ['data-web', 'scraping', 'crawling', 'extraction'] , version: '1.0.0' },
+   223→   223→  { id: 'S45', name: 'Audit Analyzer', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill audit-analyzer', primaryRole: 'Detect and prioritize audit issues — performance, accessibility, monitoring', isCustom: false, category: 'Data & Web', color: '#64FFDA', emoji: '🌐', tags: ['data-web', 'audit', 'performance', 'accessibility'] , version: '1.0.0' },
+   224→   224→  { id: 'S46', name: 'Web Design Guidelines', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill web-design-guidelines', primaryRole: 'Quick self-audit checklist for design consistency — typography, color, spacing, accessibility', isCustom: false, category: 'Data & Web', color: '#64FFDA', emoji: '🌐', tags: ['data-web', 'design', 'guidelines', 'audit'] , version: '1.0.0' },
+   225→   225→  { id: 'S47', name: 'Code Research', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill code-research', primaryRole: 'Research open-source repositories to understand how something is built', isCustom: false, category: 'Data & Web', color: '#64FFDA', emoji: '🌐', tags: ['data-web', 'research', 'open-source', 'codebase'] , version: '1.0.0' },
+   226→   226→  { id: 'S48', name: 'Explore', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill explore', primaryRole: 'Search a codebase using codebase_search tool — saves time and tokens over grep', isCustom: false, category: 'Data & Web', color: '#64FFDA', emoji: '🌐', tags: ['data-web', 'search', 'codebase', 'efficiency'] , version: '1.0.0' },
+   227→   227→
+   228→   228→  // ─── OpenCode-Accomplishments Skills: Creative ───
+   229→   229→  { id: 'S49', name: 'Photography AI', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill photography-ai', primaryRole: 'Professional visual engineering framework with batch processing, prompt engineering, cinematic sequences', isCustom: false, category: 'Creative', color: '#FF9FF3', emoji: '🎭', tags: ['creative', 'photography', 'visual', 'prompt-engineering'] , version: '1.0.0' },
+   230→   230→  { id: 'S50', name: 'Output Formatter', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill output-formatter', primaryRole: 'Strict formatting rules for all output types — JSON, tables, markdown', isCustom: false, category: 'Creative', color: '#FF9FF3', emoji: '🎭', tags: ['creative', 'formatting', 'json', 'markdown'] , version: '1.0.0' },
+   231→   231→
+   232→   232→  // ─── OpenCode-Accomplishments Skills: MCP Servers ───
+   233→   233→  { id: 'S51', name: 'MCP Stack Curator', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill mcp-stack-curator', primaryRole: 'Intelligent MCP server stack builder — recommends optimal 4-server combinations with synergy analysis', isCustom: false, category: 'MCP Servers', color: '#C77DFF', emoji: '🔌', tags: ['mcp-servers', 'curation', 'stack', 'synergy'] , version: '1.0.0' },
+   234→   234→  { id: 'S52', name: 'MCP Registry', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill mcp-registry', primaryRole: 'Curated directory of 78+ free MCP servers across 14 categories with deduplication and ratings', isCustom: false, category: 'MCP Servers', color: '#C77DFF', emoji: '🔌', tags: ['mcp-servers', 'registry', 'directory', 'ratings'] , version: '1.0.0' },
+   235→   235→  { id: 'S53', name: 'MCP Security Scanner', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill mcp-security-scanner', primaryRole: 'Security-first vetting for MCP server installations — red flag detection, permission auditing, scope analysis', isCustom: false, category: 'MCP Servers', color: '#C77DFF', emoji: '🔌', tags: ['mcp-servers', 'security', 'vetting', 'audit'] , version: '1.0.0' },
+   236→   236→
+   237→   237→  // ─── OpenCode-Accomplishments Skills: Agent Modes ───
+   238→   238→  { id: 'S54', name: 'Rabbit — Multiply Ideas', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill rabbit-multiply-ideas', primaryRole: 'Rapid ideation — take an idea and multiply it into 10 different variations with different angles, audiences, and formats', isCustom: false, category: 'Agent Modes', color: '#FF6B35', emoji: '🐇', tags: ['agent-modes', 'ideation', 'brainstorming', 'divergent'] , version: '1.0.0' },
+   239→   239→  { id: 'S55', name: 'Owl — Deep Analysis', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill owl-deep-analysis', primaryRole: 'Systematic decomposition — examine problems from multiple perspectives and identify hidden factors', isCustom: false, category: 'Agent Modes', color: '#FF6B35', emoji: '🦉', tags: ['agent-modes', 'analysis', 'decomposition', 'convergent'] , version: '1.0.0' },
+   240→   240→  { id: 'S56', name: 'Ant — Break Into Steps', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill ant-break-into-steps', primaryRole: 'Task decomposition — break goals into the smallest possible steps someone could realistically complete', isCustom: false, category: 'Agent Modes', color: '#FF6B35', emoji: '🐜', tags: ['agent-modes', 'decomposition', 'steps', 'incremental'] , version: '1.0.0' },
+   241→   241→  { id: 'S57', name: 'Eagle — Big Picture', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill eagle-big-picture', primaryRole: 'Strategic vision — see the long-term strategy and explain how all the pieces connect from a birds-eye view', isCustom: false, category: 'Agent Modes', color: '#FF6B35', emoji: '🦅', tags: ['agent-modes', 'strategy', 'vision', 'cross-domain'] , version: '1.0.0' },
+   242→   242→  { id: 'S58', name: 'Dolphin — Creative Solutions', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill dolphin-creative-solutions', primaryRole: 'Lateral thinking — generate curious, playful, and inventive solutions that most people would not normally consider', isCustom: false, category: 'Agent Modes', color: '#FF6B35', emoji: '🐬', tags: ['agent-modes', 'creative', 'lateral', 'inventive'] , version: '1.0.0' },
+   243→   243→  { id: 'S59', name: 'Beaver — Build Systems', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill beaver-build-systems', primaryRole: 'Systems design — design practical systems that solve problems step by step, like a beaver building a dam', isCustom: false, category: 'Agent Modes', color: '#FF6B35', emoji: '🦫', tags: ['agent-modes', 'systems', 'architecture', 'builder'] , version: '1.0.0' },
+   244→   244→  { id: 'S60', name: 'Elephant — Cross-Field', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill elephant-cross-field', primaryRole: 'Interdisciplinary bridging — connect ideas to insights from other fields such as psychology, economics, science, or history', isCustom: false, category: 'Agent Modes', color: '#FF6B35', emoji: '🐘', tags: ['agent-modes', 'interdisciplinary', 'synthesis', 'bridging'] , version: '1.0.0' },
+   245→   245→
+   246→   246→  // ─── OpenCode-Accomplishments Skills: Utility ───
+   247→   247→  { id: 'S61', name: 'Sample Hello Skill', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill sample-hello-skill', primaryRole: 'Hello-world demo skill for testing skill activation and validation', isCustom: false, category: 'Utility', color: '#A8B2D8', emoji: '🔧', tags: ['utility', 'demo', 'testing', 'validation'] , version: '1.0.0' },
+   248→   248→
+   249→   249→  // ─── New Skills (S62-S64) ───
+   250→   250→  { id: 'S62', name: 'PictoFlux AI', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill pictoflux-ai', primaryRole: 'Free unlimited AI image generation via MCP protocol — text-to-image, style transfer, batch generation', isCustom: false, category: 'MCP Servers', color: '#C77DFF', emoji: '🖼️', tags: ['mcp-servers', 'image-gen', 'ai', 'visual', 'style-transfer'] , version: '1.0.0' },
+   251→   251→  { id: 'S63', name: 'Stitch Loop', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill stitch-loop', primaryRole: 'Autonomous iterative site-building loop — baton-passing system for continuous Stitch-powered web development', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🔄', tags: ['design-ui', 'generation', 'iterative', 'autonomous', 'loop'] , version: '1.0.0' },
+   252→   252→  { id: 'S64', name: 'Skill Architect', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill skill-architect', primaryRole: 'Create, design, refactor, and optimize AI agent skills following the Agent Skills open standard', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '🏗️', tags: ['development', 'skill-creation', 'design', 'optimization', 'standard'] , version: '1.0.0' },
+   253→   253→];
+   254→   254→
+   255→   255→// ─── Skill Categories (grouped from skills array) ───
+   256→   256→export const skillCategories: SkillCategory[] = Object.values(CATEGORIES).map(cat => cat).length > 0
+   257→   257→  ? Object.entries(CATEGORIES).map(([name, { color, emoji }]) => ({
+   258→   258→      name,
+   259→   259→      color,
+   260→   260→      emoji,
+   261→   261→      skills: skills.filter(s => s.category === name),
+   262→   262→    })).filter(c => c.skills.length > 0)
+   263→   263→  : [];
+   264→   264→
+   265→   265→// ─── 5 Design Options ───
+   266→   266→export const options: DesignOption[] = [
+   267→   267→  {
+   268→   268→    id: 'opt1',
+   269→   269→    name: 'The Autopoietic Canvas',
+   270→   270→    tagline: 'Self-Evolving Design System',
+   271→   271→    dominantSkill: 'Stitch Design',
+   272→   272→    dominantSkillId: 'S01',
+   273→   273→    philosophy: 'A self-evolving design where each iteration reads the current state, identifies gaps, and autonomously generates the next version. The interface builds and refines itself through iterative generation cycles inspired by biological autopoiesis.',
+   274→   274→    skillWeights: { S01: 40, S03: 30, S02: 15, S04: 15 },
+   275→   275→    sp7Vector: [5, 4, 3, 5, 2, 3, 3],
+   276→   276→    sp7Weighted: 27.0,
+   277→   277→    colorFrom: '#667eea',
+   278→   278→    colorTo: '#764ba2',
+   279→   279→    accentColor: '#667eea',
+   280→   280→    motionStyle: 'Organic, spring-based — progressive refinement animations',
+   281→   281→    colorStrategy: 'Evolutionary palette — adjusts across iterations based on UX audit',
+   282→   282→    typography: 'Adaptive scale — Inter/Satoshi with wide weight range',
+   283→   283→    mobileApproach: 'Touch-first loop — single-column base expanding outward',
+   284→   284→    recommended: 'Products with rapidly evolving content, design systems that must scale without manual maintenance',
+   285→   285→  },
+   286→   286→  {
+   287→   287→    id: 'opt2',
+   288→   288→    name: 'Kinetic Spatial',
+   289→   289→    tagline: 'Motion-First Design Language',
+   290→   290→    dominantSkill: 'Framer Motion Animator',
+   291→   291→    dominantSkillId: 'S02',
+   292→   292→    philosophy: 'Motion IS the design language. Every spatial relationship and information hierarchy is expressed through choreographed motion. The design begins with a Motion Brief, not a visual brief.',
+   293→   293→    skillWeights: { S02: 40, S03: 25, S01: 20, S04: 15 },
+   294→   294→    sp7Vector: [5, 5, 3, 5, 2, 3, 3],
+   295→   295→    sp7Weighted: 28.5,
+   296→   296→    colorFrom: '#f093fb',
+   297→   297→    colorTo: '#f5576c',
+   298→   298→    accentColor: '#f5576c',
+   299→   299→    motionStyle: 'Choreographed multi-tier — Macro (400-600ms), Meso (200-350ms), Micro (80-150ms)',
+   300→   300→    colorStrategy: 'Motion-legible palette — sufficient contrast during animated transitions',
+   301→   301→    typography: 'Variable weight animated — weight shifts for emphasis',
+   302→   302→    mobileApproach: 'Gesture-driven — swipe, long-press, pull-to-refresh with elastic physics',
+   303→   303→    recommended: 'Products where interaction quality is a core differentiator, immersive storytelling',
+   304→   304→  },
+   305→   305→  {
+   306→   306→    id: 'opt3',
+   307→   307→    name: 'Chromatic Minimal',
+   308→   308→    tagline: 'Precision Through Restraint',
+   309→   309→    dominantSkill: 'UI/UX Pro Max',
+   310→   310→    dominantSkillId: 'S03',
+   311→   311→    philosophy: 'Ultra-modern sophistication through radical restraint. Every element exists for a reason. Two-color system, restricted typography, minimal animations — the absence of decoration is the design statement.',
+   312→   312→    skillWeights: { S03: 40, S01: 25, S02: 20, S04: 15 },
+   313→   313→    sp7Vector: [3, 3, 2, 2, 4, 3, 4],
+   314→   314→    sp7Weighted: 17.7,
+   315→   315→    colorFrom: '#2d3436',
+   316→   316→    colorTo: '#636e72',
+   317→   317→    accentColor: '#dfe6e9',
+   318→   318→    motionStyle: 'Precision — 3 animation types max per page, cubic-bezier only, fixed durations',
+   319→   319→    colorStrategy: 'Two-color system — 95% neutral, 5% accent on interactive elements only',
+   320→   320→    typography: 'Single variable font — Light/Regular/Semibold only, strict 1.25 scale ratio',
+   321→   321→    mobileApproach: 'Performance minimalism — fewer elements = faster rendering, generous touch targets',
+   322→   322→    recommended: 'Luxury brands, professional services, editorial platforms, content-heavy apps',
+   323→   323→  },
+   324→   324→  {
+   325→   325→    id: 'opt4',
+   326→   326→    name: 'Glass Depth',
+   327→   327→    tagline: 'Architectural Layered Surfaces',
+   328→   328→    dominantSkill: '21st.dev Registry',
+   329→   329→    dominantSkillId: 'S04',
+   330→   330→    philosophy: 'The interface as a 3D space of translucent, layered surfaces. Frosted glass panels float at different depths, creating spatial hierarchy. Elements closer appear sharper and more interactive.',
+   331→   331→    skillWeights: { S04: 35, S03: 25, S02: 25, S01: 15 },
+   332→   332→    sp7Vector: [5, 4, 3, 5, 2, 3, 3],
+   333→   333→    sp7Weighted: 27.0,
+   334→   334→    colorFrom: '#0F2027',
+   335→   335→    colorTo: '#2C5364',
+   336→   336→    accentColor: '#667eea',
+   337→   337→    motionStyle: 'Parallax & 3D transforms — depth-driven motion with tilt response',
+   338→   338→    colorStrategy: 'Depth-gradient palette — 5 layers from deep blur to sharp foreground',
+   339→   339→    typography: 'Depth-aware sizing — larger at surface, smaller at depth layers',
+   340→   340→    mobileApproach: 'Reduced depth (2-3 layers), tilt parallax via accelerometer, gradient-over-blur fallback',
+   341→   341→    recommended: 'Creative agencies, music/entertainment, fintech dashboards, premium visual impact',
+   342→   342→  },
+   343→   343→  {
+   344→   344→    id: 'opt5',
+   345→   345→    name: 'Neo-Industrial',
+   346→   346→    tagline: 'Raw Structural Power',
+   347→   347→    dominantSkill: 'UI/UX Pro Max + Framer Motion',
+   348→   348→    dominantSkillId: 'S03+S02',
+   349→   349→    philosophy: 'Bold, unapologetic design from brutalist architecture and industrial aesthetics. Visible grids, stark contrasts, heavy typography, mechanical interactions. Confidence through raw visual authority.',
+   350→   350→    skillWeights: { S03: 35, S02: 30, S04: 20, S01: 15 },
+   351→   351→    sp7Vector: [4, 4, 3, 4, 3, 3, 3],
+   352→   352→    sp7Weighted: 23.5,
+   353→   353→    colorFrom: '#0A0A0A',
+   354→   354→    colorTo: '#1A1A1A',
+   355→   355→    accentColor: '#FFD600',
+   356→   356→    motionStyle: 'Mechanical — steps() timing, snap transitions, typewriter reveals',
+   357→   357→    colorStrategy: 'Safety-color accent — near-black/off-white with single bold yellow/orange/red',
+   358→   358→    typography: 'Monospace family — JetBrains Mono/IBM Plex Mono, extreme 3:1+ size contrasts',
+   359→   359→    mobileApproach: 'Snap-lock scroll, press-and-release (200ms hold), visible grid indicators',
+   360→   360→    recommended: 'Developer tools, cybersecurity, creative studios projecting technical authority',
+   361→   361→  },
+   362→   362→];
+   363→   363→
+   364→   364→// ─── SP-7 Dimensions ───
+   365→   365→export const dimensions: SP7Dimension[] = [
+   366→   366→  { id: 'VD', name: 'Visual Density', shortName: 'VD', description: 'How much visual information the section must convey' },
+   367→   367→  { id: 'IR', name: 'Interactivity Requirement', shortName: 'IR', description: 'Degree of active user engagement beyond passive scrolling' },
+   368→   368→  { id: 'DC', name: 'Data Complexity', shortName: 'DC', description: 'Structural complexity of data the section must display' },
+   369→   369→  { id: 'MN', name: 'Motion Need', shortName: 'MN', description: 'Degree to which animation benefits the section' },
+   370→   370→  { id: 'AW', name: 'Accessibility Weight', shortName: 'AW', description: 'Importance of WCAG compliance and inclusive design' },
+   371→   371→  { id: 'AR', name: 'AI Redirect Value', shortName: 'AR', description: 'How likely an AI agent is to redirect here for guidance' },
+   372→   372→  { id: 'CR', name: 'Component Reusability', shortName: 'CR', description: 'How likely components are to be reused across projects' },
+   373→   373→];
+   374→   374→
+   375→   375→// ─── Weight Profiles ───
+   376→   376→export const weightProfiles: WeightProfile[] = [
+   377→   377→  { name: 'Visual', weights: [0.25, 0.20, 0.15, 0.20, 0.05, 0.05, 0.10] },
+   378→   378→  { name: 'Reference', weights: [0.10, 0.10, 0.20, 0.05, 0.15, 0.30, 0.10] },
+   379→   379→  { name: 'Comparison', weights: [0.15, 0.25, 0.25, 0.10, 0.05, 0.10, 0.10] },
+   380→   380→  { name: 'Portal', weights: [0.10, 0.15, 0.10, 0.05, 0.20, 0.30, 0.10] },
+   381→   381→];
+   382→   382→
+   383→   383→// ─── Intent Routes ───
+   384→   384→export const intentRoutes: IntentRoute[] = [
+   385→   385→  { category: 'Skill Installation', keywords: ['install', 'add skill', 'npx', 'setup', 'configure'], targetSection: 'skill-reference', confidence: 0.8, fallback: 'implementation' },
+   386→   386→  { category: 'Design Philosophy', keywords: ['philosophy', 'approach', 'aesthetic', 'style', 'visual'], targetSection: 'options', confidence: 0.7, fallback: 'comparative' },
+   387→   387→  { category: 'Algorithm Logic', keywords: ['algorithm', 'scoring', 'prioritization', 'SP-7', 'dimension'], targetSection: 'algorithm', confidence: 0.9, fallback: 'skill-reference' },
+   388→   388→  { category: 'Comparison', keywords: ['compare', 'versus', 'difference', 'matrix', 'which option'], targetSection: 'comparative', confidence: 0.85, fallback: 'skill-reference' },
+   389→   389→  { category: 'Build Instructions', keywords: ['build', 'implement', 'deploy', 'sequence', 'QA'], targetSection: 'implementation', confidence: 0.8, fallback: 'skill-reference' },
+   390→   390→  { category: 'Motion/Animation', keywords: ['animation', 'motion', 'scroll', 'parallax', 'spring'], targetSection: 'options', confidence: 0.8, fallback: 'algorithm' },
+   391→   391→  { category: 'Minimalist Design', keywords: ['minimal', 'clean', 'restraint', 'Swiss', 'luxury'], targetSection: 'options', confidence: 0.8, fallback: 'comparative' },
+   392→   392→  { category: 'Glassmorphism', keywords: ['glass', 'depth', 'blur', 'translucent', 'frosted'], targetSection: 'options', confidence: 0.8, fallback: 'comparative' },
+   393→   393→  { category: 'Industrial/Brutalist', keywords: ['industrial', 'brutalist', 'monospace', 'mechanical'], targetSection: 'options', confidence: 0.8, fallback: 'comparative' },
+   394→   394→  { category: 'Iterative Design', keywords: ['iterate', 'loop', 'evolve', 'generation', 'baton'], targetSection: 'options', confidence: 0.8, fallback: 'algorithm' },
+   395→   395→];
+   396→   396→
+   397→   397→// ─── Comparison matrix data ───
+   398→   398→export const comparisonMatrix = [
+   399→   399→  { dimension: 'Core Principle', opt1: 'Self-evolving design', opt2: 'Motion as language', opt3: 'Precision restraint', opt4: 'Architectural depth', opt5: 'Raw structural power' },
+   400→   400→  { dimension: 'Dominant Skill', opt1: 'Stitch Design', opt2: 'Framer Motion', opt3: 'UI/UX Pro Max', opt4: '21st.dev Registry', opt5: 'UI/UX Pro Max + FM' },
+   401→   401→  { dimension: 'Motion Style', opt1: 'Organic, spring-based', opt2: 'Choreographed, multi-tier', opt3: 'Minimal, precise', opt4: 'Parallax, 3D transforms', opt5: 'Mechanical, stepped' },
+   402→   402→  { dimension: 'Color Strategy', opt1: 'Evolutionary palette', opt2: 'Motion-legible palette', opt3: 'Two-color system', opt4: 'Depth-gradient palette', opt5: 'Safety-color accent' },
+   403→   403→  { dimension: 'Typography', opt1: 'Adaptive scale', opt2: 'Variable weight animated', opt3: 'Single family, 3 weights', opt4: 'Depth-aware sizing', opt5: 'Monospace, extreme scale' },
+   404→   404→  { dimension: 'Mobile Approach', opt1: 'Touch-first loop', opt2: 'Gesture-driven motion', opt3: 'Performance minimalism', opt4: 'Reduced depth layers', opt5: 'Snap-lock interaction' },
+   405→   405→  { dimension: 'Complexity', opt1: 'High (systemic)', opt2: 'High (choreographic)', opt3: 'Low (constraint-driven)', opt4: 'High (spatial)', opt5: 'Medium (spec-driven)' },
+   406→   406→  { dimension: 'Emotional Tone', opt1: 'Alive, adaptive', opt2: 'Fluid, responsive', opt3: 'Refined, confident', opt4: 'Immersive, premium', opt5: 'Powerful, direct' },
+   407→   407→];
+   408→   408→
+   409→   409→// ─── Skill utilization heatmap ───
+   410→   410→export const heatmapData = [
+   411→   411→  { skill: 'S01 Stitch Design', values: [0,0,1,0,5,1,0,1,0,0,1,0] },
+   412→   412→  { skill: 'S02 Framer Motion', values: [3,2,0,0,3,5,3,3,5,0,0,0] },
+   413→   413→  { skill: 'S03 UI/UX Pro Max', values: [3,3,2,1,2,2,5,2,3,1,1,1] },
+   414→   414→  { skill: 'S04 21st.dev Reg', values: [0,0,1,0,1,1,1,3,0,0,1,0] },
+   415→   415→  { skill: 'S05 GSAP Skills', values: [5,2,0,0,3,3,0,5,3,0,0,0] },
+   416→   416→  { skill: 'S06 Remotion', values: [0,3,0,0,3,3,0,3,0,0,0,0] },
+   417→   417→  { skill: 'S07 Mermaid', values: [0,2,3,5,1,0,0,0,3,1,3,3] },
+   418→   418→  { skill: 'S08 AntV Chart', values: [0,0,3,3,0,0,0,0,0,5,0,2] },
+   419→   419→  { skill: 'S09 AI Image Gen', values: [5,0,0,0,5,5,3,5,3,0,0,0] },
+   420→   420→  { skill: 'S10 shadcn/ui', values: [0,0,5,0,0,0,3,1,0,5,3,0] },
+   421→   421→  { skill: 'S11 Playwright', values: [0,0,0,0,0,0,2,0,0,0,1,0] },
+   422→   422→  { skill: 'S12 Chart Viz', values: [0,0,0,0,0,0,0,0,0,3,0,0] },
+   423→   423→  { skill: 'S13 AI Portal', values: [0,0,3,0,0,0,0,0,0,0,1,5] },
+   424→   424→  { skill: 'S14 Stack Prior.', values: [0,0,0,3,0,0,0,0,0,0,3,0] },
+   425→   425→  { skill: 'S15 Matrix Engine', values: [0,0,5,2,0,0,0,0,0,5,0,0] },
+   426→   426→  { skill: 'S16 Design Algo', values: [0,0,0,5,0,0,0,0,0,0,0,3] },
+   427→   427→];
+   428→   428→
+   429→   429→export const sectionLabels = ['Hero', 'Exec', 'Ref', 'Algo', 'Opt1', 'Opt2', 'Opt3', 'Opt4', 'Opt5', 'Comp', 'Impl', 'Portal'];
+   430→   430→
+   431→   431→// ─── Skill Conflict Matrix ───
+   432→   432→// Defines known incompatibilities between skills.
+   433→   433→// Used by the pipeline builder to detect conflicts before execution.
+   434→   434→
+   435→   435→export const skillConflicts: SkillConflict[] = [
+   436→   436→  { skillA: 'S02', skillB: 'S05', severity: 'warning', reason: 'Framer Motion and GSAP both manage animation lifecycle — may conflict on the same DOM elements', alternative: 'Use GSAP for scroll-driven, Framer Motion for UI transitions' },
+   437→   437→  { skillA: 'S01', skillB: 'S63', severity: 'info', reason: 'Stitch Design and Stitch Loop share the same core engine; Stitch Loop adds autonomous iteration on top' },
+   438→   438→  { skillA: 'S03', skillB: 'S17', severity: 'info', reason: 'UI/UX Pro Max v7 and Anthropic Frontend Design overlap in design system generation; different aesthetics' },
+   439→   439→  { skillA: 'S10', skillB: 'S04', severity: 'warning', reason: 'shadcn/ui and 21st.dev Registry both install React components — may produce conflicting component versions', alternative: 'Use 21st.dev for discovery, shadcn/ui for scaffolding' },
+   440→   440→  { skillA: 'S51', skillB: 'S52', severity: 'info', reason: 'MCP Stack Curator and MCP Registry overlap in server discovery; Curator adds composition logic' },
+   441→   441→  { skillA: 'S26', skillB: 'S51', severity: 'info', reason: 'Deployment Manager and MCP Stack Curator both handle infrastructure; different scopes (hosting vs. MCP)' },
+   442→   442→  { skillA: 'S31', skillB: 'S32', severity: 'warning', reason: 'SEO Content Writer and Humanizer both transform text — running both may over-process content', alternative: 'Write with SEO skill first, then selectively humanize sections' },
+   443→   443→];
+   444→   444→
+   445→   445→// ─── Skill Dependency Graph ───
+   446→   446→// Defines prerequisite relationships between skills.
+   447→   447→// Used by the pipeline builder for DAG construction.
+   448→   448→
+   449→   449→export const skillDependencies: SkillDependency[] = [
+   450→   450→  // Foundation skills that enhance higher-tier skills
+   451→   451→  { skillId: 'S05', dependsOnSkillId: 'S02', relationship: 'enhances' },
+   452→   452→  { skillId: 'S06', dependsOnSkillId: 'S02', relationship: 'enhances' },
+   453→   453→  { skillId: 'S10', dependsOnSkillId: 'S04', relationship: 'enhances' },
+   454→   454→  { skillId: 'S12', dependsOnSkillId: 'S08', relationship: 'enhances' },
+   455→   455→  { skillId: 'S63', dependsOnSkillId: 'S01', relationship: 'requires' },
+   456→   456→  // Portal skills that depend on foundation skills
+   457→   457→  { skillId: 'S14', dependsOnSkillId: 'S16', relationship: 'enhances' },
+   458→   458→  { skillId: 'S13', dependsOnSkillId: 'S14', relationship: 'enhances' },
+   459→   459→  { skillId: 'S51', dependsOnSkillId: 'S52', relationship: 'requires' },
+   460→   460→  { skillId: 'S53', dependsOnSkillId: 'S52', relationship: 'requires' },
+   461→   461→  { skillId: 'S38', dependsOnSkillId: 'S51', relationship: 'enhances' },
+   462→   462→  // Conflicts also recorded here for graph traversal
+   463→   463→  { skillId: 'S02', dependsOnSkillId: 'S05', relationship: 'conflicts' },
+   464→   464→  { skillId: 'S01', dependsOnSkillId: 'S63', relationship: 'enhances' },
+   465→   465→  { skillId: 'S31', dependsOnSkillId: 'S32', relationship: 'conflicts' },
+   466→   466→];
+   467→   467→
