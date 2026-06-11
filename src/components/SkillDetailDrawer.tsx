@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { Skill, skills, dimensions } from '@/lib/skill-data';
+import { useState, useMemo } from 'react';
+import { Skill, skills, dimensions, options } from '@/lib/skill-data';
 import { useSkillStore } from '@/lib/skill-store';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Copy, ShoppingBasket, Check, FileText, BarChart3, Lightbulb, Eye } from 'lucide-react';
+import { Copy, ShoppingBasket, Check, FileText, BarChart3, Lightbulb, Eye, Users, Link2, Layers } from 'lucide-react';
+import { SkillMarkdownRenderer } from './SkillMarkdownRenderer';
 import {
   RadarChart,
   PolarGrid,
@@ -47,6 +47,14 @@ const categoryAdjustments: Record<string, number[]> = {
   'Utility': [0, 0, 0, 0, 0, 0, 1],
 };
 
+// Mock install counts by tier
+const tierInstallCounts: Record<number, string> = {
+  0: '500K+',
+  1: '200K+',
+  2: '100K+',
+  3: '50K+',
+};
+
 function generateSP7Vector(skill: Skill): number[] {
   const base = tierBaseVectors[skill.tier] || tierBaseVectors[0];
   const adj = categoryAdjustments[skill.category] || [0, 0, 0, 0, 0, 0, 0];
@@ -56,72 +64,30 @@ function generateSP7Vector(skill: Skill): number[] {
 export function SkillDetailDrawer({ skill }: SkillDetailDrawerProps) {
   const { setSelectedSkill, addToClipboard, addToBasket, removeFromBasket, isInBasket } = useSkillStore();
   const [copied, setCopied] = useState(false);
-  const [copiedFull, setCopiedFull] = useState(false);
-  const [fetchState, setFetchState] = useState<{
-    content: string | null;
-    length: number;
-    lastFetched: Date | null;
-    loading: boolean;
-    skillId: string | null;
-  }>({ content: null, length: 0, lastFetched: null, loading: false, skillId: null });
 
   const open = skill !== null;
-  const loading = fetchState.loading && fetchState.skillId === skill?.id;
-  const skillContent = fetchState.skillId === skill?.id ? fetchState.content : null;
-  const contentLength = fetchState.skillId === skill?.id ? fetchState.length : 0;
-  const lastFetched = fetchState.skillId === skill?.id ? fetchState.lastFetched : null;
-
-  useEffect(() => {
-    if (!skill) return;
-    let cancelled = false;
-    const skillId = skill.id;
-    const skillDir = skill.installCommand.includes('--skill ')
-      ? skill.installCommand.split('--skill ')[1].trim()
-      : skill.name.toLowerCase().replace(/\s+/g, '-');
-    // Use microtask to defer state update out of the effect body
-    queueMicrotask(() => {
-      if (cancelled) return;
-      setFetchState((prev) => ({
-        ...prev,
-        loading: true,
-        skillId,
-        content: prev.skillId === skillId ? prev.content : null,
-      }));
-    });
-    fetch(`/api/skill-content?skill=${encodeURIComponent(skillDir)}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (cancelled) return;
-        setFetchState((prev) =>
-          prev.skillId === skillId
-            ? { content: data?.content || null, length: data?.length || 0, lastFetched: new Date(), loading: false, skillId }
-            : prev
-        );
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setFetchState((prev) =>
-          prev.skillId === skillId
-            ? { content: null, length: 0, lastFetched: prev.lastFetched, loading: false, skillId }
-            : prev
-        );
-      });
-    return () => { cancelled = true; };
-  }, [skill]);
 
   const handleCopy = async () => {
     if (!skill) return;
-    await navigator.clipboard.writeText(skill.installCommand);
-    addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
-  const handleCopyFull = async () => {
-    if (!skillContent) return;
-    await navigator.clipboard.writeText(skillContent);
-    setCopiedFull(true);
-    setTimeout(() => setCopiedFull(false), 1500);
+    try {
+      await navigator.clipboard.writeText(skill.installCommand);
+      addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Fallback for insecure contexts
+      const textarea = document.createElement('textarea');
+      textarea.value = skill.installCommand;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
   };
 
   const handleBasket = () => {
@@ -157,6 +123,26 @@ export function SkillDetailDrawer({ skill }: SkillDetailDrawerProps) {
       .slice(0, 6);
   }, [skill]);
 
+  // Dependencies: skills with tag overlap >= 2
+  const dependencies = useMemo(() => {
+    if (!skill) return [];
+    return skills
+      .filter((s) => s.id !== skill.id)
+      .map((s) => ({
+        skill: s,
+        overlap: s.tags.filter((t) => skill.tags.includes(t)).length,
+      }))
+      .filter((r) => r.overlap >= 2)
+      .sort((a, b) => b.overlap - a.overlap)
+      .slice(0, 8);
+  }, [skill]);
+
+  // Compatibility: which design options use this skill
+  const compatibleOptions = useMemo(() => {
+    if (!skill) return [];
+    return options.filter((opt) => skill.id in opt.skillWeights);
+  }, [skill]);
+
   const tagCloud = useMemo(() => {
     if (!skill) return [];
     const tagCounts: Record<string, number> = {};
@@ -183,6 +169,11 @@ export function SkillDetailDrawer({ skill }: SkillDetailDrawerProps) {
 
   const inBasket = isInBasket(skill.id);
   const sp7Vector = generateSP7Vector(skill);
+
+  // Compute skillDir for the markdown renderer
+  const skillDir = skill.installCommand.includes('--skill ')
+    ? skill.installCommand.split('--skill ')[1].trim()
+    : skill.name.toLowerCase().replace(/\s+/g, '-');
 
   return (
     <Sheet open={open} onOpenChange={(o) => !o && setSelectedSkill(null)}>
@@ -236,6 +227,11 @@ export function SkillDetailDrawer({ skill }: SkillDetailDrawerProps) {
                     Custom
                   </Badge>
                 )}
+                {/* Install Count Badge */}
+                <Badge variant="secondary" className="gap-1">
+                  <Users className="h-3 w-3" />
+                  {tierInstallCounts[skill.tier]} installs
+                </Badge>
               </div>
 
               {/* Description */}
@@ -273,6 +269,65 @@ export function SkillDetailDrawer({ skill }: SkillDetailDrawerProps) {
                 </div>
               </div>
 
+              {/* Dependencies Section */}
+              {dependencies.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                    <Link2 className="h-3.5 w-3.5" />
+                    Dependencies
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-2">Skills with strong tag overlap (≥2 shared tags)</p>
+                  <ScrollArea className="max-h-32">
+                    <div className="flex flex-wrap gap-1.5">
+                      {dependencies.map(({ skill: dep, overlap }) => (
+                        <button
+                          key={dep.id}
+                          onClick={() => setSelectedSkill(dep.id)}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-muted/50 hover:bg-muted text-foreground transition-colors"
+                        >
+                          <span>{dep.emoji}</span>
+                          {dep.name}
+                          <Badge variant="secondary" className="text-[9px] h-4 px-1 ml-0.5">{overlap}</Badge>
+                        </button>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              )}
+
+              {/* Compatibility Section */}
+              {compatibleOptions.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                    <Layers className="h-3.5 w-3.5" />
+                    Design Compatibility
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-2">Design options that leverage this skill</p>
+                  <div className="space-y-1.5">
+                    {compatibleOptions.map((opt) => (
+                      <div
+                        key={opt.id}
+                        className="flex items-center gap-2 p-2 rounded-lg bg-muted/30"
+                      >
+                        <div
+                          className="w-3 h-3 rounded-full shrink-0"
+                          style={{ background: `linear-gradient(135deg, ${opt.colorFrom}, ${opt.colorTo})` }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium truncate">{opt.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{opt.tagline}</p>
+                        </div>
+                        {opt.skillWeights[skill.id] && (
+                          <Badge variant="secondary" className="text-[10px] shrink-0">
+                            {opt.skillWeights[skill.id]}% weight
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Tags */}
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-2">Tags</h3>
@@ -286,53 +341,9 @@ export function SkillDetailDrawer({ skill }: SkillDetailDrawerProps) {
               </div>
             </TabsContent>
 
-            {/* ─── Tab 2: SKILL.md ─── */}
-            <TabsContent value="skillmd" className="mt-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-muted-foreground">
-                  {contentLength > 0 && <span>{contentLength} bytes</span>}
-                  {lastFetched && (
-                    <span className="ml-2">
-                      Fetched {lastFetched.toLocaleTimeString()}
-                    </span>
-                  )}
-                </div>
-                {skillContent && (
-                  <Button
-                    size="sm"
-                    variant={copiedFull ? 'default' : 'outline'}
-                    className="h-7 text-xs gap-1"
-                    onClick={handleCopyFull}
-                  >
-                    {copiedFull ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                    {copiedFull ? 'Copied!' : 'Copy Full Content'}
-                  </Button>
-                )}
-              </div>
-
-              {loading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-4 w-5/6" />
-                  <Skeleton className="h-4 w-2/3" />
-                  <Skeleton className="h-4 w-4/5" />
-                  <Skeleton className="h-4 w-1/3" />
-                  <Skeleton className="h-4 w-3/5" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
-              ) : skillContent ? (
-                <div className="bg-muted/30 rounded-lg p-4 max-h-[60vh] overflow-y-auto">
-                  <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-mono leading-relaxed">
-                    {skillContent}
-                  </pre>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <FileText className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
-                  <p className="text-sm text-muted-foreground">No SKILL.md available for this skill.</p>
-                </div>
-              )}
+            {/* ─── Tab 2: SKILL.md (Rich Markdown Renderer) ─── */}
+            <TabsContent value="skillmd" className="mt-4">
+              <SkillMarkdownRenderer skillId={skill.id} skillDir={skillDir} />
             </TabsContent>
 
             {/* ─── Tab 3: Insights ─── */}
@@ -447,7 +458,7 @@ export function SkillDetailDrawer({ skill }: SkillDetailDrawerProps) {
                         borderRadius: '8px',
                         fontSize: '12px',
                       }}
-                      formatter={((value: any, _name: any, props: any) => [
+                      formatter={((value: number, _name: string, props: { payload?: { fullName: string } }) => [
                         `${value}/5`,
                         props?.payload?.fullName || '',
                       ]) as never}

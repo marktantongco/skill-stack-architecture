@@ -12,6 +12,7 @@ import { TierArchitecture } from "@/components/TierArchitecture";
 import { DecisionTree } from "@/components/DecisionTree";
 import { SectionMapping } from "@/components/SectionMapping";
 import { VisualGallery } from "@/components/VisualGallery";
+import { ProxyComparison } from "@/components/ProxyComparison";
 import { SkillMarketplace } from "@/components/SkillMarketplace";
 import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { motion, AnimatePresence, useScroll, useSpring, useReducedMotion } from "framer-motion";
@@ -32,6 +33,7 @@ const navItems = [
   { id: "decision-tree", label: "Decision", num: "09" },
   { id: "section-mapping", label: "Mapping", num: "10" },
   { id: "visual-gallery", label: "Gallery", num: "11" },
+  { id: "proxy-comparison", label: "Proxy", num: "13" },
 ];
 
 /* ─── Scroll Spy Hook ─── */
@@ -318,10 +320,10 @@ export default function Home() {
                 </p>
                 <div className="space-y-6">
                   {[
-                    { tier: "T0", name: "Foundation", count: 4, desc: "Design intelligence, generation, animation, components" },
-                    { tier: "T1", name: "Interactive", count: 4, desc: "Scroll animation, video, diagrams, data visualization" },
-                    { tier: "T2", name: "Visual Asset", count: 4, desc: "Image generation, component styling, testing, custom viz" },
-                    { tier: "T3", name: "Portal", count: 4, desc: "AI redirect, prioritization, matrix engine, algorithm" },
+                    { tier: "T0", name: "Foundation", count: 8, desc: "Design intelligence, generation, animation, components, accessibility" },
+                    { tier: "T1", name: "Interactive", count: 15, desc: "Scroll animation, video, diagrams, data viz, reasoning, development" },
+                    { tier: "T2", name: "Visual Asset", count: 17, desc: "Image generation, component styling, testing, custom viz, content, data" },
+                    { tier: "T3", name: "Portal", count: 24, desc: "AI redirect, prioritization, matrix engine, strategy, agents, systems" },
                   ].map((t) => (
                     <motion.div
                       key={t.tier}
@@ -396,6 +398,10 @@ export default function Home() {
 
         {/* 11 — Visual Asset Gallery */}
         <VisualGallery />
+        <EditorialDivider />
+
+        {/* 13 — Proxy Architecture Comparison */}
+        <ProxyComparison />
       </main>
 
       {/* Editorial Footer — Colophon */}
@@ -413,7 +419,7 @@ export default function Home() {
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 A design algorithm for interactive web skill stack architecture.
-                16 Skills &middot; 4 Tiers &middot; 5 Options &middot; SP-7 Dimensions &middot; 11 Sections.
+                64 Skills &middot; 4 Tiers &middot; 5 Options &middot; SP-7 Dimensions &middot; 11 Categories &middot; 13 Sections.
               </p>
             </div>
             <div className="md:col-span-4">
@@ -421,10 +427,10 @@ export default function Home() {
                 Stack Summary
               </p>
               <div className="space-y-1 text-sm text-muted-foreground">
-                <p>T0: Stitch Design, Framer Motion, UI/UX Pro Max, 21st.dev</p>
-                <p>T1: GSAP, Remotion, Mermaid, AntV</p>
-                <p>T2: AI Image, shadcn, Playwright, D3.js</p>
-                <p>T3: AI Portal, Prioritizer, Matrix, Algorithm</p>
+                <p>T0 (8): Stitch, Framer Motion, UI/UX Pro Max, 21st.dev, Anthropic, Frontend, Vercel, Hello</p>
+                <p>T1 (15): GSAP, Remotion, Mermaid, AntV, Chain of Thought, Socratic, Devils Advocate, Simulation, MCP Builder, Superpowers, Deploy, Browser, React BP, Explained, Stitch Loop</p>
+                <p>T2 (17): AI Image, shadcn, Playwright, Chart Viz, Web Artifacts, SEO, Humanizer, Social Media, Social Pillars, Web Reader, Audit, Design Guide, Code Research, Explore, Photography, Output, PictoFlux</p>
+                <p>T3 (24): AI Portal, Prioritizer, Matrix, Algorithm, JTBD, Gumroad, Feature, Skill Finder, Memory, Sync, Feedback, Compressor, Agent Roles, MCP Stack, MCP Registry, MCP Security, Rabbit, Owl, Ant, Eagle, Dolphin, Beaver, Elephant, Skill Architect</p>
               </div>
             </div>
             <div className="md:col-span-4">

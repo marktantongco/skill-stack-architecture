@@ -20,14 +20,29 @@ interface SkillCardProps {
 }
 
 export function SkillCard({ skill }: SkillCardProps) {
-  const { addToClipboard, addToBasket, removeFromBasket, isInBasket, setSelectedSkill } = useSkillStore();
+  const { addToClipboard, addToBasket, removeFromBasket, isInBasket, setSelectedSkill, basket } = useSkillStore();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(skill.installCommand);
-    addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    try {
+      await navigator.clipboard.writeText(skill.installCommand);
+      addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Fallback for insecure contexts (HTTP, iframe restrictions)
+      const textarea = document.createElement('textarea');
+      textarea.value = skill.installCommand;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
   }, [skill, addToClipboard]);
 
   const handleBasket = useCallback(() => {
@@ -74,9 +89,14 @@ export function SkillCard({ skill }: SkillCardProps) {
         {skill.primaryRole}
       </p>
 
-      {/* Install Command Preview */}
-      <div className="bg-muted/50 rounded-md p-2 mb-3 font-mono text-[10px] text-muted-foreground overflow-hidden">
-        <code className="truncate block">{skill.installCommand}</code>
+      {/* Install Command Preview with green pulse indicator */}
+      <div className="bg-muted/50 rounded-md p-2 mb-3 font-mono text-[10px] text-muted-foreground overflow-hidden relative">
+        <code className="truncate block pr-4">{skill.installCommand}</code>
+        {/* Green pulse dot indicating one-click copyable */}
+        <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+        </span>
       </div>
 
       {/* Actions */}
@@ -93,11 +113,17 @@ export function SkillCard({ skill }: SkillCardProps) {
         <Button
           size="sm"
           variant={inBasket ? 'default' : 'outline'}
-          className="h-8 text-xs gap-1"
+          className="h-8 text-xs gap-1 relative"
           onClick={handleBasket}
           style={inBasket ? { backgroundColor: skill.color, color: '#1A1A1A' } : {}}
         >
           <ShoppingBasket className="h-3 w-3" />
+          {/* Basket count badge when in basket */}
+          {inBasket && (
+            <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+              {basket.findIndex(b => b.skillId === skill.id) + 1}
+            </span>
+          )}
         </Button>
         <Button
           size="sm"

@@ -167,6 +167,11 @@ export const skills: Skill[] = [
 
   // ─── OpenCode-Accomplishments Skills: Utility ───
   { id: 'S61', name: 'Sample Hello Skill', tier: 0, tierName: 'Foundation', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill sample-hello-skill', primaryRole: 'Hello-world demo skill for testing skill activation and validation', isCustom: false, category: 'Utility', color: '#A8B2D8', emoji: '🔧', tags: ['utility', 'demo', 'testing', 'validation'] },
+
+  // ─── New Skills (S62-S64) ───
+  { id: 'S62', name: 'PictoFlux AI', tier: 2, tierName: 'Visual Asset', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill pictoflux-ai', primaryRole: 'Free unlimited AI image generation via MCP protocol — text-to-image, style transfer, batch generation', isCustom: false, category: 'MCP Servers', color: '#C77DFF', emoji: '🖼️', tags: ['mcp-servers', 'image-gen', 'ai', 'visual', 'style-transfer'] },
+  { id: 'S63', name: 'Stitch Loop', tier: 1, tierName: 'Interactive', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill stitch-loop', primaryRole: 'Autonomous iterative site-building loop — baton-passing system for continuous Stitch-powered web development', isCustom: false, category: 'Design & UI', color: '#BFFF00', emoji: '🔄', tags: ['design-ui', 'generation', 'iterative', 'autonomous', 'loop'] },
+  { id: 'S64', name: 'Skill Architect', tier: 3, tierName: 'Portal', installCommand: 'npx skills add marktantongco/opencode-accomplishments --skill skill-architect', primaryRole: 'Create, design, refactor, and optimize AI agent skills following the Agent Skills open standard', isCustom: false, category: 'Development', color: '#00FF9D', emoji: '🏗️', tags: ['development', 'skill-creation', 'design', 'optimization', 'standard'] },
 ];
 
 // ─── Skill Categories (grouped from skills array) ───

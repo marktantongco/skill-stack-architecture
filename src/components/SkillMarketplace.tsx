@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { skills, skillCategories } from '@/lib/skill-data';
+import { skills, skillCategories, Skill } from '@/lib/skill-data';
 import { useSkillStore } from '@/lib/skill-store';
 import { SkillCard } from './SkillCard';
 import { SkillDetailDrawer } from './SkillDetailDrawer';
@@ -12,7 +12,7 @@ import { SkillGraph } from './SkillGraph';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Copy, ShoppingBasket, ClipboardList, X, Search, LayoutGrid, GitBranch } from 'lucide-react';
+import { Copy, ShoppingBasket, ClipboardList, X, Search, LayoutGrid, GitBranch, Workflow, Play } from 'lucide-react';
 
 const tierColors: Record<number, string> = {
   0: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
@@ -21,7 +21,98 @@ const tierColors: Record<number, string> = {
   3: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
 };
 
-type ViewMode = 'grid' | 'graph';
+type ViewMode = 'grid' | 'graph' | 'pipeline';
+
+/* ─── Pipeline View Subcomponent ─── */
+function PipelineView({ filteredSkills }: { filteredSkills: Skill[] }) {
+  const { basket, isInBasket } = useSkillStore();
+  const [copied, setCopied] = useState(false);
+
+  const tierGroups = [0, 1, 2, 3].map(tier => ({
+    tier,
+    label: ['Foundation', 'Interactive', 'Visual Asset', 'Portal'][tier],
+    color: ['#10b981', '#3b82f6', '#f59e0b', '#a855f7'][tier],
+    skills: filteredSkills.filter(s => s.tier === tier),
+  }));
+
+  const handleRunPipeline = async () => {
+    const basketSkills = skills.filter(s => isInBasket(s.id));
+    if (basketSkills.length === 0) return;
+    const script = basketSkills.map(s => `# ${s.name} (T${s.tier} ${s.tierName})\n${s.installCommand}`).join('\n\n');
+    const fullScript = `#!/bin/bash\n# Skill Stack Pipeline — ${basketSkills.length} skills\n# Generated at ${new Date().toISOString()}\n\nset -e\n\n${script}\n\necho "✅ Pipeline complete: ${basketSkills.length} skills installed"`;
+    await navigator.clipboard.writeText(fullScript);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const basketCount = basket.length;
+
+  return (
+    <div className="space-y-6">
+      {tierGroups.map((group, i) => (
+        <div key={group.tier}>
+          {i > 0 && (
+            <div className="flex items-center justify-center my-2">
+              <div className="h-8 w-px bg-border" />
+              <svg className="h-4 w-4 text-border -ml-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 5v14M19 12l-7 7-7-7" />
+              </svg>
+            </div>
+          )}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: group.color }} />
+              <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">
+                T{group.tier} {group.label}
+              </span>
+              <Badge variant="secondary" className="text-[10px] h-5 px-1.5">
+                {group.skills.length}
+              </Badge>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {group.skills.map(skill => (
+                <button
+                  key={skill.id}
+                  onClick={() => useSkillStore.getState().setSelectedSkill(skill.id)}
+                  className={`px-3 py-2 rounded-lg text-xs font-medium transition-all border ${
+                    isInBasket(skill.id)
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border/50 bg-background/60 hover:border-border hover:bg-muted/50 text-foreground'
+                  }`}
+                  style={isInBasket(skill.id) ? { borderColor: skill.color, backgroundColor: skill.color + '15' } : {}}
+                >
+                  {skill.emoji} {skill.name}
+                </button>
+              ))}
+              {group.skills.length === 0 && (
+                <p className="text-xs text-muted-foreground italic">No skills in this tier match filters</p>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {/* Run Pipeline Button */}
+      <div className="flex items-center gap-3 pt-4 border-t border-border">
+        <Button
+          size="sm"
+          variant={copied ? 'default' : 'outline'}
+          className="gap-1.5"
+          onClick={handleRunPipeline}
+          disabled={basketCount === 0}
+        >
+          <Play className="h-3.5 w-3.5" />
+          {copied ? 'Copied!' : 'Run Pipeline'}
+        </Button>
+        <span className="text-xs text-muted-foreground">
+          {basketCount > 0
+            ? `${basketCount} skill${basketCount > 1 ? 's' : ''} in basket — copies install script`
+            : 'Add skills to basket first'}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export function SkillMarketplace() {
   const [search, setSearch] = useState('');
@@ -114,6 +205,15 @@ export function SkillMarketplace() {
               >
                 <GitBranch className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Graph</span>
+              </Button>
+              <Button
+                size="sm"
+                variant={viewMode === 'pipeline' ? 'default' : 'ghost'}
+                className="h-8 px-3 gap-1.5 text-xs"
+                onClick={() => setViewMode('pipeline')}
+              >
+                <Workflow className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Pipeline</span>
               </Button>
             </div>
             <Button
@@ -208,9 +308,11 @@ export function SkillMarketplace() {
         </div>
       </div>
 
-      {/* View: Grid or Graph */}
+      {/* View: Grid, Graph, or Pipeline */}
       <div className="max-w-7xl mx-auto">
-        {viewMode === 'grid' ? (
+        {viewMode === 'pipeline' ? (
+          <PipelineView filteredSkills={filtered} />
+        ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <AnimatePresence mode="popLayout">
               {filtered.map((skill, i) => (
@@ -231,7 +333,7 @@ export function SkillMarketplace() {
           <SkillGraph filteredSkills={filtered} />
         )}
 
-        {filtered.length === 0 && viewMode === 'grid' && (
+        {filtered.length === 0 && viewMode !== 'pipeline' && (
           <div className="text-center py-12 text-muted-foreground">
             <p className="text-lg">No skills match your filters.</p>
             <button
