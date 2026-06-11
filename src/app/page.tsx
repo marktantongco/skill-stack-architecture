@@ -22,6 +22,8 @@ import {
   Layers, ShoppingBag, BookOpen, Eye, Wrench, ChevronDown,
   ChevronRight, CheckCircle2, XCircle, AlertTriangle, Copy, Check,
   Zap, ShieldCheck, Activity, RefreshCcw, ArrowRight,
+  Clock, BarChart3, Search, Filter, Play, Pause, RotateCcw,
+  TrendingUp, Gauge, CircleDot,
 } from 'lucide-react';
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -99,6 +101,58 @@ const scorecardRows = [
   { component: 'AIPortalGateway', clipboard: false, abort: null, boundary: true, reducer: null },
 ];
 
+// ─── Audit: Error Simulation Scenarios ───
+const simScenarios = [
+  {
+    id: 'clipboard-insecure',
+    title: 'Clipboard in Insecure Context',
+    icon: <Copy className="w-4 h-4" />,
+    trigger: 'navigator.clipboard.writeText() called on HTTP page or inside iframe',
+    resolution: 'try/catch wraps the call. On failure, a hidden textarea is created, text is selected, and document.execCommand("copy") is executed as fallback.',
+    layer: 'Layer 2 — Clipboard Resilience',
+    beforeLabel: 'Unprotected call',
+    afterLabel: 'Resilient with fallback',
+    beforeCode: `navigator.clipboard.writeText(text)\n  .then(() => console.log('copied'))\n  .catch(() => console.error('failed'));`,
+    afterCode: `try {\n  await navigator.clipboard.writeText(text);\n} catch {\n  const ta = document.createElement('textarea');\n  ta.value = text;\n  ta.style.position = 'fixed';\n  ta.style.left = '-9999px';\n  document.body.appendChild(ta);\n  ta.select();\n  document.execCommand('copy');\n  document.body.removeChild(ta);\n}`,
+  },
+  {
+    id: 'render-crash',
+    title: 'Render Crash',
+    icon: <XCircle className="w-4 h-4" />,
+    trigger: 'Component throws during render (e.g., accessing property of undefined)',
+    resolution: 'ErrorBoundary catches the error at the section boundary. The crashed section shows a recovery UI while the rest of the page continues working.',
+    layer: 'Layer 1 — ErrorBoundary',
+    beforeLabel: 'Without boundary',
+    afterLabel: 'With section isolation',
+    beforeCode: `<App>\n  <Hero />\n  <Gallery />\n  <Contact />\n</App>\n// Any crash = full white screen`,
+    afterCode: `<App>\n  <ErrorBoundary section="Hero">\n    <Hero />\n  </ErrorBoundary>\n  <ErrorBoundary section="Gallery">\n    <Gallery />\n  </ErrorBoundary>\n  <ErrorBoundary section="Contact">\n    <Contact />\n  </ErrorBoundary>\n</App>`,
+  },
+  {
+    id: 'abandoned-fetch',
+    title: 'Abandoned Fetch',
+    icon: <Activity className="w-4 h-4" />,
+    trigger: 'Component unmounts while fetch is still in-flight',
+    resolution: 'AbortController is created in useEffect. On cleanup, controller.abort() cancels the request, preventing stale state updates and memory leaks.',
+    layer: 'Layer 3 — AbortController',
+    beforeLabel: 'No cancellation',
+    afterLabel: 'With AbortController',
+    beforeCode: `useEffect(() => {\n  fetch('/api/data')\n    .then(res => res.json())\n    .then(data => setState(data));\n  // No cleanup — leak on unmount\n}, []);`,
+    afterCode: `useEffect(() => {\n  const controller = new AbortController();\n  fetch('/api/data', { signal: controller.signal })\n    .then(res => res.json())\n    .then(data => setState(data))\n    .catch(err => {\n      if (err.name !== 'AbortError') throw err;\n    });\n  return () => controller.abort();\n}, []);`,
+  },
+  {
+    id: 'race-condition',
+    title: 'Race Condition',
+    icon: <RefreshCcw className="w-4 h-4" />,
+    trigger: 'Multiple rapid dispatches cause stale state reads inside effects',
+    resolution: 'useReducer replaces useState. All state transitions are explicit dispatches — no stale closures, no implicit set-state-in-effect violations.',
+    layer: 'Layer 4 — useReducer',
+    beforeLabel: 'Stale closure',
+    afterLabel: 'Explicit dispatch',
+    beforeCode: 'const [value, setValue] = useState(0);\nuseEffect(() => {\n  // Reads stale `value` if another update\n  // happened between render and effect\n  setValue(compute(value));\n}, [value]);',
+    afterCode: `const [state, dispatch] = useReducer(\n  (prev, action) => {\n    switch (action.type) {\n      case 'COMPUTE':\n        return { ...prev, value: compute(prev.value) };\n      default: return prev;\n    }\n  },\n  { value: 0 }\n);\n// dispatch always sees latest state`,
+  },
+];
+
 // ─── Proxy: Cross-Domain Data ───
 const proxyTypes = [
   { id: 'transparent', name: 'Transparent Proxy', psychology: 'Open-plan office — everyone sees everything. Builds trust through radical transparency, but creates self-monitoring anxiety (panopticon effect).', economics: 'Commodity market — low switching costs, price competition dominates, margins compress. Value from volume, not differentiation.', science: 'Glass microscope slide — complete visibility of the specimen. Nothing hidden, everything observable, but the act of observation may alter behavior.', strengths: ['Full visibility for debugging', 'No hidden transformations', 'Easy compliance auditing'], weaknesses: ['No privacy for users', 'No caching benefit', 'Vulnerable to traffic analysis'], differentiator: 'Our transparent proxy adds request telemetry without modifying payloads — observability without opacity.' },
@@ -109,28 +163,74 @@ const proxyTypes = [
   { id: 'caching', name: 'Caching Proxy', psychology: 'Librarian — remembers what you\'ve asked for before and has it ready. Anticipates needs, but may serve outdated information.', economics: 'Inventory buffer — stores goods closer to consumers. Reduces delivery time but ties up capital in stored inventory.', science: 'Ribosome — stores and translates instructions into proteins on demand. Efficiency through reuse of cached templates.', strengths: ['Dramatic latency reduction', 'Bandwidth savings', 'Offline resilience'], weaknesses: ['Cache invalidation is hard', 'Stale data risk', 'Storage costs'], differentiator: 'Our caching proxy uses stale-while-revalidate with predictive pre-warming — fresh content with instant response.' },
 ];
 
-// ─── Docs: PDF Reports ───
-const pdfReports = [
-  { title: 'Comprehensive Code Audit Report', desc: 'Full-stack code quality analysis across all 13 sections', size: '2.4 MB' },
-  { title: 'OWL Agent Audit3 Comprehensive Report', desc: 'Deep-dive error handling and resilience audit by the OWL agent', size: '1.8 MB' },
-  { title: 'AI Billing Proxy Integration Analysis', desc: 'Proxy billing models, tier routing, and cost optimization', size: '3.1 MB' },
-  { title: 'Skill Definition Analysis Report', desc: 'Analysis of 64 skill definitions, conflicts, and dependencies', size: '1.2 MB' },
-  { title: 'Security Audit Report', desc: 'Vulnerability assessment and penetration testing results', size: '2.7 MB' },
-  { title: 'AI Stack Ecosystem Guide', desc: 'Complete guide to the 64-skill ecosystem with install commands', size: '4.5 MB' },
-  { title: 'Skill Reference Compendium', desc: 'Comprehensive reference for all skill APIs and configurations', size: '3.3 MB' },
+// ─── Proxy: Comparison Matrix Data ───
+const proxyMatrix = [
+  { type: 'Transparent', latency: 'Low', privacy: 'None', complexity: 'Low', score: 6 },
+  { type: 'Anonymous', latency: 'Medium', privacy: 'High', complexity: 'Medium', score: 7 },
+  { type: 'Reverse', latency: 'Low', privacy: 'Medium', complexity: 'High', score: 8 },
+  { type: 'Forward', latency: 'Medium', privacy: 'Medium', complexity: 'Medium', score: 6 },
+  { type: 'SSL/TLS', latency: 'High', privacy: 'High', complexity: 'High', score: 9 },
+  { type: 'Caching', latency: 'Very Low', privacy: 'Low', complexity: 'Medium', score: 7 },
 ];
 
-// ─── Docs: Research Images ───
-const researchImages = [
-  { name: 'Architecture Comparison', file: 'architecture-comparison.png', desc: 'Side-by-side comparison of current vs proposed architecture' },
-  { name: 'Decision Matrix', file: 'architecture-decision-matrix.png', desc: 'Weighted decision matrix for design option selection' },
-  { name: 'Approaches Radar', file: 'approaches-radar.png', desc: 'Radar chart overlay of all 5 design approaches' },
-  { name: 'Decision Tree', file: 'decision-tree.png', desc: 'Interactive decision tree flowchart' },
-  { name: 'Data Model Evolution', file: 'data-model-evolution.png', desc: 'Migration from flat ordered list to I/O piping model' },
-  { name: 'I/O Piping Flow', file: 'io-piping-flow.png', desc: 'Skill invocation piping diagram with telemetry' },
-  { name: 'Severity Findings', file: 'severity-findings.png', desc: 'Error severity distribution across codebase' },
-  { name: 'Severity Matrix', file: 'severity-matrix.png', desc: 'Component × error-type severity heatmap' },
+const matrixIndicatorColor = (val: string): string => {
+  const low = ['Low', 'Very Low', 'None'];
+  const high = ['High'];
+  if (low.includes(val)) return 'bg-emerald-500';
+  if (high.includes(val)) return 'bg-red-400';
+  return 'bg-amber-400';
+};
+
+const matrixCellLabel = (val: string): string => {
+  const colors: Record<string, string> = {
+    'Very Low': 'text-emerald-600 dark:text-emerald-400',
+    'Low': 'text-emerald-600 dark:text-emerald-400',
+    'Medium': 'text-amber-600 dark:text-amber-400',
+    'High': 'text-red-600 dark:text-red-400',
+    'None': 'text-red-600 dark:text-red-400',
+  };
+  return colors[val] || 'text-muted-foreground';
+};
+
+// ─── Architecture: Telemetry Data ───
+const telemetryMetrics = { totalInvocations: 847, successRate: 94.7, p99Latency: 142, activeConflicts: 2 };
+const recentInvocations = [
+  { skill: 'Stitch Design', status: 'success', duration: 89, tier: 'T0' },
+  { skill: 'GSAP Animations', status: 'success', duration: 156, tier: 'T1' },
+  { skill: 'Framer Motion', status: 'failed', duration: 0, tier: 'T0' },
+  { skill: 'shadcn/ui', status: 'success', duration: 45, tier: 'T2' },
+  { skill: 'AI Portal', status: 'success', duration: 234, tier: 'T3' },
+  { skill: 'MCP Builder', status: 'success', duration: 67, tier: 'T3' },
+  { skill: 'Recharts Viz', status: 'success', duration: 123, tier: 'T1' },
+  { skill: 'Skill Finder', status: 'failed', duration: 0, tier: 'T3' },
+  { skill: 'Playwright', status: 'success', duration: 345, tier: 'T2' },
+  { skill: 'Deep Research', status: 'success', duration: 567, tier: 'T3' },
 ];
+
+// ─── Docs: PDF Reports (with category) ───
+const pdfReports = [
+  { title: 'Comprehensive Code Audit Report', desc: 'Full-stack code quality analysis across all 13 sections', size: '2.4 MB', category: 'audit' },
+  { title: 'OWL Agent Audit3 Comprehensive Report', desc: 'Deep-dive error handling and resilience audit by the OWL agent', size: '1.8 MB', category: 'audit' },
+  { title: 'AI Billing Proxy Integration Analysis', desc: 'Proxy billing models, tier routing, and cost optimization', size: '3.1 MB', category: 'architecture' },
+  { title: 'Skill Definition Analysis Report', desc: 'Analysis of 64 skill definitions, conflicts, and dependencies', size: '1.2 MB', category: 'architecture' },
+  { title: 'Security Audit Report', desc: 'Vulnerability assessment and penetration testing results', size: '2.7 MB', category: 'security' },
+  { title: 'AI Stack Ecosystem Guide', desc: 'Complete guide to the 64-skill ecosystem with install commands', size: '4.5 MB', category: 'architecture' },
+  { title: 'Skill Reference Compendium', desc: 'Comprehensive reference for all skill APIs and configurations', size: '3.3 MB', category: 'design' },
+];
+
+// ─── Docs: Research Images (with category) ───
+const researchImages = [
+  { name: 'Architecture Comparison', file: 'architecture-comparison.png', desc: 'Side-by-side comparison of current vs proposed architecture', category: 'architecture' },
+  { name: 'Decision Matrix', file: 'architecture-decision-matrix.png', desc: 'Weighted decision matrix for design option selection', category: 'architecture' },
+  { name: 'Approaches Radar', file: 'approaches-radar.png', desc: 'Radar chart overlay of all 5 design approaches', category: 'design' },
+  { name: 'Decision Tree', file: 'decision-tree.png', desc: 'Interactive decision tree flowchart', category: 'architecture' },
+  { name: 'Data Model Evolution', file: 'data-model-evolution.png', desc: 'Migration from flat ordered list to I/O piping model', category: 'architecture' },
+  { name: 'I/O Piping Flow', file: 'io-piping-flow.png', desc: 'Skill invocation piping diagram with telemetry', category: 'architecture' },
+  { name: 'Severity Findings', file: 'severity-findings.png', desc: 'Error severity distribution across codebase', category: 'audit' },
+  { name: 'Severity Matrix', file: 'severity-matrix.png', desc: 'Component × error-type severity heatmap', category: 'audit' },
+];
+
+const docsCategories = ['all', 'architecture', 'audit', 'design', 'security'] as const;
 
 // ─── Radar Chart Data for Frontend Tab ───
 const radarData = dimensions.map((dim) => {
@@ -290,6 +390,7 @@ function HomeSubpage({ onNavigate }: { onNavigate: (tab: Subpage) => void }) {
 function AuditSubpage() {
   const shouldReduce = useReducedMotion();
   const [openLayer, setOpenLayer] = useState<number | null>(null);
+  const [simScenario, setSimScenario] = useState<string | null>(null);
 
   return (
     <div className="max-w-[1200px] mx-auto px-6">
@@ -400,6 +501,68 @@ function AuditSubpage() {
           </table>
         </div>
       </section>
+
+      <EditorialDivider />
+
+      {/* ── Enhancement 1: Interactive Error Simulation Panel ── */}
+      <section className="mb-16 py-8" aria-label="Error simulation">
+        <SectionHeader num="04" title="Interactive Error Simulation" subtitle="Trigger simulated errors and see how each defensive layer handles them in real time." />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+          {simScenarios.map((scenario) => (
+            <motion.button
+              key={scenario.id}
+              onClick={() => setSimScenario(simScenario === scenario.id ? null : scenario.id)}
+              className={`text-left min-h-[44px] p-4 border rounded cursor-pointer transition-colors ${simScenario === scenario.id ? 'border-primary bg-primary/5' : 'border-border hover:border-foreground/20 hover:bg-muted/10'}`}
+              whileHover={shouldReduce ? undefined : { scale: 1.01 }}
+              whileTap={shouldReduce ? undefined : { scale: 0.99 }}
+              aria-expanded={simScenario === scenario.id}
+              aria-label={scenario.title}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-primary">{scenario.icon}</span>
+                <span className="font-['Georgia',_serif] text-sm font-bold text-foreground">{scenario.title}</span>
+                <motion.span className="ml-auto" animate={{ rotate: simScenario === scenario.id ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                </motion.span>
+              </div>
+            </motion.button>
+          ))}
+        </div>
+        <AnimatePresence mode="wait">
+          {simScenario && (() => {
+            const s = simScenarios.find((sc) => sc.id === simScenario);
+            if (!s) return null;
+            return (
+              <motion.div
+                key={s.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="border border-primary/30 bg-primary/5 rounded p-5"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-primary">{s.icon}</span>
+                  <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">{s.title}</h3>
+                  <span className="text-[10px] tracking-[0.15em] uppercase font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">{s.layer}</span>
+                </div>
+                <div className="mb-4">
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Trigger</p>
+                  <p className="text-sm text-muted-foreground">{s.trigger}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-emerald-600 dark:text-emerald-400 font-semibold mb-1">Resolution</p>
+                  <p className="text-sm text-muted-foreground">{s.resolution}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CodeBlock code={s.beforeCode} label={s.beforeLabel} />
+                  <CodeBlock code={s.afterCode} label={s.afterLabel} />
+                </div>
+              </motion.div>
+            );
+          })()}
+        </AnimatePresence>
+      </section>
     </div>
   );
 }
@@ -411,6 +574,7 @@ function FrontendSubpage({ mounted }: { mounted: boolean }) {
   const shouldReduce = useReducedMotion();
   const [compareMode, setCompareMode] = useState(false);
   const [selectedOpts, setSelectedOpts] = useState<string[]>(options.map((o) => o.id));
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const toggleOpt = (id: string) => {
     setSelectedOpts((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
@@ -424,6 +588,19 @@ function FrontendSubpage({ mounted }: { mounted: boolean }) {
     });
     return entry;
   });
+
+  const selectedOpt = selectedOption ? options.find((o) => o.id === selectedOption) : null;
+
+  // Get top 5 skills from skillWeights
+  const getTopSkills = (opt: typeof options[0]) => {
+    return Object.entries(opt.skillWeights)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([skillId, weight]) => {
+        const skillName = options.find((o) => o.dominantSkillId === skillId)?.dominantSkill || skillId;
+        return { id: skillId, name: skillName, weight: weight as number };
+      });
+  };
 
   return (
     <div className="max-w-[1200px] mx-auto px-6">
@@ -448,7 +625,17 @@ function FrontendSubpage({ mounted }: { mounted: boolean }) {
         </div>
         <motion.div className={`grid gap-4 ${compareMode ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`} variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
           {options.map((opt, i) => (
-            <motion.div key={opt.id} variants={fadeInUp} whileHover={shouldReduce ? undefined : { scale: 1.01 }} className="border border-border rounded p-5 hover:border-foreground/20 transition-colors">
+            <motion.div
+              key={opt.id}
+              variants={fadeInUp}
+              whileHover={shouldReduce ? undefined : { scale: 1.01 }}
+              onClick={() => setSelectedOption(selectedOption === opt.id ? null : opt.id)}
+              className={`border rounded p-5 cursor-pointer transition-colors ${selectedOption === opt.id ? 'border-primary bg-primary/5' : 'border-border hover:border-foreground/20'}`}
+              role="button"
+              tabIndex={0}
+              aria-pressed={selectedOption === opt.id}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedOption(selectedOption === opt.id ? null : opt.id); } }}
+            >
               <div className="flex items-baseline gap-2 mb-1">
                 <span className="font-['Georgia',_serif] text-3xl font-bold text-border" aria-hidden="true">{i + 1}</span>
                 <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">{opt.name}</h3>
@@ -475,6 +662,96 @@ function FrontendSubpage({ mounted }: { mounted: boolean }) {
           ))}
         </motion.div>
       </section>
+
+      {/* ── Enhancement 4: Design Option Deep-Dive Panel ── */}
+      <AnimatePresence>
+        {selectedOpt && (
+          <motion.section
+            key={selectedOpt.id}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+            className="overflow-hidden mb-12"
+            aria-label={`${selectedOpt.name} deep-dive`}
+          >
+            <div className="border border-primary/30 bg-primary/5 rounded p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="font-['Georgia',_serif] text-xl font-bold text-foreground">{selectedOpt.name}</h3>
+                  <p className="text-[11px] tracking-[0.12em] uppercase text-primary font-medium">{selectedOpt.tagline}</p>
+                </div>
+                <button onClick={() => setSelectedOption(null)} className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-muted cursor-pointer" aria-label="Close deep-dive">
+                  <XCircle className="w-5 h-5 text-muted-foreground" />
+                </button>
+              </div>
+
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">{selectedOpt.philosophy}</p>
+
+              {/* SP-7 Vector Bar Chart */}
+              <div className="mb-6">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-3">SP-7 Dimension Vector</p>
+                <div className="space-y-2">
+                  {selectedOpt.sp7Vector.map((v, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="text-[10px] font-mono text-muted-foreground w-8 shrink-0" title={dimensions[i]?.name}>{dimensions[i]?.shortName}</span>
+                      <div className="flex-1 h-4 bg-muted/40 rounded overflow-hidden">
+                        <motion.div
+                          className="h-full bg-primary/70 rounded"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(v / 5) * 100}%` }}
+                          transition={{ duration: 0.5, delay: i * 0.05 }}
+                        />
+                      </div>
+                      <span className="text-xs font-mono font-bold text-foreground w-4 text-right">{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Skill Weight Distribution */}
+              <div className="mb-6">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-3">Skill Weight Distribution (Top 5)</p>
+                <div className="space-y-2">
+                  {getTopSkills(selectedOpt).map((skill) => (
+                    <div key={skill.id} className="flex items-center gap-3">
+                      <span className="text-xs text-foreground font-medium flex-1">{skill.name}</span>
+                      <div className="w-24 h-2 bg-muted/40 rounded overflow-hidden">
+                        <motion.div
+                          className="h-full bg-accent/60 rounded"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${skill.weight}%` }}
+                          transition={{ duration: 0.4 }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-muted-foreground w-8 text-right">{skill.weight}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recommended Use Case */}
+              <div className="mb-4">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Recommended Use Case</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{selectedOpt.recommended}</p>
+              </div>
+
+              {/* Motion Style Demo */}
+              <div className="flex items-center gap-3 p-3 bg-muted/20 border border-border rounded">
+                <motion.div
+                  className="w-3 h-3 rounded-full bg-primary"
+                  animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                />
+                <div>
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Motion Style</p>
+                  <p className="text-sm text-foreground">{selectedOpt.motionStyle}</p>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
       <EditorialDivider />
 
@@ -522,6 +799,7 @@ function FrontendSubpage({ mounted }: { mounted: boolean }) {
 function ProxySubpage() {
   const shouldReduce = useReducedMotion();
   const [activeProxy, setActiveProxy] = useState('transparent');
+  const [selectedMatrixRow, setSelectedMatrixRow] = useState<number | null>(null);
   const active = proxyTypes.find((p) => p.id === activeProxy)!;
 
   return (
@@ -583,9 +861,114 @@ function ProxySubpage() {
 
       <EditorialDivider />
 
-      {/* Section 3 — The Eagle Sees */}
+      {/* ── Enhancement 2: Interactive Comparison Matrix ── */}
+      <section className="mb-20 py-8" aria-label="Proxy comparison matrix">
+        <SectionHeader num="03" title="Proxy Comparison Matrix" subtitle="Side-by-side comparison across latency, privacy, complexity, and our weighted score." />
+        <div className="overflow-x-auto custom-scrollbar border border-border rounded">
+          <table className="w-full text-sm" role="table">
+            <thead>
+              <tr className="border-b-2 border-foreground bg-muted/10">
+                <th className="text-left p-3 text-[10px] tracking-[0.2em] uppercase font-semibold text-muted-foreground">Proxy Type</th>
+                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Latency</th>
+                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Privacy</th>
+                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Complexity</th>
+                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Our Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {proxyMatrix.map((row, i) => (
+                <tr
+                  key={row.type}
+                  className={`border-b border-border/40 cursor-pointer transition-colors ${selectedMatrixRow === i ? 'bg-primary/5 border-primary/30' : 'hover:bg-muted/10'}`}
+                  onClick={() => setSelectedMatrixRow(selectedMatrixRow === i ? null : i)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Select ${row.type} proxy`}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedMatrixRow(selectedMatrixRow === i ? null : i); } }}
+                >
+                  <td className="p-3 font-['Georgia',_serif] font-bold text-foreground">{row.type}</td>
+                  <td className="p-3 text-center">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className={`w-2 h-2 rounded-full ${matrixIndicatorColor(row.latency)}`} aria-hidden="true" />
+                      <span className={matrixCellLabel(row.latency)}>{row.latency}</span>
+                    </span>
+                  </td>
+                  <td className="p-3 text-center">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className={`w-2 h-2 rounded-full ${matrixIndicatorColor(row.privacy)}`} aria-hidden="true" />
+                      <span className={matrixCellLabel(row.privacy)}>{row.privacy}</span>
+                    </span>
+                  </td>
+                  <td className="p-3 text-center">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className={`w-2 h-2 rounded-full ${matrixIndicatorColor(row.complexity)}`} aria-hidden="true" />
+                      <span className={matrixCellLabel(row.complexity)}>{row.complexity}</span>
+                    </span>
+                  </td>
+                  <td className="p-3 text-center">
+                    <span className="inline-flex items-center justify-center gap-1">
+                      <span className="font-['Georgia',_serif] text-lg font-bold text-primary">{row.score}</span>
+                      <span className="text-[10px] text-muted-foreground">/10</span>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Expanded row details */}
+        <AnimatePresence>
+          {selectedMatrixRow !== null && (() => {
+            const row = proxyMatrix[selectedMatrixRow];
+            const proxy = proxyTypes.find((p) => p.id === row.type.toLowerCase() || p.name.toLowerCase().includes(row.type.toLowerCase()));
+            return (
+              <motion.div
+                key={row.type}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-4 border border-primary/30 bg-primary/5 rounded p-5">
+                  <h4 className="font-['Georgia',_serif] text-lg font-bold text-foreground mb-3">{row.type} Proxy — Detailed Breakdown</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="p-3 border border-border rounded">
+                      <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Latency Impact</p>
+                      <p className="text-sm text-foreground">{row.latency} latency — {row.latency === 'Very Low' || row.latency === 'Low' ? 'excellent for real-time applications' : row.latency === 'Medium' ? 'acceptable for most use cases, consider caching' : 'significant overhead, best for non-real-time security'}</p>
+                    </div>
+                    <div className="p-3 border border-border rounded">
+                      <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Privacy Level</p>
+                      <p className="text-sm text-foreground">{row.privacy} privacy — {row.privacy === 'None' ? 'all traffic visible to proxy operator' : row.privacy === 'Low' ? 'minimal obfuscation of client identity' : row.privacy === 'Medium' ? 'partial identity protection with some metadata visible' : 'strong identity shielding and traffic encryption'}</p>
+                    </div>
+                    <div className="p-3 border border-border rounded">
+                      <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Implementation Complexity</p>
+                      <p className="text-sm text-foreground">{row.complexity} complexity — {row.complexity === 'Low' ? 'quick setup, minimal configuration' : row.complexity === 'Medium' ? 'moderate configuration, requires monitoring' : 'significant infrastructure, needs dedicated expertise'}</p>
+                    </div>
+                  </div>
+                  {proxy && (
+                    <div className="p-3 border border-primary/20 bg-primary/5 rounded">
+                      <p className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-1">Our Differentiator</p>
+                      <p className="text-sm text-muted-foreground">{proxy.differentiator}</p>
+                    </div>
+                  )}
+                  <div className="mt-3 flex items-center gap-2">
+                    <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Score Calculation:</span>
+                    <span className="text-xs text-muted-foreground">strengths({proxy?.strengths.length ?? 0}) − weaknesses({proxy?.weaknesses.length ?? 0}) + differentiator bonus({row.score - (proxy ? proxy.strengths.length - proxy.weaknesses.length : 0) >= 0 ? '+' : ''}{row.score - (proxy ? proxy.strengths.length - proxy.weaknesses.length : 0)}) = <span className="font-bold text-primary">{row.score}/10</span></span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })()}
+        </AnimatePresence>
+      </section>
+
+      <EditorialDivider />
+
+      {/* Section 4 — The Eagle Sees */}
       <section className="mb-16 py-8" aria-label="Proxy strategy">
-        <SectionHeader num="03" title="The Eagle Sees: Long-Term Strategy" subtitle="How proxies compose together in the architecture." />
+        <SectionHeader num="04" title="The Eagle Sees: Long-Term Strategy" subtitle="How proxies compose together in the architecture." />
         <ErrorBoundary section="Proxy Comparison"><ProxyComparison /></ErrorBoundary>
       </section>
     </div>
@@ -596,6 +979,26 @@ function ProxySubpage() {
 // SUBPAGE: ARCHITECTURE
 // ═══════════════════════════════════════════════════════════
 function ArchitectureSubpage() {
+  const shouldReduce = useReducedMotion();
+  const [animCount, setAnimCount] = useState(0);
+
+  // Animate counter on mount
+  useEffect(() => {
+    let frame = 0;
+    const target = telemetryMetrics.totalInvocations;
+    const duration = 1500;
+    const start = performance.now();
+    const step = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setAnimCount(Math.round(eased * target));
+      if (progress < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
   return (
     <div className="max-w-[1200px] mx-auto px-6">
       {/* Title */}
@@ -663,6 +1066,123 @@ function ArchitectureSubpage() {
           ))}
         </div>
       </section>
+
+      <EditorialDivider />
+
+      {/* ── Enhancement 3: Telemetry Dashboard ── */}
+      <section className="mb-16 py-8" aria-label="Telemetry dashboard">
+        <SectionHeader num="TL" title="Live Telemetry Dashboard" subtitle="Simulated skill invocation metrics — real-time observability into the pipeline." />
+
+        {/* Metric Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {/* Total Invocations */}
+          <motion.div
+            className="border border-border rounded p-4 bg-card"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Invocations</span>
+            </div>
+            <p className="font-['Georgia',_serif] text-3xl font-bold text-foreground">{animCount.toLocaleString()}</p>
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mt-1">
+              <TrendingUp className="w-3 h-3" />+12% this week
+            </p>
+          </motion.div>
+
+          {/* Success Rate */}
+          <motion.div
+            className="border border-border rounded p-4 bg-card"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Success Rate</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <p className="font-['Georgia',_serif] text-3xl font-bold text-foreground">{telemetryMetrics.successRate}%</p>
+              <svg width="40" height="40" viewBox="0 0 40 40" className="shrink-0" aria-hidden="true">
+                <circle cx="20" cy="20" r="16" fill="none" stroke="var(--border)" strokeWidth="3" />
+                <circle cx="20" cy="20" r="16" fill="none" stroke="#10b981" strokeWidth="3" strokeDasharray={`${(telemetryMetrics.successRate / 100) * 100.53} 100.53`} strokeLinecap="round" transform="rotate(-90 20 20)" />
+              </svg>
+            </div>
+          </motion.div>
+
+          {/* P99 Latency */}
+          <motion.div
+            className="border border-border rounded p-4 bg-card"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="w-4 h-4 text-amber-500" />
+              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">P99 Latency</span>
+            </div>
+            <p className="font-['Georgia',_serif] text-3xl font-bold text-foreground">{telemetryMetrics.p99Latency}<span className="text-sm text-muted-foreground ml-1">ms</span></p>
+            <div className="mt-2 h-1.5 bg-muted/40 rounded overflow-hidden">
+              <div className="h-full bg-amber-500 rounded" style={{ width: `${(telemetryMetrics.p99Latency / 500) * 100}%` }} />
+            </div>
+          </motion.div>
+
+          {/* Active Conflicts */}
+          <motion.div
+            className="border border-border rounded p-4 bg-card"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="w-4 h-4 text-red-500" />
+              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Conflicts</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <p className="font-['Georgia',_serif] text-3xl font-bold text-foreground">{telemetryMetrics.activeConflicts}</p>
+              <span className="px-1.5 py-0.5 text-[9px] tracking-[0.12em] uppercase font-bold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded">Warning</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">skill dependency conflicts</p>
+          </motion.div>
+        </div>
+
+        {/* Invocation Timeline */}
+        <div className="border border-border rounded p-5">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Recent Invocations (Last 10)</p>
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true" /> Success</span>
+              <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-red-400" aria-hidden="true" /> Failed</span>
+            </div>
+          </div>
+          <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+            {recentInvocations.map((inv, i) => (
+              <motion.div
+                key={i}
+                className={`flex items-center gap-4 p-3 rounded border transition-colors ${inv.status === 'success' ? 'border-emerald-200 dark:border-emerald-900/30 bg-emerald-50/30 dark:bg-emerald-950/10' : 'border-red-200 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/10'}`}
+                initial={shouldReduce ? false : { opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05, duration: 0.3 }}
+              >
+                <span className={`w-2 h-2 rounded-full shrink-0 ${inv.status === 'success' ? 'bg-emerald-500' : 'bg-red-400'}`} aria-hidden="true" />
+                <span className="text-sm font-medium text-foreground flex-1">{inv.skill}</span>
+                <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${inv.tier === 'T0' ? 'bg-primary/10 text-primary' : inv.tier === 'T1' ? 'bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400' : inv.tier === 'T2' ? 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400' : 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'}`}>{inv.tier}</span>
+                <span className={`text-xs font-mono ${inv.status === 'success' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}`}>
+                  {inv.status === 'success' ? `${inv.duration}ms` : 'FAILED'}
+                </span>
+                {inv.status === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> : <XCircle className="w-4 h-4 text-red-400 shrink-0" />}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
@@ -690,6 +1210,20 @@ function MarketplaceSubpage() {
 // ═══════════════════════════════════════════════════════════
 function DocsSubpage() {
   const shouldReduce = useReducedMotion();
+  const [docsSearch, setDocsSearch] = useState('');
+  const [docsCategory, setDocsCategory] = useState<string>('all');
+
+  const filteredImages = researchImages.filter((img) => {
+    const matchesSearch = docsSearch === '' || img.name.toLowerCase().includes(docsSearch.toLowerCase()) || img.desc.toLowerCase().includes(docsSearch.toLowerCase());
+    const matchesCategory = docsCategory === 'all' || img.category === docsCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const filteredReports = pdfReports.filter((report) => {
+    const matchesSearch = docsSearch === '' || report.title.toLowerCase().includes(docsSearch.toLowerCase()) || report.desc.toLowerCase().includes(docsSearch.toLowerCase());
+    const matchesCategory = docsCategory === 'all' || report.category === docsCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="max-w-[1200px] mx-auto px-6">
@@ -704,6 +1238,43 @@ function DocsSubpage() {
 
       <hr className="editorial-rule-thick mb-12" />
 
+      {/* ── Enhancement 5: Search & Filter Bar ── */}
+      <div className="mb-8 p-4 border border-border rounded bg-muted/10">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <input
+              type="text"
+              placeholder="Search research images and PDF reports…"
+              value={docsSearch}
+              onChange={(e) => setDocsSearch(e.target.value)}
+              className="w-full min-h-[44px] pl-10 pr-4 py-2 text-sm bg-background border border-border rounded focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 transition-colors"
+              aria-label="Search documentation"
+            />
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Filter className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+            {docsCategories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setDocsCategory(cat)}
+                className={`min-h-[36px] px-3 py-1.5 text-[10px] tracking-[0.12em] uppercase font-medium border rounded cursor-pointer transition-colors ${docsCategory === cat ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-foreground/20'}`}
+                aria-pressed={docsCategory === cat}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+        {(docsSearch || docsCategory !== 'all') && (
+          <p className="text-[10px] text-muted-foreground mt-2">
+            Showing {filteredImages.length} image{filteredImages.length !== 1 ? 's' : ''} and {filteredReports.length} report{filteredReports.length !== 1 ? 's' : ''}
+            {docsSearch && <span> matching &ldquo;{docsSearch}&rdquo;</span>}
+            {docsCategory !== 'all' && <span> in <span className="text-primary">{docsCategory}</span></span>}
+          </p>
+        )}
+      </div>
+
       {/* Visual Gallery */}
       <section className="mb-16" aria-label="Visual gallery">
         <ErrorBoundary section="Visual Gallery"><VisualGallery /></ErrorBoundary>
@@ -714,18 +1285,28 @@ function DocsSubpage() {
       {/* Research Images List */}
       <section className="mb-16 py-8" aria-label="Research images">
         <SectionHeader num="RI" title="Research Images" subtitle="Generated analysis visuals from the architecture deep-dive." />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" role="list">
-          {researchImages.map((img) => (
-            <div key={img.file} className="border border-border rounded p-4 hover:border-foreground/20 transition-colors" role="listitem">
-              <div className="flex items-start gap-2 mb-2">
-                <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <h4 className="font-['Georgia',_serif] text-sm font-bold text-foreground">{img.name}</h4>
+        {filteredImages.length === 0 ? (
+          <div className="text-center py-10 border border-border rounded">
+            <Search className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">No images match your search criteria.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" role="list">
+            {filteredImages.map((img) => (
+              <div key={img.file} className="border border-border rounded p-4 hover:border-foreground/20 transition-colors" role="listitem">
+                <div className="flex items-start gap-2 mb-2">
+                  <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  <h4 className="font-['Georgia',_serif] text-sm font-bold text-foreground">{img.name}</h4>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{img.desc}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-[10px] font-mono text-muted-foreground/60">{img.file}</span>
+                  <span className="text-[9px] tracking-[0.12em] uppercase font-medium px-1.5 py-0.5 bg-muted/40 rounded text-muted-foreground">{img.category}</span>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">{img.desc}</p>
-              <p className="text-[10px] font-mono text-muted-foreground/60 mt-2">{img.file}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <EditorialDivider />
@@ -733,19 +1314,27 @@ function DocsSubpage() {
       {/* PDF Reports */}
       <section className="mb-16 py-8" aria-label="PDF reports">
         <SectionHeader num="PDF" title="PDF Reports" subtitle="Comprehensive analysis reports available for download." />
-        <div className="space-y-2">
-          {pdfReports.map((report, i) => (
-            <motion.div key={i} className="flex items-center gap-4 p-4 border border-border rounded hover:border-foreground/20 hover:bg-muted/10 transition-colors group cursor-pointer" whileHover={shouldReduce ? undefined : { x: 2 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
-              <BookOpen className="w-5 h-5 text-primary shrink-0" />
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">{report.title}</h4>
-                <p className="text-xs text-muted-foreground truncate">{report.desc}</p>
-              </div>
-              <span className="text-[10px] font-mono text-muted-foreground shrink-0">{report.size}</span>
-              <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-            </motion.div>
-          ))}
-        </div>
+        {filteredReports.length === 0 ? (
+          <div className="text-center py-10 border border-border rounded">
+            <Search className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">No reports match your search criteria.</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filteredReports.map((report, i) => (
+              <motion.div key={i} className="flex items-center gap-4 p-4 border border-border rounded hover:border-foreground/20 hover:bg-muted/10 transition-colors group cursor-pointer" whileHover={shouldReduce ? undefined : { x: 2 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
+                <BookOpen className="w-5 h-5 text-primary shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">{report.title}</h4>
+                  <p className="text-xs text-muted-foreground truncate">{report.desc}</p>
+                </div>
+                <span className="text-[9px] tracking-[0.12em] uppercase font-medium px-1.5 py-0.5 bg-muted/40 rounded text-muted-foreground shrink-0">{report.category}</span>
+                <span className="text-[10px] font-mono text-muted-foreground shrink-0">{report.size}</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
 
       <EditorialDivider />
