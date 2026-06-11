@@ -40,7 +40,19 @@ function PipelineView({ filteredSkills }: { filteredSkills: Skill[] }) {
     if (basketSkills.length === 0) return;
     const script = basketSkills.map(s => `# ${s.name} (T${s.tier} ${s.tierName})\n${s.installCommand}`).join('\n\n');
     const fullScript = `#!/bin/bash\n# Skill Stack Pipeline — ${basketSkills.length} skills\n# Generated at ${new Date().toISOString()}\n\nset -e\n\n${script}\n\necho "✅ Pipeline complete: ${basketSkills.length} skills installed"`;
-    await navigator.clipboard.writeText(fullScript);
+    try {
+      await navigator.clipboard.writeText(fullScript);
+    } catch {
+      // Fallback for insecure contexts (HTTP, iframe restrictions)
+      const textarea = document.createElement('textarea');
+      textarea.value = fullScript;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

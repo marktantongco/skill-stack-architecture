@@ -85,7 +85,19 @@ export function ClipboardPanel() {
   }, [clipboardHistory]);
 
   const handleRecopy = async (item: ClipboardItem) => {
-    await navigator.clipboard.writeText(item.command);
+    try {
+      await navigator.clipboard.writeText(item.command);
+    } catch {
+      // Fallback for insecure contexts (HTTP, iframe restrictions)
+      const textarea = document.createElement('textarea');
+      textarea.value = item.command;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
     addToClipboard({ id: item.id, command: item.command, skillName: item.skillName });
     setCopiedId(item.id + '-' + item.copiedAt);
     setTimeout(() => setCopiedId(null), 1000);
@@ -93,7 +105,19 @@ export function ClipboardPanel() {
 
   const handleCopyAll = async () => {
     const allCommands = clipboardHistory.map((item) => item.command).join('\n');
-    await navigator.clipboard.writeText(allCommands);
+    try {
+      await navigator.clipboard.writeText(allCommands);
+    } catch {
+      // Fallback for insecure contexts (HTTP, iframe restrictions)
+      const textarea = document.createElement('textarea');
+      textarea.value = allCommands;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
     setCopiedAll(true);
     setTimeout(() => setCopiedAll(false), 1500);
   };

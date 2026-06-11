@@ -110,7 +110,19 @@ export function BasketPanel() {
       );
     }
 
-    await navigator.clipboard.writeText(text);
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Fallback for insecure contexts (HTTP, iframe restrictions)
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
     setCopiedType(type);
     setTimeout(() => setCopiedType(null), 1500);
   };

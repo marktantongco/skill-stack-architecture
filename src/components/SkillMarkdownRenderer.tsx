@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef, useReducer } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useSkillStore } from '@/lib/skill-store';
@@ -15,11 +15,39 @@ interface SkillMarkdownRendererProps {
   skillDir: string;
 }
 
+type FetchState = {
+  content: string | null;
+  length: number;
+  loading: boolean;
+  error: string | null;
+};
+
+type FetchAction =
+  | { type: 'FETCH_START' }
+  | { type: 'FETCH_SUCCESS'; content: string | null; length: number }
+  | { type: 'FETCH_ERROR'; error: string };
+
+function fetchReducer(state: FetchState, action: FetchAction): FetchState {
+  switch (action.type) {
+    case 'FETCH_START':
+      return { content: null, length: 0, loading: true, error: null };
+    case 'FETCH_SUCCESS':
+      return { content: action.content, length: action.length, loading: false, error: null };
+    case 'FETCH_ERROR':
+      return { content: null, length: 0, loading: false, error: action.error };
+    default:
+      return state;
+  }
+}
+
 export function SkillMarkdownRenderer({ skillId, skillDir }: SkillMarkdownRendererProps) {
-  const [content, setContent] = useState<string | null>(null);
-  const [length, setLength] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [fetchState, dispatch] = useReducer(fetchReducer, {
+    content: null,
+    length: 0,
+    loading: true,
+    error: null,
+  });
+  const { content, length, loading, error } = fetchState;
   const [retryCount, setRetryCount] = useState(0);
   const [copiedFull, setCopiedFull] = useState(false);
   const [copiedCommand, setCopiedCommand] = useState(false);
@@ -34,8 +62,7 @@ export function SkillMarkdownRenderer({ skillId, skillDir }: SkillMarkdownRender
     const controller = new AbortController();
     abortRef.current = controller;
 
-    setLoading(true);
-    setError(null);
+    dispatch({ type: 'FETCH_START' });
 
     fetch(`/api/skill-content?skill=${encodeURIComponent(skillDir)}`, {
       signal: controller.signal,
@@ -45,16 +72,11 @@ export function SkillMarkdownRenderer({ skillId, skillDir }: SkillMarkdownRender
         return r.json();
       })
       .then(data => {
-        setContent(data?.content || null);
-        setLength(data?.length || 0);
-        setLoading(false);
+        dispatch({ type: 'FETCH_SUCCESS', content: data?.content || null, length: data?.length || 0 });
       })
       .catch((err: Error) => {
         if (err.name === 'AbortError') return; // cancelled, not an error
-        setError(err.message || 'Failed to load SKILL.md');
-        setContent(null);
-        setLength(0);
-        setLoading(false);
+        dispatch({ type: 'FETCH_ERROR', error: err.message || 'Failed to load SKILL.md' });
       });
 
     return () => { controller.abort(); };
@@ -62,17 +84,46 @@ export function SkillMarkdownRenderer({ skillId, skillDir }: SkillMarkdownRender
 
   const handleCopyFull = useCallback(async () => {
     if (!content) return;
-    await navigator.clipboard.writeText(content);
-    setCopiedFull(true);
-    setTimeout(() => setCopiedFull(false), 1500);
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedFull(true);
+      setTimeout(() => setCopiedFull(false), 1500);
+    } catch {
+      // Fallback for insecure contexts (HTTP, iframe restrictions)
+      const textarea = document.createElement('textarea');
+      textarea.value = content;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopiedFull(true);
+      setTimeout(() => setCopiedFull(false), 1500);
+    }
   }, [content]);
 
   const handleCopyCommand = useCallback(async () => {
     if (!skill) return;
-    await navigator.clipboard.writeText(skill.installCommand);
-    addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
-    setCopiedCommand(true);
-    setTimeout(() => setCopiedCommand(false), 1500);
+    try {
+      await navigator.clipboard.writeText(skill.installCommand);
+      addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
+      setCopiedCommand(true);
+      setTimeout(() => setCopiedCommand(false), 1500);
+    } catch {
+      // Fallback for insecure contexts (HTTP, iframe restrictions)
+      const textarea = document.createElement('textarea');
+      textarea.value = skill.installCommand;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      addToClipboard({ id: skill.id, command: skill.installCommand, skillName: skill.name });
+      setCopiedCommand(true);
+      setTimeout(() => setCopiedCommand(false), 1500);
+    }
   }, [skill, addToClipboard]);
 
   if (loading) {
