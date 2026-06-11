@@ -14,6 +14,7 @@ import { SectionMapping } from "@/components/SectionMapping";
 import { VisualGallery } from "@/components/VisualGallery";
 import { ProxyComparison } from "@/components/ProxyComparison";
 import { SkillMarketplace } from "@/components/SkillMarketplace";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { motion, AnimatePresence, useScroll, useSpring, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -279,7 +280,9 @@ export default function Home() {
       {/* Main Content */}
       <main id="main-content" className="flex-1 section-below-fold">
         {/* Hero / Masthead */}
-        <HeroSection />
+        <ErrorBoundary section="Hero">
+          <HeroSection />
+        </ErrorBoundary>
 
         <EditorialDivider thick />
 
@@ -353,55 +356,81 @@ export default function Home() {
         <EditorialDivider />
 
         {/* 01 — Skill Reference */}
-        <SkillReference />
+        <ErrorBoundary section="Skill Registry">
+          <SkillReference />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 12 — KDI Skill Marketplace */}
-        <SkillMarketplace />
+        <ErrorBoundary section="Skill Marketplace">
+          <SkillMarketplace />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 02 — Design Algorithm */}
-        <DesignAlgorithm />
+        <ErrorBoundary section="Design Algorithm">
+          <DesignAlgorithm />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 03 — Options Showcase */}
-        <OptionsShowcase />
+        <ErrorBoundary section="Options Showcase">
+          <OptionsShowcase />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 04 — Comparative Analysis */}
-        <ComparativeAnalysis />
+        <ErrorBoundary section="Comparative Analysis">
+          <ComparativeAnalysis />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 05 — Heatmap */}
-        <HeatmapViz />
+        <ErrorBoundary section="Heatmap">
+          <HeatmapViz />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 06 — Implementation Blueprint */}
-        <ImplementationBlueprint />
+        <ErrorBoundary section="Implementation Blueprint">
+          <ImplementationBlueprint />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 07 — AI Portal Gateway */}
-        <AIPortalGateway />
+        <ErrorBoundary section="AI Portal Gateway">
+          <AIPortalGateway />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 08 — Tier Architecture */}
-        <TierArchitecture />
+        <ErrorBoundary section="Tier Architecture">
+          <TierArchitecture />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 09 — Decision Tree */}
-        <DecisionTree />
+        <ErrorBoundary section="Decision Tree">
+          <DecisionTree />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 10 — Section-to-Skill Mapping */}
-        <SectionMapping />
+        <ErrorBoundary section="Section Mapping">
+          <SectionMapping />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 11 — Visual Asset Gallery */}
-        <VisualGallery />
+        <ErrorBoundary section="Visual Gallery">
+          <VisualGallery />
+        </ErrorBoundary>
         <EditorialDivider />
 
         {/* 13 — Proxy Architecture Comparison */}
-        <ProxyComparison />
+        <ErrorBoundary section="Proxy Comparison">
+          <ProxyComparison />
+        </ErrorBoundary>
       </main>
 
       {/* Editorial Footer — Colophon */}

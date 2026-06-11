@@ -121,3 +121,26 @@ Stage Summary:
 - 12/12 clipboard call sites now have consistent try/catch + textarea fallback pattern
 - API routes verified as secure and well-handled
 - Build and lint both pass clean
+
+---
+Task ID: audit-deep-continue
+Agent: main-agent
+Task: Continue deep audit — ErrorBoundary, design consistency, proxy radar differentiation
+
+Work Log:
+- Created ErrorBoundary component with contextual section name, retry button, go-home button, dev-only error stack
+- Wrapped all 14 section components in page.tsx with individual ErrorBoundary instances
+- Each section now isolated — a crash in one section doesn't take down the entire page
+- Audited all 8 remaining components for design consistency against canonical editorial pattern
+- 7/8 components fully consistent; HeroSection deviations are intentional (dark hero treatment)
+- No accessibility issues found across any component
+- Enhanced ProxyComparison with 4th tab: Radar Comparison
+- Radar tab: dual-proxy selector, overlaid Recharts RadarChart, dimension delta table with color-coded +/- indicators
+- Total score row in delta table for quick aggregate comparison
+- All build and lint pass clean
+
+Stage Summary:
+- ErrorBoundary: 14 section-level crash recovery boundaries added
+- Design audit: 7/8 consistent, 1 intentional hero deviation, 0 accessibility issues
+- Proxy radar: Interactive dual-proxy overlay with Recharts, delta table, total comparison
+- All builds and lint pass clean

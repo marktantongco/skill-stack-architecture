@@ -4,8 +4,18 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '@/lib/animation-variants';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { Copy, Check, ArrowRight, Zap, Shield, Globe, Layers, TrendingUp, Fingerprint } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Copy, Check, ArrowRight, Zap, Shield, Globe, Layers, TrendingUp, Fingerprint, Radar } from 'lucide-react';
+import {
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar as RechartsRadar,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from 'recharts';
 
 /* ─── Proxy Type Definitions ─── */
 interface ProxyType {
@@ -139,9 +149,25 @@ const scores: Record<string, Record<string, number>> = {
 export function ProxyComparison() {
   const [selectedProxy, setSelectedProxy] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'compare' | 'insights'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'compare' | 'radar' | 'insights'>('overview');
+  const [radarProxyA, setRadarProxyA] = useState<string>('reverse');
+  const [radarProxyB, setRadarProxyB] = useState<string>('identity');
   const shouldReduce = useReducedMotion();
   const noMotion = shouldReduce ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } } : null;
+
+  // Build radar chart data for the two selected proxies
+  const radarData = useMemo(() => {
+    return comparisonDimensions.map((dim) => ({
+      dimension: dim.label,
+      [proxyTypes.find(p => p.id === radarProxyA)?.name.replace(' Proxy', '') || 'A']: scores[radarProxyA]?.[dim.id] || 0,
+      [proxyTypes.find(p => p.id === radarProxyB)?.name.replace(' Proxy', '') || 'B']: scores[radarProxyB]?.[dim.id] || 0,
+    }));
+  }, [radarProxyA, radarProxyB]);
+
+  const radarColorA = proxyTypes.find(p => p.id === radarProxyA)?.color || '#3b82f6';
+  const radarColorB = proxyTypes.find(p => p.id === radarProxyB)?.color || '#06b6d4';
+  const radarNameA = proxyTypes.find(p => p.id === radarProxyA)?.name.replace(' Proxy', '') || 'A';
+  const radarNameB = proxyTypes.find(p => p.id === radarProxyB)?.name.replace(' Proxy', '') || 'B';
 
   const handleCopy = async (id: string, text: string) => {
     try {
@@ -196,6 +222,7 @@ export function ProxyComparison() {
           {[
             { id: 'overview' as const, label: 'Overview' },
             { id: 'compare' as const, label: 'Compare' },
+            { id: 'radar' as const, label: 'Radar' },
             { id: 'insights' as const, label: 'Cross-Field' },
           ].map((tab) => (
             <button
@@ -359,6 +386,180 @@ export function ProxyComparison() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* ─── Radar Comparison Tab ─── */}
+        {activeTab === 'radar' && (
+          <div className="space-y-6">
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
+              Select two proxy types to overlay on a radar chart. The visual shape reveals
+              architectural philosophy at a glance — where each paradigm invests its capability budget,
+              and where it deliberately accepts trade-offs.
+            </p>
+
+            {/* Proxy Selectors */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 block">
+                  Proxy A
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {proxyTypes.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setRadarProxyA(p.id)}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all border cursor-pointer ${
+                        radarProxyA === p.id
+                          ? 'border-foreground text-foreground'
+                          : 'border-border/50 text-muted-foreground hover:border-border hover:text-foreground'
+                      }`}
+                      style={radarProxyA === p.id ? { backgroundColor: p.color + '20', borderColor: p.color } : {}}
+                    >
+                      {p.name.replace(' Proxy', '')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 block">
+                  Proxy B
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {proxyTypes.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setRadarProxyB(p.id)}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all border cursor-pointer ${
+                        radarProxyB === p.id
+                          ? 'border-foreground text-foreground'
+                          : 'border-border/50 text-muted-foreground hover:border-border hover:text-foreground'
+                      }`}
+                      style={radarProxyB === p.id ? { backgroundColor: p.color + '20', borderColor: p.color } : {}}
+                    >
+                      {p.name.replace(' Proxy', '')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Radar Chart */}
+            <div className="border border-border/50 rounded-xl p-6 bg-muted/10">
+              <div className="w-full aspect-square max-w-lg mx-auto">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
+                    <PolarGrid stroke="currentColor" strokeOpacity={0.15} />
+                    <PolarAngleAxis
+                      dataKey="dimension"
+                      tick={{ fontSize: 10, fill: 'currentColor', fillOpacity: 0.6 }}
+                    />
+                    <PolarRadiusAxis
+                      angle={90}
+                      domain={[0, 5]}
+                      tick={{ fontSize: 8, fill: 'currentColor', fillOpacity: 0.4 }}
+                      tickCount={6}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--popover))',
+                        borderColor: 'hsl(var(--border))',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{ fontSize: '11px', paddingTop: '12px' }}
+                    />
+                    <RechartsRadar
+                      name={radarNameA}
+                      dataKey={radarNameA}
+                      stroke={radarColorA}
+                      fill={radarColorA}
+                      fillOpacity={0.15}
+                      strokeWidth={2}
+                    />
+                    <RechartsRadar
+                      name={radarNameB}
+                      dataKey={radarNameB}
+                      stroke={radarColorB}
+                      fill={radarColorB}
+                      fillOpacity={0.15}
+                      strokeWidth={2}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Dimension Delta Table */}
+            <div className="rounded-lg border border-border/50 overflow-hidden">
+              <table className="w-full text-xs" role="table" aria-label="Proxy comparison delta">
+                <thead>
+                  <tr className="bg-muted/50">
+                    <th className="text-left p-2.5 font-semibold">Dimension</th>
+                    <th className="text-center p-2.5 font-semibold" style={{ color: radarColorA }}>
+                      {radarNameA}
+                    </th>
+                    <th className="text-center p-2.5 font-semibold" style={{ color: radarColorB }}>
+                      {radarNameB}
+                    </th>
+                    <th className="text-center p-2.5 font-semibold">Delta</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonDimensions.map((dim) => {
+                    const a = scores[radarProxyA]?.[dim.id] || 0;
+                    const b = scores[radarProxyB]?.[dim.id] || 0;
+                    const delta = a - b;
+                    return (
+                      <tr key={dim.id} className="border-t border-border/30">
+                        <td className="p-2.5 font-medium">{dim.label}</td>
+                        <td className="p-2.5 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">
+                              <div className="h-full rounded-full" style={{ width: `${(a / 5) * 100}%`, backgroundColor: radarColorA }} />
+                            </div>
+                            <span className="font-mono text-muted-foreground w-3">{a}</span>
+                          </div>
+                        </td>
+                        <td className="p-2.5 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">
+                              <div className="h-full rounded-full" style={{ width: `${(b / 5) * 100}%`, backgroundColor: radarColorB }} />
+                            </div>
+                            <span className="font-mono text-muted-foreground w-3">{b}</span>
+                          </div>
+                        </td>
+                        <td className="p-2.5 text-center">
+                          <span className={`font-mono font-semibold ${delta > 0 ? 'text-emerald-600 dark:text-emerald-400' : delta < 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
+                            {delta > 0 ? '+' : ''}{delta}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {/* Total score row */}
+                  <tr className="border-t-2 border-border bg-muted/30">
+                    <td className="p-2.5 font-bold">Total</td>
+                    <td className="p-2.5 text-center font-mono font-bold" style={{ color: radarColorA }}>
+                      {Object.values(scores[radarProxyA] || {}).reduce((a, b) => a + b, 0)}
+                    </td>
+                    <td className="p-2.5 text-center font-mono font-bold" style={{ color: radarColorB }}>
+                      {Object.values(scores[radarProxyB] || {}).reduce((a, b) => a + b, 0)}
+                    </td>
+                    <td className="p-2.5 text-center font-mono font-bold">
+                      {(() => {
+                        const totalA = Object.values(scores[radarProxyA] || {}).reduce((a, b) => a + b, 0);
+                        const totalB = Object.values(scores[radarProxyB] || {}).reduce((a, b) => a + b, 0);
+                        const d = totalA - totalB;
+                        return <span className={d > 0 ? 'text-emerald-600 dark:text-emerald-400' : d < 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}>{d > 0 ? '+' : ''}{d}</span>;
+                      })()}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
