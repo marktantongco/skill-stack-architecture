@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --text: #111827; --text-sub: #6B7280; --text-muted: #9CA3AF;
+    --bg: #FFFFFF; --surface: #F9FAFB; --border: #E5E7EB;
+    --red: #EF4444; --amber: #F59E0B; --green: #10B981; --blue: #3B82F6;
+    --purple: #8B5CF6;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased;
+  }
+  #root { width: fit-content; min-width: 1000px; margin: 0 auto; padding: 48px 40px; }
+
+  .title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: var(--text-sub); text-align: center; margin-bottom: 40px; }
+
+  .comparison { display: flex; gap: 32px; align-items: flex-start; }
+  .panel {
+    flex: 1; min-width: 420px; border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .panel-header {
+    padding: 20px 24px; font-size: 16px; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .panel-header .badge {
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; margin-left: auto;
+  }
+  .current .panel-header { background: #FEF2F2; color: #991B1B; }
+  .current .badge { background: #FEE2E2; color: #991B1B; }
+  .proposed .panel-header { background: #F0FDF4; color: #065F46; }
+  .proposed .badge { background: #DCFCE7; color: #065F46; }
+
+  .panel-body { padding: 20px 24px; }
+
+  .arch-layer {
+    margin-bottom: 16px; border: 1px solid var(--border); border-radius: 10px;
+    overflow: hidden;
+  }
+  .arch-layer-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 8px 14px;
+    background: var(--surface); color: var(--text-sub);
+    border-bottom: 1px solid var(--border);
+  }
+  .arch-layer-content { padding: 12px 14px; }
+  .arch-item {
+    font-size: 13px; color: var(--text); padding: 6px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .arch-item + .arch-item { border-top: 1px dashed #F3F4F6; }
+  .icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+  .icon-red { color: var(--red); }
+  .icon-green { color: var(--green); }
+  .icon-amber { color: var(--amber); }
+  .icon-blue { color: var(--blue); }
+
+  .stat-row {
+    display: flex; gap: 12px; margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .stat {
+    flex: 1; text-align: center; padding: 8px;
+    background: var(--surface); border-radius: 8px;
+  }
+  .stat-value { font-size: 20px; font-weight: 700; }
+  .stat-label { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+
+  .arrow-container {
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; width: 48px;
+  }
+  .arrow {
+    font-size: 28px; color: var(--blue); font-weight: bold;
+  }
+
+  .key-changes {
+    margin-top: 32px; padding: 20px 24px;
+    background: #F8FAFC; border-radius: 12px; border: 1px solid var(--border);
+  }
+  .key-changes-title {
+    font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 12px;
+  }
+  .change-item {
+    font-size: 13px; color: var(--text); padding: 6px 0;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .change-item + .change-item { border-top: 1px dashed #E5E7EB; padding-top: 8px; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="title">Architecture Evolution: Current vs. Proposed</div>
+  <div class="subtitle">From ordered-list stacks to pipeline-based composition with telemetry</div>
+
+  <div class="comparison">
+    <!-- CURRENT -->
+    <div class="panel current">
+      <div class="panel-header">
+        Current Architecture
+        <span class="badge">Ordered List Model</span>
+      </div>
+      <div class="panel-body">
+        <div class="arch-layer">
+          <div class="arch-layer-title">Data Model</div>
+          <div class="arch-layer-content">
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> Skill = flat type, no versioning</div>
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> Stack = ordered BasketItem[]</div>
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> No dependency graph (DAG)</div>
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> No conflict detection</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">Execution</div>
+          <div class="arch-layer-content">
+            <div class="arch-item"><span class="icon icon-amber">&#9888;</span> Clipboard-based: bash script copy</div>
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> No server-side execution</div>
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> No partial-failure handling</div>
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> No parallelization</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">Observability</div>
+          <div class="arch-layer-content">
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> Zero telemetry / analytics</div>
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> No success/failure metrics</div>
+            <div class="arch-item"><span class="icon icon-red">&#10007;</span> No latency tracking</div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value" style="color:#EF4444;">2</div><div class="stat-label">High Issues</div></div>
+          <div class="stat"><div class="stat-value" style="color:#F59E0B;">4</div><div class="stat-label">Medium Issues</div></div>
+          <div class="stat"><div class="stat-value" style="color:#10B981;">2</div><div class="stat-label">Resolved</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARROW -->
+    <div class="arrow-container">
+      <div class="arrow">&rarr;</div>
+    </div>
+
+    <!-- PROPOSED -->
+    <div class="panel proposed">
+      <div class="panel-header">
+        Proposed Architecture
+        <span class="badge">Pipeline + Telemetry</span>
+      </div>
+      <div class="panel-body">
+        <div class="arch-layer">
+          <div class="arch-layer-title">Data Model</div>
+          <div class="arch-layer-content">
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Skill with version field + schema hash</div>
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> SkillPipeline with I/O stages</div>
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Conflict detection matrix</div>
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Dependency edges (optional DAG)</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">Execution</div>
+          <div class="arch-layer-content">
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Pipeline executor with stage runner</div>
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Partial-failure + rollback semantics</div>
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Parallel stage execution</div>
+            <div class="arch-item"><span class="icon icon-blue">&#8635;</span> Cost/latency budgets per pipeline</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">Observability</div>
+          <div class="arch-layer-content">
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Skill invocation telemetry</div>
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Pipeline success/failure rates</div>
+            <div class="arch-item"><span class="icon icon-green">&#10003;</span> Latency p50/p99 tracking</div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value" style="color:#10B981;">0</div><div class="stat-label">High Issues</div></div>
+          <div class="stat"><div class="stat-value" style="color:#F59E0B;">1</div><div class="stat-label">Medium Issues</div></div>
+          <div class="stat"><div class="stat-value" style="color:#10B981;">7</div><div class="stat-label">Resolved</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="key-changes">
+    <div class="key-changes-title">Key Implementation Changes</div>
+    <div class="change-item">
+      <span class="icon icon-green">&#10003;</span>
+      <span><strong>Telemetry API route</strong> &mdash; POST /api/telemetry records skill_invocations, pipeline_success_rate, skill_latency_p99 to SQLite via Prisma</span>
+    </div>
+    <div class="change-item">
+      <span class="icon icon-green">&#10003;</span>
+      <span><strong>SkillPipeline type</strong> &mdash; Replaces flat basket with stage-based I/O piping: each stage has inputs, outputs, and rollback instructions</span>
+    </div>
+    <div class="change-item">
+      <span class="icon icon-green">&#10003;</span>
+      <span><strong>Partial-failure executor</strong> &mdash; Pipeline execution tracks completed stages, supports rollback on failure, and reports which stages succeeded/failed</span>
+    </div>
+    <div class="change-item">
+      <span class="icon icon-green">&#10003;</span>
+      <span><strong>Version pinning + conflict matrix</strong> &mdash; Skills gain version field; pipeline construction checks for version mismatches and tag conflicts before execution</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

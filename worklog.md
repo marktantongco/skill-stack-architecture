@@ -162,3 +162,62 @@ Stage Summary:
 - Generated: /home/z/my-project/download/skill_stack_deep_audit.pdf (99KB, 25 pages)
 - Key findings: (1) No skill execution runtime — system cannot validate recommendations, (2) MCP stacks are dead data with zero UI integration, (3) Two-registry problem with no synchronization, (4) 5 sections provide low value for high complexity, (5) SP-7 scoring is derived not measured, (6) Mock install counts presented as real data
 - Priority recommendations: P0 = Surface MCP stacks in UI, P1 = Migrate to database, P2 = Add caching and consolidate clipboard patterns
+
+---
+Task ID: visualize-and-implement
+Agent: Main Agent
+Task: Visualize the Skill/Skill Stack architectural discussion and implement the 80/20 recommendation
+
+Work Log:
+- Created 4 visualizations of the architectural analysis:
+  1. Decision Tree flowchart (Playwright+CSS Layout C) — 4-phase decision flow from dependency analysis to final verdict
+  2. Severity Findings horizontal bar chart (matplotlib) — 8 findings ranked by severity (2 HIGH, 4 MED, 2 RESOLVED)
+  3. Three Approaches radar chart (matplotlib) — Event-Sourced DAG vs Market-Driven vs Minimal Flat across 8 dimensions
+  4. Architecture Comparison (Playwright+CSS) — Current vs Proposed side-by-side with key changes
+- All 4 visualizations saved to /home/z/my-project/download/
+
+Implementation of the 80/20 recommendation:
+- Added SkillPipeline type with I/O piping model (replaces flat stack)
+  - PipelineStage: id, skillId, index, inputs, outputs, rollback, status, durationMs, errorMsg, rollbackResult
+  - SkillPipeline: id, name, stages, status, parallelGroups, budget, successCount/failureCount/rollbackCount
+- Added telemetry infrastructure
+  - New API route: POST/GET /api/telemetry — records and queries skill execution metrics
+  - Supports individual and batch telemetry events
+  - Aggregate endpoint: success rate, avg/p99 duration, per-skill metrics
+  - In-memory store with clear path to Prisma database migration
+- Added partial-failure semantics and rollback handling
+  - Pipeline executor tracks completed stages and supports rollback on failure
+  - Reports which stages succeeded/failed/rolled_back/skipped
+  - Budget enforcement: maxDurationMs and maxStages limits
+- Added skill versioning and conflict detection
+  - version field added to all 64 skills (semver '1.0.0')
+  - schemaHash field for change detection across versions
+  - skillConflicts: 7 known conflicts (Framer Motion vs GSAP, SEO vs Humanizer, etc.)
+  - skillDependencies: 13 dependency edges (requires, enhances, conflicts)
+  - detectConflicts() utility for pre-pipeline validation
+  - checkVersionCompatibility() utility for dependency checking
+- Updated Prisma schema with 4 new models:
+  - SkillInvocation: skill_id, status, duration_ms, error_msg, input/output hashes
+  - PipelineExecution: skill_ids, status, success/failure/rollback counts, total_duration
+  - PipelineStage: skill_id, stage_index, status, input/output summaries, rollback_result
+  - SkillVersion: skill_id, version, schema_hash, deprecated flag
+- Updated Zustand store with pipeline and telemetry state
+  - activePipeline, pipelineHistory, pipelineConflicts
+  - telemetryBuffer with batched flush to API
+  - updatePipelineStage for real-time stage updates
+  - completePipeline for history tracking
+
+Build verification:
+- Prisma generate: ✅ Client generated (v7.8.0)
+- Next.js build: ✅ Compiles successfully
+- ESLint: ✅ Clean on all modified files
+- All new routes visible: /api/telemetry
+
+Stage Summary:
+- 4 visualization PNGs in /download/: decision-tree.png, severity-findings.png, approaches-radar.png, architecture-comparison.png
+- New file: src/lib/pipeline-executor.ts — buildPipeline(), executePipeline(), detectConflicts(), checkVersionCompatibility()
+- New file: src/app/api/telemetry/route.ts — POST (record events) + GET (query/aggregate metrics)
+- Modified: src/lib/skill-data.ts — Added PipelineStage, SkillPipeline, SkillConflict, SkillDependency, TelemetryEvent types; version field on all skills; skillConflicts + skillDependencies data
+- Modified: src/lib/skill-store.ts — Added pipeline state, telemetry buffer, conflict tracking
+- Modified: prisma/schema.prisma — Added SkillInvocation, PipelineExecution, PipelineStage, SkillVersion models
+- Build and lint pass clean

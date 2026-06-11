@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --text: #111827;
+    --text-sub: #6B7280;
+    --text-muted: #9CA3AF;
+    --bg: #FFFFFF;
+    --surface: #F9FAFB;
+    --border: #E5E7EB;
+    --blue: #3B82F6;
+    --cyan: #06B6D4;
+    --purple: #8B5CF6;
+    --amber: #F59E0B;
+    --red: #EF4444;
+    --green: #10B981;
+    --connector: #94A3B8;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  #root { width: fit-content; min-width: 800px; margin: 0 auto; padding: 48px 40px; }
+  
+  .flow-title {
+    font-size: 22px; font-weight: 700; color: var(--text);
+    text-align: center; margin-bottom: 8px;
+  }
+  .flow-subtitle {
+    font-size: 14px; color: var(--text-sub);
+    text-align: center; margin-bottom: 40px;
+  }
+  
+  .phase-group {
+    background: #F8FAFC; border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .phase-title {
+    font-size: 16px; font-weight: 700; padding: 10px 16px;
+    border-radius: 8px; margin-bottom: 16px;
+  }
+  .phase-steps { display: flex; flex-direction: column; gap: 8px; padding-left: 12px; }
+  .phase-step {
+    font-size: 14px; font-weight: 400; color: var(--text);
+    padding: 8px 14px; background: white; border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .phase-step .step-num {
+    display: inline-block; width: 22px; height: 22px; line-height: 22px;
+    text-align: center; border-radius: 50%; font-size: 12px; font-weight: 600;
+    margin-right: 8px;
+  }
+  .phase-step .step-badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px; margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-dag { background: #EFF6FF; color: #1E40AF; }
+  .badge-market { background: #FFF7ED; color: #92400E; }
+  .badge-flat { background: #F0FDF4; color: #065F46; }
+  .badge-keep { background: #F5F3FF; color: #5B21B6; }
+  .badge-delete { background: #FEF2F2; color: #991B1B; }
+  
+  .phase-step .step-desc {
+    display: block; font-size: 12px; color: var(--text-sub);
+    margin-top: 4px; margin-left: 30px; line-height: 1.5;
+  }
+  
+  /* Phase colors — same-hue blue-gray gradient */
+  .phase-1 .phase-title { background: #F0F4F8; color: #334155; border-left: 4px solid #64748B; }
+  .phase-1 .step-num { background: #E2E8F0; color: #475569; }
+  .phase-2 .phase-title { background: #E8EDF2; color: #1E3A5F; border-left: 4px solid #5B7A99; }
+  .phase-2 .step-num { background: #DBEAFE; color: #1E3A5F; }
+  .phase-3 .phase-title { background: #E0E7EF; color: #1E3050; border-left: 4px solid #4A6B8A; }
+  .phase-3 .step-num { background: #D0D9E4; color: #1E3050; }
+  .phase-4 .phase-title { background: #D8E0EA; color: #172540; border-left: 4px solid #3A5C7A; }
+  .phase-4 .step-num { background: #C7D2E0; color: #172540; }
+  
+  .arrow-down {
+    text-align: center; color: #94A3B8; font-size: 24px; margin: 8px 0;
+  }
+  .arrow-label {
+    font-size: 12px; color: var(--text-sub); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  
+  .flow-legend {
+    display: flex; gap: 24px; justify-content: center;
+    margin-top: 40px; padding: 16px 24px;
+    background: #F9FAFB; border-radius: 8px; border: 1px solid #E5E7EB;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #4B5563; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; border: 2px solid; }
+
+  .confidence {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    color: var(--text-muted); margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="flow-title">Skill Architecture Decision Tree</div>
+  <div class="flow-subtitle">Multi-framework evaluation of Skill &amp; Skill Stack — from the Impeccable Audit</div>
+  
+  <div class="phase-group phase-1">
+    <div class="phase-title">Phase 1: Dependency Analysis</div>
+    <div class="phase-steps">
+      <div class="phase-step">
+        <span class="step-num">1</span>
+        Do skills have cross-dependencies?
+        <span class="confidence">(Root Question)</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="arrow-down">
+    <span class="arrow-label">If YES &rarr;</span> ↓
+  </div>
+  
+  <div class="phase-group phase-2">
+    <div class="phase-title">Phase 2: Dependency Topology</div>
+    <div class="phase-steps">
+      <div class="phase-step">
+        <span class="step-num">2a</span>
+        Are dependencies tree-shaped (no cycles)?
+        <span class="step-badge badge-dag">A: Event-Sourced DAG</span>
+        <span class="confidence">Confidence: 6/10</span>
+        <span class="step-desc">Skills as nodes in a DAG; execution traces as event streams; stacks are materialized views. Excellent auditability but complex debugging and migration pain.</span>
+      </div>
+      <div class="phase-step">
+        <span class="step-num">2b</span>
+        Do cycles exist between skills?
+        <span class="step-badge badge-market">B: Market-Driven Selection</span>
+        <span class="confidence">Confidence: 7/10</span>
+        <span class="step-desc">No explicit stacks &mdash; algorithm assembles skills based on task description with bidding/relevance scoring. Emergent behaviors but cold-start problem and distrust risk.</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="arrow-down">
+    <span class="arrow-label">If NO (skills are independent) &rarr;</span> ↓
+  </div>
+  
+  <div class="phase-group phase-3">
+    <div class="phase-title">Phase 3: Bundle Necessity</div>
+    <div class="phase-steps">
+      <div class="phase-step">
+        <span class="step-num">3a</span>
+        Do users need "one-click bundles"?
+        <span class="step-badge badge-keep">Keep Stacks + Metrics</span>
+        <span class="confidence">Confidence: 7/10</span>
+        <span class="step-desc">Retain the stack abstraction but add success rate telemetry, version pinning, and cost budgets. Without metrics, you can't improve what you don't measure.</span>
+      </div>
+      <div class="phase-step">
+        <span class="step-num">3b</span>
+        No evidence of bundle demand?
+        <span class="step-badge badge-delete">C: Delete Stacks (80/20)</span>
+        <span class="confidence">Confidence: 8/10</span>
+        <span class="step-desc">Delete the stack abstraction entirely. Skills are independently invocable with standard I/O piping. Stacks become shell pipelines &mdash; zero new code, maximum flexibility. This is what a senior dev would actually ship.</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="arrow-down">
+    <span class="arrow-label">Current assessment &rarr;</span> ↓
+  </div>
+  
+  <div class="phase-group phase-4">
+    <div class="phase-title">Phase 4: Current State Verdict</div>
+    <div class="phase-steps">
+      <div class="phase-step">
+        <span class="step-num">4</span>
+        Current codebase: Skills are independent + no evidence of bundle demand
+        <span class="step-badge badge-delete">Recommendation: Approach C</span>
+        <span class="step-desc">The Skill Stack data model is an ordered list pretending to be a composition engine. The 80/20 fix is to add telemetry first to validate if stacks matter, then either keep stacks with metrics or replace with standard I/O piping.</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="flow-legend">
+    <div class="legend-item"><div class="legend-dot" style="border-color:#3B82F6;background:#EFF6FF;"></div>Event-Sourced DAG</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:#F59E0B;background:#FFF7ED;"></div>Market-Driven</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:#8B5CF6;background:#F5F3FF;"></div>Keep + Metrics</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:#EF4444;background:#FEF2F2;"></div>Delete Stacks (80/20)</div>
+  </div>
+</div>
+</body>
+</html>
