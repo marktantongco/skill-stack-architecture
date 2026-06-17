@@ -1,0 +1,1602 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import { HeroSection } from '@/components/HeroSection';
+     4→     4→import { SkillMarketplace } from '@/components/SkillMarketplace';
+     5→     5→import { ProxyComparison } from '@/components/ProxyComparison';
+     6→     6→import { ProxyMatrix } from '@/components/ProxyMatrix';
+     7→     7→import { SP7Radar } from '@/components/SP7Radar';
+     8→     8→import { SkillPipeline } from '@/components/SkillPipeline';
+     9→     9→import { ArchitectureTree } from '@/components/ArchitectureTree';
+    10→    10→import { InfographicDashboard } from '@/components/InfographicMotion';
+    11→    11→import { DecisionTree } from '@/components/DecisionTree';
+    12→    12→import { VisualGallery } from '@/components/VisualGallery';
+    13→    13→import { ComparativeAnalysis } from '@/components/ComparativeAnalysis';
+    14→    14→import { TierArchitecture } from '@/components/TierArchitecture';
+    15→    15→import { AIPortalGateway } from '@/components/AIPortalGateway';
+    16→    16→import { SkillReference } from '@/components/SkillReference';
+    17→    17→import { ErrorBoundary } from '@/components/ErrorBoundary';
+    18→    18→import { EditorialReveal } from '@/components/EditorialReveal';
+    19→    19→import { gsapMotionRules } from '@/lib/gsap-hybrid';
+    20→    20→import { options, dimensions } from '@/lib/skill-data';
+    21→    21→import { staggerContainer, fadeInUp, dividerVariant, hoverNavItem } from '@/lib/animation-variants';
+    22→    22→import { copyToClipboard } from '@/lib/clipboard';
+    23→    23→import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
+    24→    24→import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+    25→    25→import { useTheme } from 'next-themes';
+    26→    26→import {
+    27→    27→  Moon, Sun, ArrowUp, Home, Shield, Paintbrush, Globe,
+    28→    28→  Layers, ShoppingBag, BookOpen, Eye, Wrench, ChevronDown,
+    29→    29→  ChevronRight, CheckCircle2, XCircle, AlertTriangle, Copy, Check,
+    30→    30→  Zap, ShieldCheck, Activity, RefreshCcw, ArrowRight,
+    31→    31→  Clock, BarChart3, Search, Filter, Play, Pause, RotateCcw,
+    32→    32→  TrendingUp, Gauge, CircleDot,
+    33→    33→} from 'lucide-react';
+    34→    34→import {
+    35→    35→  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+    36→    36→  Radar, ResponsiveContainer, Tooltip, Legend,
+    37→    37→} from 'recharts';
+    38→    38→
+    39→    39→// ─── Types ───
+    40→    40→type Subpage = 'home' | 'audit' | 'frontend' | 'proxy' | 'architecture' | 'marketplace' | 'docs';
+    41→    41→
+    42→    42→// ─── Tab Config ───
+    43→    43→const tabs: { id: Subpage; label: string; icon: React.ReactNode }[] = [
+    44→    44→  { id: 'home', label: 'Home', icon: <Home className="w-4 h-4" /> },
+    45→    45→  { id: 'audit', label: 'Audit', icon: <Eye className="w-4 h-4" /> },
+    46→    46→  { id: 'frontend', label: 'Frontend', icon: <Paintbrush className="w-4 h-4" /> },
+    47→    47→  { id: 'proxy', label: 'Proxy', icon: <Globe className="w-4 h-4" /> },
+    48→    48→  { id: 'architecture', label: 'Arch', icon: <Layers className="w-4 h-4" /> },
+    49→    49→  { id: 'marketplace', label: 'Market', icon: <ShoppingBag className="w-4 h-4" /> },
+    50→    50→  { id: 'docs', label: 'Docs', icon: <BookOpen className="w-4 h-4" /> },
+    51→    51→];
+    52→    52→
+    53→    53→// ─── Audit: Error Patterns Data ───
+    54→    54→const errorPatterns = [
+    55→    55→  {
+    56→    56→    name: 'navigator.clipboard Fallback',
+    57→    57→    severity: 'Critical' as const,
+    58→    58→    before: `await navigator.clipboard.writeText(text);`,
+    59→    59→    after: `try {\n  await navigator.clipboard.writeText(text);\n} catch {\n  // textarea fallback\n  const ta = document.createElement('textarea');\n  ta.value = text;\n  document.body.appendChild(ta);\n  ta.select();\n  document.execCommand('copy');\n  document.body.removeChild(ta);\n}`,
+    60→    60→    description: 'navigator.clipboard fails in insecure contexts (HTTP, iframes). The textarea fallback pattern ensures copy always works.',
+    61→    61→  },
+    62→    62→  {
+    63→    63→    name: 'setState-in-Effect Violation',
+    64→    64→    severity: 'High' as const,
+    65→    65→    before: `useEffect(() => { setState(value); }, [value]);`,
+    66→    66→    after: `const [state, dispatch] = useReducer(reducer, init);\n// State transitions are explicit, predictable, traceable`,
+    67→    67→    description: 'react-hooks/set-state-in-effect lint violations indicate implicit state transitions. useReducer makes state machines explicit.',
+    68→    68→  },
+    69→    69→  {
+    70→    70→    name: 'AbortController for Fetch Lifecycle',
+    71→    71→    severity: 'Medium' as const,
+    72→    72→    before: `const data = await fetch(url);\n// No way to cancel on unmount`,
+    73→    73→    after: `const controller = new AbortController();\nuseEffect(() => () => controller.abort(), []);\nconst data = await fetch(url, { signal: controller.signal });`,
+    74→    74→    description: 'Without AbortController, in-flight requests continue after component unmount, causing memory leaks and stale state updates.',
+    75→    75→  },
+    76→    76→  {
+    77→    77→    name: 'ErrorBoundary Per-Section Isolation',
+    78→    78→    severity: 'High' as const,
+    79→    79→    before: `<App />\n// Any render crash = white screen`,
+    80→    80→    after: `<ErrorBoundary section="Hero">\n  <HeroSection />\n</ErrorBoundary>\n<ErrorBoundary section="Gallery">\n  <VisualGallery />\n</ErrorBoundary>`,
+    81→    81→    description: 'Section-level ErrorBoundary prevents cascade failures. One section crashing does not take down the entire page.',
+    82→    82→  },
+    83→    83→];
+    84→    84→
+    85→    85→const severityColor: Record<string, string> = {
+    86→    86→  Critical: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30',
+    87→    87→  High: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30',
+    88→    88→  Medium: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30',
+    89→    89→};
+    90→    90→
+    91→    91→// ─── Audit: Error Layers Data ───
+    92→    92→const errorLayers = [
+    93→    93→  { layer: 1, name: 'Section-level ErrorBoundary', desc: 'Catches render crashes per section. Prevents cascade failures from propagating up the component tree.', icon: <Shield className="w-5 h-5" /> },
+    94→    94→  { layer: 2, name: 'Clipboard Resilience', desc: 'try/catch + textarea fallback pattern. Ensures copy-to-clipboard works in all browser contexts including insecure origins.', icon: <Copy className="w-5 h-5" /> },
+    95→    95→  { layer: 3, name: 'AbortController', desc: 'Cancellable fetch lifecycle. Prevents memory leaks and stale updates from in-flight requests after component unmount.', icon: <Activity className="w-5 h-5" /> },
+    96→    96→  { layer: 4, name: 'useReducer Migration', desc: 'Explicit state machine replacing useState. Makes state transitions predictable and eliminates set-state-in-effect lint violations.', icon: <RefreshCcw className="w-5 h-5" /> },
+    97→    97→];
+    98→    98→
+    99→    99→// ─── Audit: Scorecard Data ───
+   100→   100→const scorecardRows = [
+   101→   101→  { component: 'SkillMarkdownRenderer', clipboard: true, abort: true, boundary: 'parent', reducer: true },
+   102→   102→  { component: 'ClipboardPanel', clipboard: true, abort: null, boundary: 'parent', reducer: null },
+   103→   103→  { component: 'SkillMarketplace', clipboard: true, abort: null, boundary: true, reducer: null },
+   104→   104→  { component: 'BasketPanel', clipboard: true, abort: null, boundary: 'parent', reducer: null },
+   105→   105→  { component: 'SkillReference', clipboard: true, abort: null, boundary: true, reducer: null },
+   106→   106→  { component: 'ImplementationBlueprint', clipboard: true, abort: null, boundary: true, reducer: null },
+   107→   107→  { component: 'AIPortalGateway', clipboard: false, abort: null, boundary: true, reducer: null },
+   108→   108→];
+   109→   109→
+   110→   110→// ─── Audit: Error Simulation Scenarios ───
+   111→   111→const simScenarios = [
+   112→   112→  {
+   113→   113→    id: 'clipboard-insecure',
+   114→   114→    title: 'Clipboard in Insecure Context',
+   115→   115→    icon: <Copy className="w-4 h-4" />,
+   116→   116→    trigger: 'navigator.clipboard.writeText() called on HTTP page or inside iframe',
+   117→   117→    resolution: 'try/catch wraps the call. On failure, a hidden textarea is created, text is selected, and document.execCommand("copy") is executed as fallback.',
+   118→   118→    layer: 'Layer 2 — Clipboard Resilience',
+   119→   119→    beforeLabel: 'Unprotected call',
+   120→   120→    afterLabel: 'Resilient with fallback',
+   121→   121→    beforeCode: `navigator.clipboard.writeText(text)\n  .then(() => console.log('copied'))\n  .catch(() => console.error('failed'));`,
+   122→   122→    afterCode: `try {\n  await navigator.clipboard.writeText(text);\n} catch {\n  const ta = document.createElement('textarea');\n  ta.value = text;\n  ta.style.position = 'fixed';\n  ta.style.left = '-9999px';\n  document.body.appendChild(ta);\n  ta.select();\n  document.execCommand('copy');\n  document.body.removeChild(ta);\n}`,
+   123→   123→  },
+   124→   124→  {
+   125→   125→    id: 'render-crash',
+   126→   126→    title: 'Render Crash',
+   127→   127→    icon: <XCircle className="w-4 h-4" />,
+   128→   128→    trigger: 'Component throws during render (e.g., accessing property of undefined)',
+   129→   129→    resolution: 'ErrorBoundary catches the error at the section boundary. The crashed section shows a recovery UI while the rest of the page continues working.',
+   130→   130→    layer: 'Layer 1 — ErrorBoundary',
+   131→   131→    beforeLabel: 'Without boundary',
+   132→   132→    afterLabel: 'With section isolation',
+   133→   133→    beforeCode: `<App>\n  <Hero />\n  <Gallery />\n  <Contact />\n</App>\n// Any crash = full white screen`,
+   134→   134→    afterCode: `<App>\n  <ErrorBoundary section="Hero">\n    <Hero />\n  </ErrorBoundary>\n  <ErrorBoundary section="Gallery">\n    <Gallery />\n  </ErrorBoundary>\n  <ErrorBoundary section="Contact">\n    <Contact />\n  </ErrorBoundary>\n</App>`,
+   135→   135→  },
+   136→   136→  {
+   137→   137→    id: 'abandoned-fetch',
+   138→   138→    title: 'Abandoned Fetch',
+   139→   139→    icon: <Activity className="w-4 h-4" />,
+   140→   140→    trigger: 'Component unmounts while fetch is still in-flight',
+   141→   141→    resolution: 'AbortController is created in useEffect. On cleanup, controller.abort() cancels the request, preventing stale state updates and memory leaks.',
+   142→   142→    layer: 'Layer 3 — AbortController',
+   143→   143→    beforeLabel: 'No cancellation',
+   144→   144→    afterLabel: 'With AbortController',
+   145→   145→    beforeCode: `useEffect(() => {\n  fetch('/api/data')\n    .then(res => res.json())\n    .then(data => setState(data));\n  // No cleanup — leak on unmount\n}, []);`,
+   146→   146→    afterCode: `useEffect(() => {\n  const controller = new AbortController();\n  fetch('/api/data', { signal: controller.signal })\n    .then(res => res.json())\n    .then(data => setState(data))\n    .catch(err => {\n      if (err.name !== 'AbortError') throw err;\n    });\n  return () => controller.abort();\n}, []);`,
+   147→   147→  },
+   148→   148→  {
+   149→   149→    id: 'race-condition',
+   150→   150→    title: 'Race Condition',
+   151→   151→    icon: <RefreshCcw className="w-4 h-4" />,
+   152→   152→    trigger: 'Multiple rapid dispatches cause stale state reads inside effects',
+   153→   153→    resolution: 'useReducer replaces useState. All state transitions are explicit dispatches — no stale closures, no implicit set-state-in-effect violations.',
+   154→   154→    layer: 'Layer 4 — useReducer',
+   155→   155→    beforeLabel: 'Stale closure',
+   156→   156→    afterLabel: 'Explicit dispatch',
+   157→   157→    beforeCode: 'const [value, setValue] = useState(0);\nuseEffect(() => {\n  // Reads stale `value` if another update\n  // happened between render and effect\n  setValue(compute(value));\n}, [value]);',
+   158→   158→    afterCode: `const [state, dispatch] = useReducer(\n  (prev, action) => {\n    switch (action.type) {\n      case 'COMPUTE':\n        return { ...prev, value: compute(prev.value) };\n      default: return prev;\n    }\n  },\n  { value: 0 }\n);\n// dispatch always sees latest state`,
+   159→   159→  },
+   160→   160→];
+   161→   161→
+   162→   162→// ─── Proxy: Cross-Domain Data ───
+   163→   163→const proxyTypes = [
+   164→   164→  { id: 'transparent', name: 'Transparent Proxy', psychology: 'Open-plan office — everyone sees everything. Builds trust through radical transparency, but creates self-monitoring anxiety (panopticon effect).', economics: 'Commodity market — low switching costs, price competition dominates, margins compress. Value from volume, not differentiation.', science: 'Glass microscope slide — complete visibility of the specimen. Nothing hidden, everything observable, but the act of observation may alter behavior.', strengths: ['Full visibility for debugging', 'No hidden transformations', 'Easy compliance auditing'], weaknesses: ['No privacy for users', 'No caching benefit', 'Vulnerable to traffic analysis'], differentiator: 'Our transparent proxy adds request telemetry without modifying payloads — observability without opacity.' },
+   165→   165→  { id: 'anonymous', name: 'Anonymous Proxy', psychology: 'Masquerade ball — identity is hidden behind masks. Freedom through anonymity, but trust requires verification beyond the mask.', economics: 'Black market — anonymity enables both privacy and fraud. Premium pricing for verified anonymity vs. unverified.', science: 'Dark matter — we know it exists by its gravitational effects, but cannot observe it directly. Influence without visibility.', strengths: ['User privacy protection', 'Bypass geo-restrictions', 'Identity shielding'], weaknesses: ['Cannot verify user intent', 'Potential for abuse', 'Performance overhead from stripping headers'], differentiator: 'Our anonymous proxy uses rotating exit nodes with zero-log verification — anonymity with accountability hashes.' },
+   166→   166→  { id: 'reverse', name: 'Reverse Proxy', psychology: 'Concierge desk — a single point of contact that routes to the right specialist. Controls access, manages flow, and shields the interior.', economics: 'Distributor — sits between producers and consumers, aggregating demand and managing supply. Value from distribution efficiency.', science: 'Cell membrane — selective permeability that controls what enters and exits. Protects the nucleus while enabling nutrient flow.', strengths: ['Load balancing', 'SSL termination', 'DDoS protection'], weaknesses: ['Single point of failure', 'Added latency', 'Configuration complexity'], differentiator: 'Our reverse proxy uses predictive routing with circuit breaker patterns — fails fast, recovers faster.' },
+   167→   167→  { id: 'forward', name: 'Forward Proxy', psychology: 'Travel agent — intermediates between you and the destination. Simplifies complex bookings, but adds a layer between intent and outcome.', economics: 'Broker — connects buyers and sellers, extracting commission. Value from matchmaking and market knowledge.', science: 'Enzyme catalyst — lowers activation energy without being consumed. Accelerates reactions that would otherwise be too slow.', strengths: ['Access control', 'Content filtering', 'Bandwidth optimization'], weaknesses: ['Client configuration required', 'Potential bottleneck', 'Privacy concerns for operator'], differentiator: 'Our forward proxy auto-discovers provider endpoints with zero-config — no manual setup needed.' },
+   168→   168→  { id: 'ssl', name: 'SSL/TLS Proxy', psychology: 'Vault — security through layers of protection. The contents are safe, but accessing them requires the right keys and authority.', economics: 'Insurance — you pay for protection against worst-case scenarios. Value is in risk reduction, not daily utility.', science: 'Immune system — identifies and neutralizes threats before they reach vital systems. Adaptive defense that learns from attacks.', strengths: ['End-to-end encryption', 'Certificate management', 'Man-in-the-middle prevention'], weaknesses: ['Performance overhead from encryption', 'Certificate renewal complexity', 'Cannot inspect encrypted traffic for threats'], differentiator: 'Our TLS proxy uses automated certificate rotation with hardware acceleration — security without the performance tax.' },
+   169→   169→  { id: 'caching', name: 'Caching Proxy', psychology: 'Librarian — remembers what you\'ve asked for before and has it ready. Anticipates needs, but may serve outdated information.', economics: 'Inventory buffer — stores goods closer to consumers. Reduces delivery time but ties up capital in stored inventory.', science: 'Ribosome — stores and translates instructions into proteins on demand. Efficiency through reuse of cached templates.', strengths: ['Dramatic latency reduction', 'Bandwidth savings', 'Offline resilience'], weaknesses: ['Cache invalidation is hard', 'Stale data risk', 'Storage costs'], differentiator: 'Our caching proxy uses stale-while-revalidate with predictive pre-warming — fresh content with instant response.' },
+   170→   170→];
+   171→   171→
+   172→   172→// ─── Proxy: Comparison Matrix Data ───
+   173→   173→const proxyMatrix = [
+   174→   174→  { type: 'Transparent', latency: 'Low', privacy: 'None', complexity: 'Low', score: 6 },
+   175→   175→  { type: 'Anonymous', latency: 'Medium', privacy: 'High', complexity: 'Medium', score: 7 },
+   176→   176→  { type: 'Reverse', latency: 'Low', privacy: 'Medium', complexity: 'High', score: 8 },
+   177→   177→  { type: 'Forward', latency: 'Medium', privacy: 'Medium', complexity: 'Medium', score: 6 },
+   178→   178→  { type: 'SSL/TLS', latency: 'High', privacy: 'High', complexity: 'High', score: 9 },
+   179→   179→  { type: 'Caching', latency: 'Very Low', privacy: 'Low', complexity: 'Medium', score: 7 },
+   180→   180→];
+   181→   181→
+   182→   182→const matrixIndicatorColor = (val: string): string => {
+   183→   183→  const low = ['Low', 'Very Low', 'None'];
+   184→   184→  const high = ['High'];
+   185→   185→  if (low.includes(val)) return 'bg-emerald-500';
+   186→   186→  if (high.includes(val)) return 'bg-red-400';
+   187→   187→  return 'bg-amber-400';
+   188→   188→};
+   189→   189→
+   190→   190→const matrixCellLabel = (val: string): string => {
+   191→   191→  const colors: Record<string, string> = {
+   192→   192→    'Very Low': 'text-emerald-600 dark:text-emerald-400',
+   193→   193→    'Low': 'text-emerald-600 dark:text-emerald-400',
+   194→   194→    'Medium': 'text-amber-600 dark:text-amber-400',
+   195→   195→    'High': 'text-red-600 dark:text-red-400',
+   196→   196→    'None': 'text-red-600 dark:text-red-400',
+   197→   197→  };
+   198→   198→  return colors[val] || 'text-muted-foreground';
+   199→   199→};
+   200→   200→
+   201→   201→// ─── Architecture: Telemetry Data ───
+   202→   202→const telemetryMetrics = { totalInvocations: 847, successRate: 94.7, p99Latency: 142, activeConflicts: 2 };
+   203→   203→const recentInvocations = [
+   204→   204→  { skill: 'Stitch Design', status: 'success', duration: 89, tier: 'T0' },
+   205→   205→  { skill: 'GSAP Animations', status: 'success', duration: 156, tier: 'T1' },
+   206→   206→  { skill: 'Framer Motion', status: 'failed', duration: 0, tier: 'T0' },
+   207→   207→  { skill: 'shadcn/ui', status: 'success', duration: 45, tier: 'T2' },
+   208→   208→  { skill: 'AI Portal', status: 'success', duration: 234, tier: 'T3' },
+   209→   209→  { skill: 'MCP Builder', status: 'success', duration: 67, tier: 'T3' },
+   210→   210→  { skill: 'Recharts Viz', status: 'success', duration: 123, tier: 'T1' },
+   211→   211→  { skill: 'Skill Finder', status: 'failed', duration: 0, tier: 'T3' },
+   212→   212→  { skill: 'Playwright', status: 'success', duration: 345, tier: 'T2' },
+   213→   213→  { skill: 'Deep Research', status: 'success', duration: 567, tier: 'T3' },
+   214→   214→];
+   215→   215→
+   216→   216→// ─── Docs: PDF Reports (with category) ───
+   217→   217→const pdfReports = [
+   218→   218→  { title: 'Comprehensive Code Audit Report', desc: 'Full-stack code quality analysis across all 13 sections', size: '2.4 MB', category: 'audit' },
+   219→   219→  { title: 'OWL Agent Audit3 Comprehensive Report', desc: 'Deep-dive error handling and resilience audit by the OWL agent', size: '1.8 MB', category: 'audit' },
+   220→   220→  { title: 'AI Billing Proxy Integration Analysis', desc: 'Proxy billing models, tier routing, and cost optimization', size: '3.1 MB', category: 'architecture' },
+   221→   221→  { title: 'Skill Definition Analysis Report', desc: 'Analysis of 64 skill definitions, conflicts, and dependencies', size: '1.2 MB', category: 'architecture' },
+   222→   222→  { title: 'Security Audit Report', desc: 'Vulnerability assessment and penetration testing results', size: '2.7 MB', category: 'security' },
+   223→   223→  { title: 'AI Stack Ecosystem Guide', desc: 'Complete guide to the 64-skill ecosystem with install commands', size: '4.5 MB', category: 'architecture' },
+   224→   224→  { title: 'Skill Reference Compendium', desc: 'Comprehensive reference for all skill APIs and configurations', size: '3.3 MB', category: 'design' },
+   225→   225→];
+   226→   226→
+   227→   227→// ─── Docs: Research Images (with category) ───
+   228→   228→const researchImages = [
+   229→   229→  { name: 'Architecture Comparison', file: 'architecture-comparison.png', desc: 'Side-by-side comparison of current vs proposed architecture', category: 'architecture' },
+   230→   230→  { name: 'Decision Matrix', file: 'architecture-decision-matrix.png', desc: 'Weighted decision matrix for design option selection', category: 'architecture' },
+   231→   231→  { name: 'Approaches Radar', file: 'approaches-radar.png', desc: 'Radar chart overlay of all 5 design approaches', category: 'design' },
+   232→   232→  { name: 'Decision Tree', file: 'decision-tree.png', desc: 'Interactive decision tree flowchart', category: 'architecture' },
+   233→   233→  { name: 'Data Model Evolution', file: 'data-model-evolution.png', desc: 'Migration from flat ordered list to I/O piping model', category: 'architecture' },
+   234→   234→  { name: 'I/O Piping Flow', file: 'io-piping-flow.png', desc: 'Skill invocation piping diagram with telemetry', category: 'architecture' },
+   235→   235→  { name: 'Severity Findings', file: 'severity-findings.png', desc: 'Error severity distribution across codebase', category: 'audit' },
+   236→   236→  { name: 'Severity Matrix', file: 'severity-matrix.png', desc: 'Component × error-type severity heatmap', category: 'audit' },
+   237→   237→];
+   238→   238→
+   239→   239→const docsCategories = ['all', 'architecture', 'audit', 'design', 'security'] as const;
+   240→   240→
+   241→   241→// ─── Radar Chart Data for Frontend Tab ───
+   242→   242→const radarData = dimensions.map((dim) => {
+   243→   243→  const entry: Record<string, string | number> = { name: dim.shortName, fullName: dim.name };
+   244→   244→  options.forEach((opt) => {
+   245→   245→    const idx = dimensions.findIndex((d) => d.id === dim.id);
+   246→   246→    entry[opt.name.replace('The ', '')] = opt.sp7Vector[idx] ?? 0;
+   247→   247→  });
+   248→   248→  return entry;
+   249→   249→});
+   250→   250→
+   251→   251→const optColors = ['#C23616', '#2C3E50', '#6B6B6B', '#5B7B6F', '#8B7355'];
+   252→   252→
+   253→   253→// ─── Shared Sub-Components ───
+   254→   254→function SectionHeader({ num, title, subtitle }: { num: string; title: string; subtitle: string }) {
+   255→   255→  return (
+   256→   256→    <motion.div
+   257→   257→      className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-10"
+   258→   258→      initial={{ opacity: 0, y: 40 }}
+   259→   259→      whileInView={{ opacity: 1, y: 0 }}
+   260→   260→      viewport={{ once: true, margin: '-80px' }}
+   261→   261→      transition={{ duration: 0.6 }}
+   262→   262→    >
+   263→   263→      <div className="md:col-span-8">
+   264→   264→        <div className="flex items-baseline gap-4 mb-3">
+   265→   265→          <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">{num}</span>
+   266→   266→          <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">{title}</h2>
+   267→   267→        </div>
+   268→   268→        <div className="editorial-pullquote ml-0 md:ml-20">{subtitle}</div>
+   269→   269→      </div>
+   270→   270→    </motion.div>
+   271→   271→  );
+   272→   272→}
+   273→   273→
+   274→   274→function EditorialDivider({ thick = false }: { thick?: boolean }) {
+   275→   275→  return (
+   276→   276→    <div className="max-w-[1200px] mx-auto px-6">
+   277→   277→      <motion.hr
+   278→   278→        className={thick ? 'editorial-rule-thick' : 'editorial-rule'}
+   279→   279→        variants={dividerVariant}
+   280→   280→        initial="hidden"
+   281→   281→        whileInView="visible"
+   282→   282→        viewport={{ once: true, margin: '-50px' }}
+   283→   283→      />
+   284→   284→    </div>
+   285→   285→  );
+   286→   286→}
+   287→   287→
+   288→   288→function CodeBlock({ code, label }: { code: string; label?: string }) {
+   289→   289→  const [copied, setCopied] = useState(false);
+   290→   290→  const handleCopy = async () => {
+   291→   291→    const ok = await copyToClipboard(code);
+   292→   292→    if (ok) { setCopied(true); setTimeout(() => setCopied(false), 2000); }
+   293→   293→  };
+   294→   294→  return (
+   295→   295→    <div className="relative group">
+   296→   296→      {label && <span className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground font-mono">{label}</span>}
+   297→   297→      <pre className="bg-muted/60 border border-border rounded p-3 text-xs font-mono overflow-x-auto custom-scrollbar text-foreground/80 mt-1">
+   298→   298→        <code>{code}</code>
+   299→   299→      </pre>
+   300→   300→      <button onClick={handleCopy} className="absolute top-2 right-2 min-w-[32px] min-h-[32px] flex items-center justify-center rounded hover:bg-muted cursor-pointer" aria-label="Copy code">
+   301→   301→        {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
+   302→   302→      </button>
+   303→   303→    </div>
+   304→   304→  );
+   305→   305→}
+   306→   306→
+   307→   307→// ═══════════════════════════════════════════════════════════
+   308→   308→// SUBPAGE: HOME
+   309→   309→// ═══════════════════════════════════════════════════════════
+   310→   310→function HomeSubpage({ onNavigate }: { onNavigate: (tab: Subpage) => void }) {
+   311→   311→  const shouldReduce = useReducedMotion();
+   312→   312→  const navCards: { tab: Subpage; icon: React.ReactNode; title: string; desc: string }[] = [
+   313→   313→    { tab: 'audit', icon: <Eye className="w-5 h-5" />, title: 'Audit', desc: 'Error handling deep dive — Owl sees patterns, Beaver builds resilience' },
+   314→   314→    { tab: 'frontend', icon: <Paintbrush className="w-5 h-5" />, title: 'Frontend Design', desc: 'Creative exploration & strategic design option comparison' },
+   315→   315→    { tab: 'proxy', icon: <Globe className="w-5 h-5" />, title: 'Proxy Architecture', desc: 'Cross-domain intelligence from psychology, economics, and science' },
+   316→   316→    { tab: 'architecture', icon: <Layers className="w-5 h-5" />, title: 'Architecture', desc: 'Decision trees, tier models, and data model evolution' },
+   317→   317→    { tab: 'marketplace', icon: <ShoppingBag className="w-5 h-5" />, title: 'Marketplace', desc: 'Browse, search, and install 64 production-ready skills' },
+   318→   318→    { tab: 'docs', icon: <BookOpen className="w-5 h-5" />, title: 'Documentation', desc: 'Research gallery, PDF reports, and skill reference' },
+   319→   319→  ];
+   320→   320→
+   321→   321→  return (
+   322→   322→    <>
+   323→   323→      <ErrorBoundary section="Hero"><HeroSection /></ErrorBoundary>
+   324→   324→      <EditorialDivider thick />
+   325→   325→
+   326→   326→      {/* Architecture Overview */}
+   327→   327→      <motion.section className="py-16 md:py-24 px-6" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.6 }} aria-label="Architecture overview">
+   328→   328→        <div className="max-w-[1200px] mx-auto">
+   329→   329→          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
+   330→   330→            <div className="md:col-span-7">
+   331→   331→              <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-4">Architecture Overview</p>
+   332→   332→              <h2 className="font-['Georgia',_serif] text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.15] mb-6">
+   333→   333→                A living, navigable architecture that serves as build specification, AI guidance portal, and publishable skill repository
+   334→   334→              </h2>
+   335→   335→              <div className="editorial-pullquote mb-6">Every component is also an installable skill. The architecture is the product, and the product is the architecture.</div>
+   336→   336→              <p className="text-base text-muted-foreground leading-relaxed editorial-dropcap">
+   337→   337→                This interactive web experience translates the Skill Stack Architecture into a living specification. It serves three simultaneous purposes: a build specification that any AI agent can follow, a self-referencing portal for design guidance, and a publishable repository where every component is installable via npx skills add.
+   338→   338→              </p>
+   339→   339→            </div>
+   340→   340→            <div className="md:col-span-5 md:border-l md:border-border md:pl-8">
+   341→   341→              <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground font-medium mb-6">The Stack at a Glance</p>
+   342→   342→              <div className="space-y-6">
+   343→   343→                {[
+   344→   344→                  { tier: 'T0', name: 'Foundation', count: 8, desc: 'Design intelligence, generation, animation, components, accessibility' },
+   345→   345→                  { tier: 'T1', name: 'Interactive', count: 15, desc: 'Scroll animation, video, diagrams, data viz, reasoning, development' },
+   346→   346→                  { tier: 'T2', name: 'Visual Asset', count: 17, desc: 'Image generation, component styling, testing, custom viz, content' },
+   347→   347→                  { tier: 'T3', name: 'Portal', count: 24, desc: 'AI redirect, prioritization, matrix engine, strategy, agents, systems' },
+   348→   348→                ].map((t) => (
+   349→   349→                  <motion.div key={t.tier} className="group" whileHover={shouldReduce ? undefined : { scale: 1.02 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+   350→   350→                    <div className="flex items-baseline justify-between mb-1">
+   351→   351→                      <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground"><span className="text-primary">{t.tier}</span> {t.name}</h3>
+   352→   352→                      <span className="text-2xl font-['Georgia',_serif] font-bold text-border group-hover:text-primary transition-colors">{t.count}</span>
+   353→   353→                    </div>
+   354→   354→                    <p className="text-sm text-muted-foreground leading-relaxed">{t.desc}</p>
+   355→   355→                    <hr className="editorial-rule mt-4" />
+   356→   356→                  </motion.div>
+   357→   357→                ))}
+   358→   358→              </div>
+   359→   359→            </div>
+   360→   360→          </div>
+   361→   361→        </div>
+   362→   362→      </motion.section>
+   363→   363→
+   364→   364→      <EditorialDivider />
+   365→   365→
+   366→   366→      {/* Navigation Cards */}
+   367→   367→      <section className="py-16 px-6" aria-label="Quick navigation">
+   368→   368→        <div className="max-w-[1200px] mx-auto">
+   369→   369→          <EditorialReveal>
+   370→   370→            <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-3">Explore the Blueprint</p>
+   371→   371→            <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground mb-10">Seven Dimensions of the Architecture</h2>
+   372→   372→          </EditorialReveal>
+   373→   373→          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
+   374→   374→            {navCards.map((card) => (
+   375→   375→              <motion.div key={card.tab} variants={fadeInUp} whileHover={shouldReduce ? undefined : { scale: 1.02, y: -2 }} whileTap={shouldReduce ? undefined : { scale: 0.98 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+   376→   376→                <button onClick={() => onNavigate(card.tab)} className="w-full text-left min-h-[44px] p-5 border border-border rounded hover:border-primary/30 hover:bg-muted/20 transition-colors cursor-pointer group" aria-label={`Navigate to ${card.title}`}>
+   377→   377→                  <div className="flex items-center gap-3 mb-2">
+   378→   378→                    <span className="text-primary group-hover:scale-110 transition-transform">{card.icon}</span>
+   379→   379→                    <h3 className="font-['Georgia',_serif] text-base font-bold text-foreground group-hover:text-primary transition-colors">{card.title}</h3>
+   380→   380→                    <ArrowRight className="w-4 h-4 text-muted-foreground ml-auto group-hover:translate-x-1 group-hover:text-primary transition-all" />
+   381→   381→                  </div>
+   382→   382→                  <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+   383→   383→                </button>
+   384→   384→              </motion.div>
+   385→   385→            ))}
+   386→   386→          </motion.div>
+   387→   387→        </div>
+   388→   388→      </section>
+   389→   389→    </>
+   390→   390→  );
+   391→   391→}
+   392→   392→
+   393→   393→// ═══════════════════════════════════════════════════════════
+   394→   394→// SUBPAGE: AUDIT
+   395→   395→// ═══════════════════════════════════════════════════════════
+   396→   396→function AuditSubpage() {
+   397→   397→  const shouldReduce = useReducedMotion();
+   398→   398→  const [openLayer, setOpenLayer] = useState<number | null>(null);
+   399→   399→  const [simScenario, setSimScenario] = useState<string | null>(null);
+   400→   400→
+   401→   401→  return (
+   402→   402→    <div className="max-w-[1200px] mx-auto px-6">
+   403→   403→      {/* Title */}
+   404→   404→      <motion.div className="py-16 md:py-20" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+   405→   405→        <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-3">Owl &middot; Beaver</p>
+   406→   406→        <h1 className="font-['Georgia',_serif] text-3xl md:text-5xl font-bold text-foreground leading-[1.1] mb-4">
+   407→   407→          Impeccable Audit<br /><span className="text-primary">Error Fix Handler</span>
+   408→   408→        </h1>
+   409→   409→        <div className="editorial-pullquote">The Owl sees hidden error patterns. The Beaver builds systematic resilience. Together, they create an architecture that fails gracefully and recovers autonomously.</div>
+   410→   410→      </motion.div>
+   411→   411→
+   412→   412→      <hr className="editorial-rule-thick mb-12" />
+   413→   413→
+   414→   414→      {/* Section 1 — The Owl Sees */}
+   415→   415→      <section className="mb-20" aria-label="Error patterns">
+   416→   416→        <SectionHeader num="01" title="The Owl Sees: Hidden Error Patterns" subtitle="Four critical error patterns discovered across the codebase — each with a proven fix." />
+   417→   417→        <motion.div className="space-y-6" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
+   418→   418→          {errorPatterns.map((pattern, i) => (
+   419→   419→            <motion.div key={i} variants={fadeInUp} className="border border-border rounded p-5 hover:border-foreground/20 transition-colors">
+   420→   420→              <div className="flex items-start justify-between mb-3">
+   421→   421→                <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">{pattern.name}</h3>
+   422→   422→                <span className={`px-2.5 py-1 rounded text-[10px] tracking-[0.12em] uppercase font-bold ${severityColor[pattern.severity]}`}>{pattern.severity}</span>
+   423→   423→              </div>
+   424→   424→              <p className="text-sm text-muted-foreground leading-relaxed mb-4">{pattern.description}</p>
+   425→   425→              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   426→   426→                <CodeBlock code={pattern.before} label="Before" />
+   427→   427→                <CodeBlock code={pattern.after} label="After" />
+   428→   428→              </div>
+   429→   429→            </motion.div>
+   430→   430→          ))}
+   431→   431→        </motion.div>
+   432→   432→      </section>
+   433→   433→
+   434→   434→      <EditorialDivider />
+   435→   435→
+   436→   436→      {/* Section 2 — The Beaver Builds */}
+   437→   437→      <section className="mb-20 py-8" aria-label="Error architecture">
+   438→   438→        <SectionHeader num="02" title="The Beaver Builds: Systematic Error Architecture" subtitle="Four defensive layers, each catching what the layer above missed." />
+   439→   439→        <div className="space-y-2">
+   440→   440→          {errorLayers.map((layer) => (
+   441→   441→            <div key={layer.layer} className="border border-border rounded overflow-hidden">
+   442→   442→              <button onClick={() => setOpenLayer(openLayer === layer.layer ? null : layer.layer)} className="w-full flex items-center gap-4 p-4 hover:bg-muted/20 transition-colors cursor-pointer min-h-[44px]" aria-expanded={openLayer === layer.layer} aria-label={`Layer ${layer.layer}: ${layer.name}`}>
+   443→   443→                <span className="font-['Georgia',_serif] text-2xl font-bold text-primary w-8">{layer.layer}</span>
+   444→   444→                <span className="text-primary">{layer.icon}</span>
+   445→   445→                <span className="font-['Georgia',_serif] text-base font-bold text-foreground flex-1 text-left">{layer.name}</span>
+   446→   446→                <motion.span animate={{ rotate: openLayer === layer.layer ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown className="w-4 h-4 text-muted-foreground" /></motion.span>
+   447→   447→              </button>
+   448→   448→              <AnimatePresence>
+   449→   449→                {openLayer === layer.layer && (
+   450→   450→                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+   451→   451→                    <div className="px-4 pb-4 pt-2 border-t border-border">
+   452→   452→                      <p className="text-sm text-muted-foreground leading-relaxed">{layer.desc}</p>
+   453→   453→                    </div>
+   454→   454→                  </motion.div>
+   455→   455→                )}
+   456→   456→              </AnimatePresence>
+   457→   457→            </div>
+   458→   458→          ))}
+   459→   459→        </div>
+   460→   460→
+   461→   461→        {/* Error Recovery Flow */}
+   462→   462→        <div className="mt-10 p-5 bg-muted/20 border border-border rounded">
+   463→   463→          <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-4">Error Recovery Flow</p>
+   464→   464→          <div className="font-mono text-xs text-muted-foreground leading-loose">
+   465→   465→            <p>┌─ Render Error?</p>
+   466→   466→            <p>│  └─ Yes → ErrorBoundary catches → Retry/Go Home</p>
+   467→   467→            <p>│  └─ No ↓</p>
+   468→   468→            <p>├─ Clipboard Fails?</p>
+   469→   469→            <p>│  └─ Yes → try/catch → textarea fallback → document.execCommand(&apos;copy&apos;)</p>
+   470→   470→            <p>│  └─ No ↓</p>
+   471→   471→            <p>├─ Fetch In-Flight?</p>
+   472→   472→            <p>│  └─ Unmount? → AbortController.abort() → Cancel request</p>
+   473→   473→            <p>│  └─ Continue ↓</p>
+   474→   474→            <p>└─ State Update?</p>
+   475→   475→            <p>   └─ useReducer dispatch → Explicit transition → Predictable state</p>
+   476→   476→          </div>
+   477→   477→        </div>
+   478→   478→      </section>
+   479→   479→
+   480→   480→      <EditorialDivider />
+   481→   481→
+   482→   482→      {/* Section 3 — Error Resilience Scorecard */}
+   483→   483→      <section className="mb-16 py-8" aria-label="Error resilience scorecard">
+   484→   484→        <SectionHeader num="03" title="Error Resilience Scorecard" subtitle="Component-level audit of error handling coverage across all four defensive layers." />
+   485→   485→        <div className="overflow-x-auto custom-scrollbar border border-border rounded">
+   486→   486→          <table className="w-full text-sm" role="table">
+   487→   487→            <thead>
+   488→   488→              <tr className="border-b-2 border-foreground bg-muted/10">
+   489→   489→                <th className="text-left p-3 text-[10px] tracking-[0.2em] uppercase font-semibold text-muted-foreground">Component</th>
+   490→   490→                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Clipboard Fallback</th>
+   491→   491→                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">AbortController</th>
+   492→   492→                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">ErrorBoundary</th>
+   493→   493→                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">useReducer</th>
+   494→   494→              </tr>
+   495→   495→            </thead>
+   496→   496→            <tbody>
+   497→   497→              {scorecardRows.map((row) => (
+   498→   498→                <tr key={row.component} className="border-b border-border/40 hover:bg-muted/10 transition-colors">
+   499→   499→                  <td className="p-3 font-medium text-foreground">{row.component}</td>
+   500→   500→                  <td className="p-3 text-center">{row.clipboard ? <CheckCircle2 className="w-4 h-4 text-emerald-500 mx-auto" /> : <XCircle className="w-4 h-4 text-red-400 mx-auto" />}</td>
+   501→   501→                  <td className="p-3 text-center">{row.abort === null ? <span className="text-[10px] text-muted-foreground">N/A</span> : row.abort ? <CheckCircle2 className="w-4 h-4 text-emerald-500 mx-auto" /> : <XCircle className="w-4 h-4 text-red-400 mx-auto" />}</td>
+   502→   502→                  <td className="p-3 text-center">{typeof row.boundary === 'string' ? <span className="flex items-center justify-center gap-1"><CheckCircle2 className="w-4 h-4 text-emerald-500" /><span className="text-[10px] text-muted-foreground">({row.boundary})</span></span> : row.boundary ? <CheckCircle2 className="w-4 h-4 text-emerald-500 mx-auto" /> : <XCircle className="w-4 h-4 text-red-400 mx-auto" />}</td>
+   503→   503→                  <td className="p-3 text-center">{row.reducer === null ? <span className="text-[10px] text-muted-foreground">N/A</span> : row.reducer ? <CheckCircle2 className="w-4 h-4 text-emerald-500 mx-auto" /> : <XCircle className="w-4 h-4 text-red-400 mx-auto" />}</td>
+   504→   504→                </tr>
+   505→   505→              ))}
+   506→   506→            </tbody>
+   507→   507→          </table>
+   508→   508→        </div>
+   509→   509→      </section>
+   510→   510→
+   511→   511→      <EditorialDivider />
+   512→   512→
+   513→   513→      {/* ── Enhancement 1: Interactive Error Simulation Panel ── */}
+   514→   514→      <section className="mb-16 py-8" aria-label="Error simulation">
+   515→   515→        <SectionHeader num="04" title="Interactive Error Simulation" subtitle="Trigger simulated errors and see how each defensive layer handles them in real time." />
+   516→   516→        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+   517→   517→          {simScenarios.map((scenario) => (
+   518→   518→            <motion.button
+   519→   519→              key={scenario.id}
+   520→   520→              onClick={() => setSimScenario(simScenario === scenario.id ? null : scenario.id)}
+   521→   521→              className={`text-left min-h-[44px] p-4 border rounded cursor-pointer transition-colors ${simScenario === scenario.id ? 'border-primary bg-primary/5' : 'border-border hover:border-foreground/20 hover:bg-muted/10'}`}
+   522→   522→              whileHover={shouldReduce ? undefined : { scale: 1.01 }}
+   523→   523→              whileTap={shouldReduce ? undefined : { scale: 0.99 }}
+   524→   524→              aria-expanded={simScenario === scenario.id}
+   525→   525→              aria-label={scenario.title}
+   526→   526→            >
+   527→   527→              <div className="flex items-center gap-3">
+   528→   528→                <span className="text-primary">{scenario.icon}</span>
+   529→   529→                <span className="font-['Georgia',_serif] text-sm font-bold text-foreground">{scenario.title}</span>
+   530→   530→                <motion.span className="ml-auto" animate={{ rotate: simScenario === scenario.id ? 180 : 0 }} transition={{ duration: 0.2 }}>
+   531→   531→                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+   532→   532→                </motion.span>
+   533→   533→              </div>
+   534→   534→            </motion.button>
+   535→   535→          ))}
+   536→   536→        </div>
+   537→   537→        <AnimatePresence mode="wait">
+   538→   538→          {simScenario && (() => {
+   539→   539→            const s = simScenarios.find((sc) => sc.id === simScenario);
+   540→   540→            if (!s) return null;
+   541→   541→            return (
+   542→   542→              <motion.div
+   543→   543→                key={s.id}
+   544→   544→                initial={{ opacity: 0, y: 10 }}
+   545→   545→                animate={{ opacity: 1, y: 0 }}
+   546→   546→                exit={{ opacity: 0, y: -10 }}
+   547→   547→                transition={{ duration: 0.3 }}
+   548→   548→                className="border border-primary/30 bg-primary/5 rounded p-5"
+   549→   549→              >
+   550→   550→                <div className="flex items-center gap-3 mb-4">
+   551→   551→                  <span className="text-primary">{s.icon}</span>
+   552→   552→                  <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">{s.title}</h3>
+   553→   553→                  <span className="text-[10px] tracking-[0.15em] uppercase font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">{s.layer}</span>
+   554→   554→                </div>
+   555→   555→                <div className="mb-4">
+   556→   556→                  <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Trigger</p>
+   557→   557→                  <p className="text-sm text-muted-foreground">{s.trigger}</p>
+   558→   558→                </div>
+   559→   559→                <div className="mb-4">
+   560→   560→                  <p className="text-[10px] tracking-[0.2em] uppercase text-emerald-600 dark:text-emerald-400 font-semibold mb-1">Resolution</p>
+   561→   561→                  <p className="text-sm text-muted-foreground">{s.resolution}</p>
+   562→   562→                </div>
+   563→   563→                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   564→   564→                  <CodeBlock code={s.beforeCode} label={s.beforeLabel} />
+   565→   565→                  <CodeBlock code={s.afterCode} label={s.afterLabel} />
+   566→   566→                </div>
+   567→   567→              </motion.div>
+   568→   568→            );
+   569→   569→          })()}
+   570→   570→        </AnimatePresence>
+   571→   571→      </section>
+   572→   572→    </div>
+   573→   573→  );
+   574→   574→}
+   575→   575→
+   576→   576→// ═══════════════════════════════════════════════════════════
+   577→   577→// SUBPAGE: FRONTEND DESIGN
+   578→   578→// ═══════════════════════════════════════════════════════════
+   579→   579→function FrontendSubpage({ mounted }: { mounted: boolean }) {
+   580→   580→  const shouldReduce = useReducedMotion();
+   581→   581→  const [compareMode, setCompareMode] = useState(false);
+   582→   582→  const [selectedOpts, setSelectedOpts] = useState<string[]>(options.map((o) => o.id));
+   583→   583→  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+   584→   584→
+   585→   585→  const toggleOpt = (id: string) => {
+   586→   586→    setSelectedOpts((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+   587→   587→  };
+   588→   588→
+   589→   589→  const filteredRadar = radarData.map((d) => {
+   590→   590→    const entry: Record<string, string | number> = { name: d.name, fullName: d.fullName };
+   591→   591→    options.forEach((opt) => {
+   592→   592→      const key = opt.name.replace('The ', '');
+   593→   593→      if (selectedOpts.includes(opt.id)) entry[key] = d[key] as number;
+   594→   594→    });
+   595→   595→    return entry;
+   596→   596→  });
+   597→   597→
+   598→   598→  const selectedOpt = selectedOption ? options.find((o) => o.id === selectedOption) : null;
+   599→   599→
+   600→   600→  // Get top 5 skills from skillWeights
+   601→   601→  const getTopSkills = (opt: typeof options[0]) => {
+   602→   602→    return Object.entries(opt.skillWeights)
+   603→   603→      .sort(([, a], [, b]) => b - a)
+   604→   604→      .slice(0, 5)
+   605→   605→      .map(([skillId, weight]) => {
+   606→   606→        const skillName = options.find((o) => o.dominantSkillId === skillId)?.dominantSkill || skillId;
+   607→   607→        return { id: skillId, name: skillName, weight: weight as number };
+   608→   608→      });
+   609→   609→  };
+   610→   610→
+   611→   611→  return (
+   612→   612→    <div className="max-w-[1200px] mx-auto px-6">
+   613→   613→      {/* Title */}
+   614→   614→      <motion.div className="py-16 md:py-20" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+   615→   615→        <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-3">Dolphin &middot; Eagle</p>
+   616→   616→        <h1 className="font-['Georgia',_serif] text-3xl md:text-5xl font-bold text-foreground leading-[1.1] mb-4">
+   617→   617→          Frontend Design<br /><span className="text-primary">Creative &amp; Strategic</span>
+   618→   618→        </h1>
+   619→   619→        <div className="editorial-pullquote">The Dolphin plays with creative solutions. The Eagle sees long-term strategy. Five design options, one SP-7 scoring algorithm.</div>
+   620→   620→      </motion.div>
+   621→   621→
+   622→   622→      <hr className="editorial-rule-thick mb-12" />
+   623→   623→
+   624→   624→      {/* Section 1 — The Dolphin Plays */}
+   625→   625→      <section className="mb-20" aria-label="Design options">
+   626→   626→        <SectionHeader num="01" title="The Dolphin Plays: Creative Solutions" subtitle="Five distinct design philosophies — each with its own motion language, color strategy, and typographic identity." />
+   627→   627→        <div className="flex items-center gap-3 mb-6">
+   628→   628→          <button onClick={() => setCompareMode(!compareMode)} className={`min-h-[44px] px-4 py-2 text-[11px] tracking-[0.12em] uppercase font-medium border rounded cursor-pointer transition-colors ${compareMode ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-foreground/30'}`} aria-pressed={compareMode}>
+   629→   629→            {compareMode ? '✓ Compare Mode' : 'Compare Mode'}
+   630→   630→          </button>
+   631→   631→        </div>
+   632→   632→        <motion.div className={`grid gap-4 ${compareMode ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`} variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
+   633→   633→          {options.map((opt, i) => (
+   634→   634→            <motion.div
+   635→   635→              key={opt.id}
+   636→   636→              variants={fadeInUp}
+   637→   637→              whileHover={shouldReduce ? undefined : { scale: 1.01 }}
+   638→   638→              onClick={() => setSelectedOption(selectedOption === opt.id ? null : opt.id)}
+   639→   639→              className={`border rounded p-5 cursor-pointer transition-colors ${selectedOption === opt.id ? 'border-primary bg-primary/5' : 'border-border hover:border-foreground/20'}`}
+   640→   640→              role="button"
+   641→   641→              tabIndex={0}
+   642→   642→              aria-pressed={selectedOption === opt.id}
+   643→   643→              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedOption(selectedOption === opt.id ? null : opt.id); } }}
+   644→   644→            >
+   645→   645→              <div className="flex items-baseline gap-2 mb-1">
+   646→   646→                <span className="font-['Georgia',_serif] text-3xl font-bold text-border" aria-hidden="true">{i + 1}</span>
+   647→   647→                <h3 className="font-['Georgia',_serif] text-lg font-bold text-foreground">{opt.name}</h3>
+   648→   648→              </div>
+   649→   649→              <p className="text-[11px] tracking-[0.12em] uppercase text-muted-foreground font-medium mb-3">{opt.tagline}</p>
+   650→   650→              <p className="text-sm text-muted-foreground leading-relaxed mb-4">{opt.philosophy.slice(0, 150)}…</p>
+   651→   651→              <div className="space-y-2 text-xs">
+   652→   652→                <div className="flex gap-2"><span className="text-primary font-semibold w-20 shrink-0">Motion</span><span className="text-muted-foreground">{opt.motionStyle}</span></div>
+   653→   653→                <div className="flex gap-2"><span className="text-primary font-semibold w-20 shrink-0">Color</span><span className="text-muted-foreground">{opt.colorStrategy}</span></div>
+   654→   654→                <div className="flex gap-2"><span className="text-primary font-semibold w-20 shrink-0">Typography</span><span className="text-muted-foreground">{opt.typography}</span></div>
+   655→   655→                <div className="flex gap-2"><span className="text-primary font-semibold w-20 shrink-0">Dominant</span><span className="text-muted-foreground">{opt.dominantSkill}</span></div>
+   656→   656→              </div>
+   657→   657→              {compareMode && (
+   658→   658→                <div className="mt-3 pt-3 border-t border-border">
+   659→   659→                  <div className="flex gap-1">{opt.sp7Vector.map((v, j) => (
+   660→   660→                    <span key={j} className="flex-1 text-center text-[10px] font-mono" title={dimensions[j]?.name}>
+   661→   661→                      <span className="block font-bold text-foreground">{v}</span>
+   662→   662→                      <span className="text-muted-foreground">{dimensions[j]?.shortName}</span>
+   663→   663→                    </span>
+   664→   664→                  ))}</div>
+   665→   665→                </div>
+   666→   666→              )}
+   667→   667→            </motion.div>
+   668→   668→          ))}
+   669→   669→        </motion.div>
+   670→   670→      </section>
+   671→   671→
+   672→   672→      {/* ── Enhancement 4: Design Option Deep-Dive Panel ── */}
+   673→   673→      <AnimatePresence>
+   674→   674→        {selectedOpt && (
+   675→   675→          <motion.section
+   676→   676→            key={selectedOpt.id}
+   677→   677→            initial={{ opacity: 0, height: 0 }}
+   678→   678→            animate={{ opacity: 1, height: 'auto' }}
+   679→   679→            exit={{ opacity: 0, height: 0 }}
+   680→   680→            transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+   681→   681→            className="overflow-hidden mb-12"
+   682→   682→            aria-label={`${selectedOpt.name} deep-dive`}
+   683→   683→          >
+   684→   684→            <div className="border border-primary/30 bg-primary/5 rounded p-6">
+   685→   685→              <div className="flex items-start justify-between mb-4">
+   686→   686→                <div>
+   687→   687→                  <h3 className="font-['Georgia',_serif] text-xl font-bold text-foreground">{selectedOpt.name}</h3>
+   688→   688→                  <p className="text-[11px] tracking-[0.12em] uppercase text-primary font-medium">{selectedOpt.tagline}</p>
+   689→   689→                </div>
+   690→   690→                <button onClick={() => setSelectedOption(null)} className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-muted cursor-pointer" aria-label="Close deep-dive">
+   691→   691→                  <XCircle className="w-5 h-5 text-muted-foreground" />
+   692→   692→                </button>
+   693→   693→              </div>
+   694→   694→
+   695→   695→              <p className="text-sm text-muted-foreground leading-relaxed mb-6">{selectedOpt.philosophy}</p>
+   696→   696→
+   697→   697→              {/* SP-7 Vector Bar Chart */}
+   698→   698→              <div className="mb-6">
+   699→   699→                <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-3">SP-7 Dimension Vector</p>
+   700→   700→                <div className="space-y-2">
+   701→   701→                  {selectedOpt.sp7Vector.map((v, i) => (
+   702→   702→                    <div key={i} className="flex items-center gap-3">
+   703→   703→                      <span className="text-[10px] font-mono text-muted-foreground w-8 shrink-0" title={dimensions[i]?.name}>{dimensions[i]?.shortName}</span>
+   704→   704→                      <div className="flex-1 h-4 bg-muted/40 rounded overflow-hidden">
+   705→   705→                        <motion.div
+   706→   706→                          className="h-full bg-primary/70 rounded"
+   707→   707→                          initial={{ width: 0 }}
+   708→   708→                          animate={{ width: `${(v / 5) * 100}%` }}
+   709→   709→                          transition={{ duration: 0.5, delay: i * 0.05 }}
+   710→   710→                        />
+   711→   711→                      </div>
+   712→   712→                      <span className="text-xs font-mono font-bold text-foreground w-4 text-right">{v}</span>
+   713→   713→                    </div>
+   714→   714→                  ))}
+   715→   715→                </div>
+   716→   716→              </div>
+   717→   717→
+   718→   718→              {/* Skill Weight Distribution */}
+   719→   719→              <div className="mb-6">
+   720→   720→                <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-3">Skill Weight Distribution (Top 5)</p>
+   721→   721→                <div className="space-y-2">
+   722→   722→                  {getTopSkills(selectedOpt).map((skill) => (
+   723→   723→                    <div key={skill.id} className="flex items-center gap-3">
+   724→   724→                      <span className="text-xs text-foreground font-medium flex-1">{skill.name}</span>
+   725→   725→                      <div className="w-24 h-2 bg-muted/40 rounded overflow-hidden">
+   726→   726→                        <motion.div
+   727→   727→                          className="h-full bg-accent/60 rounded"
+   728→   728→                          initial={{ width: 0 }}
+   729→   729→                          animate={{ width: `${skill.weight}%` }}
+   730→   730→                          transition={{ duration: 0.4 }}
+   731→   731→                        />
+   732→   732→                      </div>
+   733→   733→                      <span className="text-[10px] font-mono text-muted-foreground w-8 text-right">{skill.weight}%</span>
+   734→   734→                    </div>
+   735→   735→                  ))}
+   736→   736→                </div>
+   737→   737→              </div>
+   738→   738→
+   739→   739→              {/* Recommended Use Case */}
+   740→   740→              <div className="mb-4">
+   741→   741→                <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Recommended Use Case</p>
+   742→   742→                <p className="text-sm text-muted-foreground leading-relaxed">{selectedOpt.recommended}</p>
+   743→   743→              </div>
+   744→   744→
+   745→   745→              {/* Motion Style Demo */}
+   746→   746→              <div className="flex items-center gap-3 p-3 bg-muted/20 border border-border rounded">
+   747→   747→                <motion.div
+   748→   748→                  className="w-3 h-3 rounded-full bg-primary"
+   749→   749→                  animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+   750→   750→                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+   751→   751→                />
+   752→   752→                <div>
+   753→   753→                  <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Motion Style</p>
+   754→   754→                  <p className="text-sm text-foreground">{selectedOpt.motionStyle}</p>
+   755→   755→                </div>
+   756→   756→              </div>
+   757→   757→            </div>
+   758→   758→          </motion.section>
+   759→   759→        )}
+   760→   760→      </AnimatePresence>
+   761→   761→
+   762→   762→      <EditorialDivider />
+   763→   763→
+   764→   764→      {/* Section 2 — The Eagle Sees */}
+   765→   765→      <section className="mb-20 py-8" aria-label="SP-7 strategy">
+   766→   766→        <SectionHeader num="02" title="The Eagle Sees: Long-Term Strategy" subtitle="How the pieces connect across the design system — SP-7 dimension vectors visualized." />
+   767→   767→        <div className="flex flex-wrap gap-2 mb-6">
+   768→   768→          {options.map((opt, i) => (
+   769→   769→            <button key={opt.id} onClick={() => toggleOpt(opt.id)} className={`min-h-[44px] px-3 py-1.5 text-[11px] tracking-[0.1em] uppercase font-medium border cursor-pointer transition-colors ${selectedOpts.includes(opt.id) ? 'border-foreground/30 bg-foreground/5 text-foreground' : 'border-border bg-transparent text-muted-foreground hover:border-foreground/20'}`} aria-pressed={selectedOpts.includes(opt.id)}>
+   770→   770→              <span className="inline-block w-2 h-2 mr-1.5 rounded-full" style={{ backgroundColor: optColors[i] }} aria-hidden="true" />{opt.name.replace('The ', '')}
+   771→   771→            </button>
+   772→   772→          ))}
+   773→   773→        </div>
+   774→   774→        {mounted && (
+   775→   775→          <div className="bg-card border border-border rounded p-4 md:p-6">
+   776→   776→            <ResponsiveContainer width="100%" height={400}>
+   777→   777→              <RadarChart data={filteredRadar}>
+   778→   778→                <PolarGrid stroke="var(--border)" />
+   779→   779→                <PolarAngleAxis dataKey="name" tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }} />
+   780→   780→                <PolarRadiusAxis tick={false} axisLine={false} domain={[0, 5]} />
+   781→   781→                <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 12 }} />
+   782→   782→                <Legend wrapperStyle={{ fontSize: 11 }} />
+   783→   783→                {options.map((opt, i) => selectedOpts.includes(opt.id) && (
+   784→   784→                  <Radar key={opt.id} name={opt.name.replace('The ', '')} dataKey={opt.name.replace('The ', '')} stroke={optColors[i]} fill={optColors[i]} fillOpacity={0.1} />
+   785→   785→                ))}
+   786→   786→              </RadarChart>
+   787→   787→            </ResponsiveContainer>
+   788→   788→          </div>
+   789→   789→        )}
+   790→   790→      </section>
+   791→   791→
+   792→   792→      <EditorialDivider />
+   793→   793→
+   794→   794→      {/* Section 3 — Comparative Analysis */}
+   795→   795→      <section className="mb-16 py-8" aria-label="Comparative analysis">
+   796→   796→        <ErrorBoundary section="Comparative Analysis"><ComparativeAnalysis /></ErrorBoundary>
+   797→   797→      </section>
+   798→   798→    </div>
+   799→   799→  );
+   800→   800→}
+   801→   801→
+   802→   802→// ═══════════════════════════════════════════════════════════
+   803→   803→// SUBPAGE: PROXY
+   804→   804→// ═══════════════════════════════════════════════════════════
+   805→   805→function ProxySubpage() {
+   806→   806→  const shouldReduce = useReducedMotion();
+   807→   807→  const [activeProxy, setActiveProxy] = useState('transparent');
+   808→   808→  const [selectedMatrixRow, setSelectedMatrixRow] = useState<number | null>(null);
+   809→   809→  const active = proxyTypes.find((p) => p.id === activeProxy)!;
+   810→   810→
+   811→   811→  return (
+   812→   812→    <div className="max-w-[1200px] mx-auto px-6">
+   813→   813→      {/* Title */}
+   814→   814→      <motion.div className="py-16 md:py-20" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+   815→   815→        <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-3">Elephant &middot; Dolphin &middot; Eagle</p>
+   816→   816→        <h1 className="font-['Georgia',_serif] text-3xl md:text-5xl font-bold text-foreground leading-[1.1] mb-4">
+   817→   817→          Proxy Architecture<br /><span className="text-primary">Cross-Domain Intelligence</span>
+   818→   818→        </h1>
+   819→   819→        <div className="editorial-pullquote">The Elephant remembers cross-field connections. Each proxy type maps to psychology, economics, and science — revealing hidden structure.</div>
+   820→   820→      </motion.div>
+   821→   821→
+   822→   822→      <hr className="editorial-rule-thick mb-12" />
+   823→   823→
+   824→   824→      {/* Section 1 — The Elephant Remembers */}
+   825→   825→      <section className="mb-20" aria-label="Cross-field connections">
+   826→   826→        <SectionHeader num="01" title="The Elephant Remembers: Cross-Field Connections" subtitle="Six proxy types, each illuminated through three disciplinary lenses." />
+   827→   827→        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
+   828→   828→          {proxyTypes.map((proxy) => (
+   829→   829→            <motion.div key={proxy.id} variants={fadeInUp} whileHover={shouldReduce ? undefined : { scale: 1.01 }} className={`border rounded p-5 cursor-pointer transition-colors ${activeProxy === proxy.id ? 'border-primary bg-primary/5' : 'border-border hover:border-foreground/20'}`} onClick={() => setActiveProxy(proxy.id)} role="button" tabIndex={0} aria-label={`Select ${proxy.name}`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveProxy(proxy.id); } }}>
+   830→   830→              <h3 className="font-['Georgia',_serif] text-base font-bold text-foreground mb-3">{proxy.name}</h3>
+   831→   831→              <div className="space-y-3 text-xs">
+   832→   832→                <div><span className="text-primary font-semibold">Psychology</span><p className="text-muted-foreground mt-0.5 leading-relaxed">{proxy.psychology.slice(0, 120)}…</p></div>
+   833→   833→                <div><span className="text-accent font-semibold">Economics</span><p className="text-muted-foreground mt-0.5 leading-relaxed">{proxy.economics.slice(0, 120)}…</p></div>
+   834→   834→                <div><span className="text-chart-4 font-semibold">Science</span><p className="text-muted-foreground mt-0.5 leading-relaxed">{proxy.science.slice(0, 120)}…</p></div>
+   835→   835→              </div>
+   836→   836→            </motion.div>
+   837→   837→          ))}
+   838→   838→        </motion.div>
+   839→   839→      </section>
+   840→   840→
+   841→   841→      <EditorialDivider />
+   842→   842→
+   843→   843→      {/* Section 2 — How We Stand Out */}
+   844→   844→      <section className="mb-20 py-8" aria-label="Differentiators">
+   845→   845→        <SectionHeader num="02" title="How We Stand Out" subtitle="Strengths, weaknesses, and our differentiator for each proxy type." />
+   846→   846→        <div className="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Proxy type selector">
+   847→   847→          {proxyTypes.map((proxy) => (
+   848→   848→            <button key={proxy.id} onClick={() => setActiveProxy(proxy.id)} role="tab" aria-selected={activeProxy === proxy.id} className={`min-h-[44px] px-3 py-2 text-[11px] tracking-[0.1em] uppercase font-medium border rounded cursor-pointer transition-colors ${activeProxy === proxy.id ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-foreground/20'}`}>{proxy.name.replace(' Proxy', '')}</button>
+   849→   849→          ))}
+   850→   850→        </div>
+   851→   851→        <AnimatePresence mode="wait">
+   852→   852→          <motion.div key={active.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.25 }} className="border border-border rounded p-6">
+   853→   853→            <h3 className="font-['Georgia',_serif] text-xl font-bold text-foreground mb-4">{active.name}</h3>
+   854→   854→            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+   855→   855→              <div><p className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-2">Psychology</p><p className="text-sm text-muted-foreground leading-relaxed">{active.psychology}</p></div>
+   856→   856→              <div><p className="text-[10px] tracking-[0.2em] uppercase text-accent font-semibold mb-2">Economics</p><p className="text-sm text-muted-foreground leading-relaxed">{active.economics}</p></div>
+   857→   857→              <div><p className="text-[10px] tracking-[0.2em] uppercase text-chart-4 font-semibold mb-2">Science</p><p className="text-sm text-muted-foreground leading-relaxed">{active.science}</p></div>
+   858→   858→            </div>
+   859→   859→            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-border">
+   860→   860→              <div><p className="text-[10px] tracking-[0.2em] uppercase text-emerald-600 font-semibold mb-2">Strengths</p><ul className="space-y-1">{active.strengths.map((s, i) => <li key={i} className="text-sm text-muted-foreground flex items-start gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />{s}</li>)}</ul></div>
+   861→   861→              <div><p className="text-[10px] tracking-[0.2em] uppercase text-red-600 font-semibold mb-2">Weaknesses</p><ul className="space-y-1">{active.weaknesses.map((w, i) => <li key={i} className="text-sm text-muted-foreground flex items-start gap-1.5"><AlertTriangle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />{w}</li>)}</ul></div>
+   862→   862→              <div><p className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-2">Differentiator</p><p className="text-sm text-muted-foreground leading-relaxed">{active.differentiator}</p></div>
+   863→   863→            </div>
+   864→   864→          </motion.div>
+   865→   865→        </AnimatePresence>
+   866→   866→      </section>
+   867→   867→
+   868→   868→      <EditorialDivider />
+   869→   869→
+   870→   870→      {/* ── Enhancement 2: Interactive Comparison Matrix ── */}
+   871→   871→      <section className="mb-20 py-8" aria-label="Proxy comparison matrix">
+   872→   872→        <SectionHeader num="03" title="Proxy Comparison Matrix" subtitle="Side-by-side comparison across latency, privacy, complexity, and our weighted score." />
+   873→   873→        <div className="overflow-x-auto custom-scrollbar border border-border rounded">
+   874→   874→          <table className="w-full text-sm" role="table">
+   875→   875→            <thead>
+   876→   876→              <tr className="border-b-2 border-foreground bg-muted/10">
+   877→   877→                <th className="text-left p-3 text-[10px] tracking-[0.2em] uppercase font-semibold text-muted-foreground">Proxy Type</th>
+   878→   878→                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Latency</th>
+   879→   879→                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Privacy</th>
+   880→   880→                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Complexity</th>
+   881→   881→                <th className="text-center p-3 text-[10px] tracking-[0.15em] uppercase font-semibold text-muted-foreground">Our Score</th>
+   882→   882→              </tr>
+   883→   883→            </thead>
+   884→   884→            <tbody>
+   885→   885→              {proxyMatrix.map((row, i) => (
+   886→   886→                <tr
+   887→   887→                  key={row.type}
+   888→   888→                  className={`border-b border-border/40 cursor-pointer transition-colors ${selectedMatrixRow === i ? 'bg-primary/5 border-primary/30' : 'hover:bg-muted/10'}`}
+   889→   889→                  onClick={() => setSelectedMatrixRow(selectedMatrixRow === i ? null : i)}
+   890→   890→                  role="button"
+   891→   891→                  tabIndex={0}
+   892→   892→                  aria-label={`Select ${row.type} proxy`}
+   893→   893→                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedMatrixRow(selectedMatrixRow === i ? null : i); } }}
+   894→   894→                >
+   895→   895→                  <td className="p-3 font-['Georgia',_serif] font-bold text-foreground">{row.type}</td>
+   896→   896→                  <td className="p-3 text-center">
+   897→   897→                    <span className="inline-flex items-center gap-1.5">
+   898→   898→                      <span className={`w-2 h-2 rounded-full ${matrixIndicatorColor(row.latency)}`} aria-hidden="true" />
+   899→   899→                      <span className={matrixCellLabel(row.latency)}>{row.latency}</span>
+   900→   900→                    </span>
+   901→   901→                  </td>
+   902→   902→                  <td className="p-3 text-center">
+   903→   903→                    <span className="inline-flex items-center gap-1.5">
+   904→   904→                      <span className={`w-2 h-2 rounded-full ${matrixIndicatorColor(row.privacy)}`} aria-hidden="true" />
+   905→   905→                      <span className={matrixCellLabel(row.privacy)}>{row.privacy}</span>
+   906→   906→                    </span>
+   907→   907→                  </td>
+   908→   908→                  <td className="p-3 text-center">
+   909→   909→                    <span className="inline-flex items-center gap-1.5">
+   910→   910→                      <span className={`w-2 h-2 rounded-full ${matrixIndicatorColor(row.complexity)}`} aria-hidden="true" />
+   911→   911→                      <span className={matrixCellLabel(row.complexity)}>{row.complexity}</span>
+   912→   912→                    </span>
+   913→   913→                  </td>
+   914→   914→                  <td className="p-3 text-center">
+   915→   915→                    <span className="inline-flex items-center justify-center gap-1">
+   916→   916→                      <span className="font-['Georgia',_serif] text-lg font-bold text-primary">{row.score}</span>
+   917→   917→                      <span className="text-[10px] text-muted-foreground">/10</span>
+   918→   918→                    </span>
+   919→   919→                  </td>
+   920→   920→                </tr>
+   921→   921→              ))}
+   922→   922→            </tbody>
+   923→   923→          </table>
+   924→   924→        </div>
+   925→   925→
+   926→   926→        {/* Expanded row details */}
+   927→   927→        <AnimatePresence>
+   928→   928→          {selectedMatrixRow !== null && (() => {
+   929→   929→            const row = proxyMatrix[selectedMatrixRow];
+   930→   930→            const proxy = proxyTypes.find((p) => p.id === row.type.toLowerCase() || p.name.toLowerCase().includes(row.type.toLowerCase()));
+   931→   931→            return (
+   932→   932→              <motion.div
+   933→   933→                key={row.type}
+   934→   934→                initial={{ opacity: 0, height: 0 }}
+   935→   935→                animate={{ opacity: 1, height: 'auto' }}
+   936→   936→                exit={{ opacity: 0, height: 0 }}
+   937→   937→                transition={{ duration: 0.3 }}
+   938→   938→                className="overflow-hidden"
+   939→   939→              >
+   940→   940→                <div className="mt-4 border border-primary/30 bg-primary/5 rounded p-5">
+   941→   941→                  <h4 className="font-['Georgia',_serif] text-lg font-bold text-foreground mb-3">{row.type} Proxy — Detailed Breakdown</h4>
+   942→   942→                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+   943→   943→                    <div className="p-3 border border-border rounded">
+   944→   944→                      <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Latency Impact</p>
+   945→   945→                      <p className="text-sm text-foreground">{row.latency} latency — {row.latency === 'Very Low' || row.latency === 'Low' ? 'excellent for real-time applications' : row.latency === 'Medium' ? 'acceptable for most use cases, consider caching' : 'significant overhead, best for non-real-time security'}</p>
+   946→   946→                    </div>
+   947→   947→                    <div className="p-3 border border-border rounded">
+   948→   948→                      <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Privacy Level</p>
+   949→   949→                      <p className="text-sm text-foreground">{row.privacy} privacy — {row.privacy === 'None' ? 'all traffic visible to proxy operator' : row.privacy === 'Low' ? 'minimal obfuscation of client identity' : row.privacy === 'Medium' ? 'partial identity protection with some metadata visible' : 'strong identity shielding and traffic encryption'}</p>
+   950→   950→                    </div>
+   951→   951→                    <div className="p-3 border border-border rounded">
+   952→   952→                      <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-1">Implementation Complexity</p>
+   953→   953→                      <p className="text-sm text-foreground">{row.complexity} complexity — {row.complexity === 'Low' ? 'quick setup, minimal configuration' : row.complexity === 'Medium' ? 'moderate configuration, requires monitoring' : 'significant infrastructure, needs dedicated expertise'}</p>
+   954→   954→                    </div>
+   955→   955→                  </div>
+   956→   956→                  {proxy && (
+   957→   957→                    <div className="p-3 border border-primary/20 bg-primary/5 rounded">
+   958→   958→                      <p className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-1">Our Differentiator</p>
+   959→   959→                      <p className="text-sm text-muted-foreground">{proxy.differentiator}</p>
+   960→   960→                    </div>
+   961→   961→                  )}
+   962→   962→                  <div className="mt-3 flex items-center gap-2">
+   963→   963→                    <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Score Calculation:</span>
+   964→   964→                    <span className="text-xs text-muted-foreground">strengths({proxy?.strengths.length ?? 0}) − weaknesses({proxy?.weaknesses.length ?? 0}) + differentiator bonus({row.score - (proxy ? proxy.strengths.length - proxy.weaknesses.length : 0) >= 0 ? '+' : ''}{row.score - (proxy ? proxy.strengths.length - proxy.weaknesses.length : 0)}) = <span className="font-bold text-primary">{row.score}/10</span></span>
+   965→   965→                  </div>
+   966→   966→                </div>
+   967→   967→              </motion.div>
+   968→   968→            );
+   969→   969→          })()}
+   970→   970→        </AnimatePresence>
+   971→   971→      </section>
+   972→   972→
+   973→   973→      <EditorialDivider />
+   974→   974→
+   975→   975→      {/* Section 4 — The Eagle Sees */}
+   976→   976→      <section className="mb-16 py-8" aria-label="Proxy strategy">
+   977→   977→        <SectionHeader num="04" title="The Eagle Sees: Long-Term Strategy" subtitle="How proxies compose together in the architecture." />
+   978→   978→        <ErrorBoundary section="Proxy Comparison"><ProxyComparison /></ErrorBoundary>
+   979→   979→      </section>
+   980→   980→
+   981→   981→      <EditorialDivider />
+   982→   982→
+   983→   983→      {/* Section 5 — Creative Proxy Matrix (dolphin-designed centerpiece) */}
+   984→   984→      <section className="mb-16 py-8" aria-label="Creative proxy comparison matrix">
+   985→   985→        <SectionHeader num="05" title="Creative Comparison Lab" subtitle="Five lenses on six proxy types — heatmap, signal/noise, traffic lights, gauges, and metaphor cards. Same data, different truths." />
+   986→   986→        <ErrorBoundary section="Proxy Matrix"><ProxyMatrix /></ErrorBoundary>
+   987→   987→      </section>
+   988→   988→
+   989→   989→      <EditorialDivider />
+   990→   990→
+   991→   991→      {/* Section 6 — Infographic Motion (proxy performance dashboard) */}
+   992→   992→      <section className="mb-16 py-8" aria-label="Infographic motion dashboard">
+   993→   993→        <SectionHeader num="06" title="Infographic Motion" subtitle="GSAP + Framer Motion hybrid — animated counters, progress arcs, bar meters, all scroll-triggered and reduced-motion aware." />
+   994→   994→        <ErrorBoundary section="Infographic Dashboard"><InfographicDashboard /></ErrorBoundary>
+   995→   995→      </section>
+   996→   996→    </div>
+   997→   997→  );
+   998→   998→}
+   999→   999→
+  1000→  1000→// ═══════════════════════════════════════════════════════════
+  1001→  1001→// SUBPAGE: ARCHITECTURE
+  1002→  1002→// ═══════════════════════════════════════════════════════════
+  1003→  1003→function ArchitectureSubpage() {
+  1004→  1004→  const shouldReduce = useReducedMotion();
+  1005→  1005→  const [animCount, setAnimCount] = useState(0);
+  1006→  1006→
+  1007→  1007→  // Animate counter on mount
+  1008→  1008→  useEffect(() => {
+  1009→  1009→    let frame = 0;
+  1010→  1010→    const target = telemetryMetrics.totalInvocations;
+  1011→  1011→    const duration = 1500;
+  1012→  1012→    const start = performance.now();
+  1013→  1013→    const step = (now: number) => {
+  1014→  1014→      const elapsed = now - start;
+  1015→  1015→      const progress = Math.min(elapsed / duration, 1);
+  1016→  1016→      const eased = 1 - Math.pow(1 - progress, 3);
+  1017→  1017→      setAnimCount(Math.round(eased * target));
+  1018→  1018→      if (progress < 1) frame = requestAnimationFrame(step);
+  1019→  1019→    };
+  1020→  1020→    frame = requestAnimationFrame(step);
+  1021→  1021→    return () => cancelAnimationFrame(frame);
+  1022→  1022→  }, []);
+  1023→  1023→
+  1024→  1024→  return (
+  1025→  1025→    <div className="max-w-[1200px] mx-auto px-6">
+  1026→  1026→      {/* Title */}
+  1027→  1027→      <motion.div className="py-16 md:py-20" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+  1028→  1028→        <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-3">Decision &amp; Data Model</p>
+  1029→  1029→        <h1 className="font-['Georgia',_serif] text-3xl md:text-5xl font-bold text-foreground leading-[1.1] mb-4">
+  1030→  1030→          Architecture<br /><span className="text-primary">Decision &amp; Data Model</span>
+  1031→  1031→        </h1>
+  1032→  1032→        <div className="editorial-pullquote">From decision trees to data models — every architectural choice documented, every dependency visualized.</div>
+  1033→  1033→      </motion.div>
+  1034→  1034→
+  1035→  1035→      <hr className="editorial-rule-thick mb-12" />
+  1036→  1036→
+  1037→  1037→      {/* Decision Tree */}
+  1038→  1038→      <section className="mb-12" aria-label="Decision tree">
+  1039→  1039→        <ErrorBoundary section="Decision Tree"><DecisionTree /></ErrorBoundary>
+  1040→  1040→      </section>
+  1041→  1041→
+  1042→  1042→      <EditorialDivider thick />
+  1043→  1043→
+  1044→  1044→      {/* Tier Architecture */}
+  1045→  1045→      <section className="mb-12 py-8" aria-label="Tier architecture">
+  1046→  1046→        <ErrorBoundary section="Tier Architecture"><TierArchitecture /></ErrorBoundary>
+  1047→  1047→      </section>
+  1048→  1048→
+  1049→  1049→      <EditorialDivider />
+  1050→  1050→
+  1051→  1051→      {/* Data Model Evolution */}
+  1052→  1052→      <section className="mb-16 py-8" aria-label="Data model evolution">
+  1053→  1053→        <SectionHeader num="DM" title="Data Model Evolution" subtitle="From flat ordered list to I/O piping with telemetry — a more resilient architecture." />
+  1054→  1054→        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  1055→  1055→          <div className="border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20 rounded p-5">
+  1056→  1056→            <p className="text-[10px] tracking-[0.2em] uppercase text-red-600 dark:text-red-400 font-semibold mb-3">Current — Flat Ordered List</p>
+  1057→  1057→            <ul className="space-y-2 text-sm text-muted-foreground">
+  1058→  1058→              <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />Sequential execution, no branching</li>
+  1059→  1059→              <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />No error recovery between stages</li>
+  1060→  1060→              <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />No telemetry or observability</li>
+  1061→  1061→              <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />Budget tracking at orchestration level only</li>
+  1062→  1062→              <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />Rollback semantics — all or nothing</li>
+  1063→  1063→            </ul>
+  1064→  1064→          </div>
+  1065→  1065→          <div className="border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/20 rounded p-5">
+  1066→  1066→            <p className="text-[10px] tracking-[0.2em] uppercase text-emerald-600 dark:text-emerald-400 font-semibold mb-3">Proposed — I/O Piping with Telemetry</p>
+  1067→  1067→            <ul className="space-y-2 text-sm text-muted-foreground">
+  1068→  1068→              <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />Independent skill invocation with standard I/O</li>
+  1069→  1069→              <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />Failures don&apos;t cascade — errors piped forward</li>
+  1070→  1070→              <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />Telemetry buffer with batch flush to API</li>
+  1071→  1071→              <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />Version pinning and schema hash change detection</li>
+  1072→  1072→              <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />Shell pipeline model: skill1 | skill2 | skill3</li>
+  1073→  1073→            </ul>
+  1074→  1074→          </div>
+  1075→  1075→        </div>
+  1076→  1076→        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+  1077→  1077→          {[
+  1078→  1078→            { label: 'Current Skills', current: '16', proposed: '64' },
+  1079→  1079→            { label: 'Execution Model', current: 'Sequential', proposed: 'Pipe + Parallel' },
+  1080→  1080→            { label: 'Error Recovery', current: 'Rollback', proposed: 'Pipe Forward' },
+  1081→  1081→            { label: 'Telemetry', current: 'None', proposed: 'Batch Flush' },
+  1082→  1082→          ].map((row) => (
+  1083→  1083→            <div key={row.label} className="text-center p-3 border border-border rounded">
+  1084→  1084→              <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground font-semibold mb-1">{row.label}</p>
+  1085→  1085→              <p className="text-xs text-red-500 line-through">{row.current}</p>
+  1086→  1086→              <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{row.proposed}</p>
+  1087→  1087→            </div>
+  1088→  1088→          ))}
+  1089→  1089→        </div>
+  1090→  1090→      </section>
+  1091→  1091→
+  1092→  1092→      <EditorialDivider />
+  1093→  1093→
+  1094→  1094→      {/* ── Enhancement 3: Telemetry Dashboard ── */}
+  1095→  1095→      <section className="mb-16 py-8" aria-label="Telemetry dashboard">
+  1096→  1096→        <SectionHeader num="TL" title="Live Telemetry Dashboard" subtitle="Simulated skill invocation metrics — real-time observability into the pipeline." />
+  1097→  1097→
+  1098→  1098→        {/* Metric Cards */}
+  1099→  1099→        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  1100→  1100→          {/* Total Invocations */}
+  1101→  1101→          <motion.div
+  1102→  1102→            className="border border-border rounded p-4 bg-card"
+  1103→  1103→            initial={{ opacity: 0, y: 20 }}
+  1104→  1104→            whileInView={{ opacity: 1, y: 0 }}
+  1105→  1105→            viewport={{ once: true }}
+  1106→  1106→            transition={{ duration: 0.4 }}
+  1107→  1107→          >
+  1108→  1108→            <div className="flex items-center gap-2 mb-2">
+  1109→  1109→              <BarChart3 className="w-4 h-4 text-primary" />
+  1110→  1110→              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Invocations</span>
+  1111→  1111→            </div>
+  1112→  1112→            <p className="font-['Georgia',_serif] text-3xl font-bold text-foreground">{animCount.toLocaleString()}</p>
+  1113→  1113→            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mt-1">
+  1114→  1114→              <TrendingUp className="w-3 h-3" />+12% this week
+  1115→  1115→            </p>
+  1116→  1116→          </motion.div>
+  1117→  1117→
+  1118→  1118→          {/* Success Rate */}
+  1119→  1119→          <motion.div
+  1120→  1120→            className="border border-border rounded p-4 bg-card"
+  1121→  1121→            initial={{ opacity: 0, y: 20 }}
+  1122→  1122→            whileInView={{ opacity: 1, y: 0 }}
+  1123→  1123→            viewport={{ once: true }}
+  1124→  1124→            transition={{ duration: 0.4, delay: 0.1 }}
+  1125→  1125→          >
+  1126→  1126→            <div className="flex items-center gap-2 mb-2">
+  1127→  1127→              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+  1128→  1128→              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Success Rate</span>
+  1129→  1129→            </div>
+  1130→  1130→            <div className="flex items-center gap-3">
+  1131→  1131→              <p className="font-['Georgia',_serif] text-3xl font-bold text-foreground">{telemetryMetrics.successRate}%</p>
+  1132→  1132→              <svg width="40" height="40" viewBox="0 0 40 40" className="shrink-0" aria-hidden="true">
+  1133→  1133→                <circle cx="20" cy="20" r="16" fill="none" stroke="var(--border)" strokeWidth="3" />
+  1134→  1134→                <circle cx="20" cy="20" r="16" fill="none" stroke="#10b981" strokeWidth="3" strokeDasharray={`${(telemetryMetrics.successRate / 100) * 100.53} 100.53`} strokeLinecap="round" transform="rotate(-90 20 20)" />
+  1135→  1135→              </svg>
+  1136→  1136→            </div>
+  1137→  1137→          </motion.div>
+  1138→  1138→
+  1139→  1139→          {/* P99 Latency */}
+  1140→  1140→          <motion.div
+  1141→  1141→            className="border border-border rounded p-4 bg-card"
+  1142→  1142→            initial={{ opacity: 0, y: 20 }}
+  1143→  1143→            whileInView={{ opacity: 1, y: 0 }}
+  1144→  1144→            viewport={{ once: true }}
+  1145→  1145→            transition={{ duration: 0.4, delay: 0.2 }}
+  1146→  1146→          >
+  1147→  1147→            <div className="flex items-center gap-2 mb-2">
+  1148→  1148→              <Clock className="w-4 h-4 text-amber-500" />
+  1149→  1149→              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">P99 Latency</span>
+  1150→  1150→            </div>
+  1151→  1151→            <p className="font-['Georgia',_serif] text-3xl font-bold text-foreground">{telemetryMetrics.p99Latency}<span className="text-sm text-muted-foreground ml-1">ms</span></p>
+  1152→  1152→            <div className="mt-2 h-1.5 bg-muted/40 rounded overflow-hidden">
+  1153→  1153→              <div className="h-full bg-amber-500 rounded" style={{ width: `${(telemetryMetrics.p99Latency / 500) * 100}%` }} />
+  1154→  1154→            </div>
+  1155→  1155→          </motion.div>
+  1156→  1156→
+  1157→  1157→          {/* Active Conflicts */}
+  1158→  1158→          <motion.div
+  1159→  1159→            className="border border-border rounded p-4 bg-card"
+  1160→  1160→            initial={{ opacity: 0, y: 20 }}
+  1161→  1161→            whileInView={{ opacity: 1, y: 0 }}
+  1162→  1162→            viewport={{ once: true }}
+  1163→  1163→            transition={{ duration: 0.4, delay: 0.3 }}
+  1164→  1164→          >
+  1165→  1165→            <div className="flex items-center gap-2 mb-2">
+  1166→  1166→              <AlertTriangle className="w-4 h-4 text-red-500" />
+  1167→  1167→              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Conflicts</span>
+  1168→  1168→            </div>
+  1169→  1169→            <div className="flex items-center gap-2">
+  1170→  1170→              <p className="font-['Georgia',_serif] text-3xl font-bold text-foreground">{telemetryMetrics.activeConflicts}</p>
+  1171→  1171→              <span className="px-1.5 py-0.5 text-[9px] tracking-[0.12em] uppercase font-bold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded">Warning</span>
+  1172→  1172→            </div>
+  1173→  1173→            <p className="text-[10px] text-muted-foreground mt-1">skill dependency conflicts</p>
+  1174→  1174→          </motion.div>
+  1175→  1175→        </div>
+  1176→  1176→
+  1177→  1177→        {/* Invocation Timeline */}
+  1178→  1178→        <div className="border border-border rounded p-5">
+  1179→  1179→          <div className="flex items-center justify-between mb-4">
+  1180→  1180→            <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">Recent Invocations (Last 10)</p>
+  1181→  1181→            <div className="flex items-center gap-3">
+  1182→  1182→              <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true" /> Success</span>
+  1183→  1183→              <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-red-400" aria-hidden="true" /> Failed</span>
+  1184→  1184→            </div>
+  1185→  1185→          </div>
+  1186→  1186→          <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+  1187→  1187→            {recentInvocations.map((inv, i) => (
+  1188→  1188→              <motion.div
+  1189→  1189→                key={i}
+  1190→  1190→                className={`flex items-center gap-4 p-3 rounded border transition-colors ${inv.status === 'success' ? 'border-emerald-200 dark:border-emerald-900/30 bg-emerald-50/30 dark:bg-emerald-950/10' : 'border-red-200 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/10'}`}
+  1191→  1191→                initial={shouldReduce ? false : { opacity: 0, x: -10 }}
+  1192→  1192→                whileInView={{ opacity: 1, x: 0 }}
+  1193→  1193→                viewport={{ once: true }}
+  1194→  1194→                transition={{ delay: i * 0.05, duration: 0.3 }}
+  1195→  1195→              >
+  1196→  1196→                <span className={`w-2 h-2 rounded-full shrink-0 ${inv.status === 'success' ? 'bg-emerald-500' : 'bg-red-400'}`} aria-hidden="true" />
+  1197→  1197→                <span className="text-sm font-medium text-foreground flex-1">{inv.skill}</span>
+  1198→  1198→                <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${inv.tier === 'T0' ? 'bg-primary/10 text-primary' : inv.tier === 'T1' ? 'bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400' : inv.tier === 'T2' ? 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400' : 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'}`}>{inv.tier}</span>
+  1199→  1199→                <span className={`text-xs font-mono ${inv.status === 'success' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}`}>
+  1200→  1200→                  {inv.status === 'success' ? `${inv.duration}ms` : 'FAILED'}
+  1201→  1201→                </span>
+  1202→  1202→                {inv.status === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> : <XCircle className="w-4 h-4 text-red-400 shrink-0" />}
+  1203→  1203→              </motion.div>
+  1204→  1204→            ))}
+  1205→  1205→          </div>
+  1206→  1206→        </div>
+  1207→  1207→      </section>
+  1208→  1208→
+  1209→  1209→      <EditorialDivider />
+  1210→  1210→
+  1211→  1211→      {/* ── SP-7 Dimensional Radar ── */}
+  1212→  1212→      <section className="mb-16 py-8" aria-label="SP-7 dimensional radar">
+  1213→  1213→        <SectionHeader num="R7" title="SP-7 Dimensional Radar" subtitle="Seven-axis evaluation of every design option — Visual Density, Interactivity, Data Complexity, Motion Need, Accessibility, AI Redirect, Component Reusability. Switch weight profiles to see how scoring shifts." />
+  1214→  1214→        <ErrorBoundary section="SP-7 Radar">
+  1215→  1215→          <div className="border border-border rounded p-6 bg-card/30">
+  1216→  1216→            <SP7Radar />
+  1217→  1217→          </div>
+  1218→  1218→        </ErrorBoundary>
+  1219→  1219→      </section>
+  1220→  1220→
+  1221→  1221→      <EditorialDivider />
+  1222→  1222→
+  1223→  1223→      {/* ── Skill Invocation Pipeline ── */}
+  1224→  1224→      <section className="mb-16 py-8" aria-label="Skill invocation pipeline">
+  1225→  1225→        <SectionHeader num="PL" title="Skill Invocation Pipeline" subtitle="The I/O piping pattern in action — each skill's JSON output is fed to the next. GSAP draws the connectors stroke-by-stroke on scroll; flowing dashes indicate live data." />
+  1226→  1226→        <ErrorBoundary section="Skill Pipeline">
+  1227→  1227→          <div className="border border-border rounded p-6 bg-card/30">
+  1228→  1228→            <SkillPipeline />
+  1229→  1229→          </div>
+  1230→  1230→        </ErrorBoundary>
+  1231→  1231→      </section>
+  1232→  1232→
+  1233→  1233→      <EditorialDivider />
+  1234→  1234→
+  1235→  1235→      {/* ── Architecture Tree ── */}
+  1236→  1236→      <section className="mb-16 py-8" aria-label="Architecture tree">
+  1237→  1237→        <SectionHeader num="AT" title="Minimal Flat Registry · Architecture Tree" subtitle="Radial tree of the 4-tier architecture. AI Portal at the center, T0-T3 tiers as concentric rings. Hover any node to see its install command; click a tier label to expand its description." />
+  1238→  1238→        <ErrorBoundary section="Architecture Tree">
+  1239→  1239→          <div className="border border-border rounded p-6 bg-card/30">
+  1240→  1240→            <ArchitectureTree />
+  1241→  1241→          </div>
+  1242→  1242→        </ErrorBoundary>
+  1243→  1243→      </section>
+  1244→  1244→
+  1245→  1245→      <EditorialDivider />
+  1246→  1246→
+  1247→  1247→      {/* ── GSAP + Framer Motion Compatibility Rules ── */}
+  1248→  1248→      <section className="mb-16 py-8" aria-label="GSAP motion compatibility rules">
+  1249→  1249→        <SectionHeader num="GS" title="GSAP × Framer Motion · Compatibility Charter" subtitle="Six non-negotiable rules for using both libraries on the same page without conflict. Owl-observed, eagle-strategic, beaver-guardrailed, dolphin-creative." />
+  1250→  1250→        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  1251→  1251→          {gsapMotionRules.map((rule, i) => (
+  1252→  1252→            <motion.div
+  1253→  1253→              key={rule.rule}
+  1254→  1254→              initial={{ opacity: 0, y: 12 }}
+  1255→  1255→              whileInView={{ opacity: 1, y: 0 }}
+  1256→  1256→              viewport={{ once: true }}
+  1257→  1257→              transition={{ duration: 0.3, delay: i * 0.05 }}
+  1258→  1258→              className="p-4 border border-border rounded bg-card/40 hover:bg-card/70 transition-colors"
+  1259→  1259→            >
+  1260→  1260→              <div className="flex items-start gap-3">
+  1261→  1261→                <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary font-mono font-bold text-xs flex-shrink-0">
+  1262→  1262→                  {String(i + 1).padStart(2, '0')}
+  1263→  1263→                </span>
+  1264→  1264→                <div>
+  1265→  1265→                  <h4 className="font-['Georgia',_serif] text-sm font-bold text-foreground mb-1">{rule.rule}</h4>
+  1266→  1266→                  <p className="text-xs text-muted-foreground leading-relaxed">{rule.detail}</p>
+  1267→  1267→                </div>
+  1268→  1268→              </div>
+  1269→  1269→            </motion.div>
+  1270→  1270→          ))}
+  1271→  1271→        </div>
+  1272→  1272→      </section>
+  1273→  1273→    </div>
+  1274→  1274→  );
+  1275→  1275→}
+  1276→  1276→
+  1277→  1277→// ═══════════════════════════════════════════════════════════
+  1278→  1278→// SUBPAGE: MARKETPLACE (wrapper)
+  1279→  1279→// ═══════════════════════════════════════════════════════════
+  1280→  1280→function MarketplaceSubpage() {
+  1281→  1281→  return (
+  1282→  1282→    <div>
+  1283→  1283→      <motion.div className="py-16 md:py-20 px-6 max-w-[1200px] mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+  1284→  1284→        <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-3">Skill Registry</p>
+  1285→  1285→        <h1 className="font-['Georgia',_serif] text-3xl md:text-5xl font-bold text-foreground leading-[1.1] mb-4">
+  1286→  1286→          Skill <span className="text-primary">Marketplace</span>
+  1287→  1287→        </h1>
+  1288→  1288→        <div className="editorial-pullquote">Browse, search, filter, and collect 64 production-ready agent skills. Every skill installable via npx skills add.</div>
+  1289→  1289→      </motion.div>
+  1290→  1290→      <ErrorBoundary section="Skill Marketplace"><SkillMarketplace /></ErrorBoundary>
+  1291→  1291→    </div>
+  1292→  1292→  );
+  1293→  1293→}
+  1294→  1294→
+  1295→  1295→// ═══════════════════════════════════════════════════════════
+  1296→  1296→// SUBPAGE: DOCS
+  1297→  1297→// ═══════════════════════════════════════════════════════════
+  1298→  1298→function DocsSubpage() {
+  1299→  1299→  const shouldReduce = useReducedMotion();
+  1300→  1300→  const [docsSearch, setDocsSearch] = useState('');
+  1301→  1301→  const [docsCategory, setDocsCategory] = useState<string>('all');
+  1302→  1302→
+  1303→  1303→  const filteredImages = researchImages.filter((img) => {
+  1304→  1304→    const matchesSearch = docsSearch === '' || img.name.toLowerCase().includes(docsSearch.toLowerCase()) || img.desc.toLowerCase().includes(docsSearch.toLowerCase());
+  1305→  1305→    const matchesCategory = docsCategory === 'all' || img.category === docsCategory;
+  1306→  1306→    return matchesSearch && matchesCategory;
+  1307→  1307→  });
+  1308→  1308→
+  1309→  1309→  const filteredReports = pdfReports.filter((report) => {
+  1310→  1310→    const matchesSearch = docsSearch === '' || report.title.toLowerCase().includes(docsSearch.toLowerCase()) || report.desc.toLowerCase().includes(docsSearch.toLowerCase());
+  1311→  1311→    const matchesCategory = docsCategory === 'all' || report.category === docsCategory;
+  1312→  1312→    return matchesSearch && matchesCategory;
+  1313→  1313→  });
+  1314→  1314→
+  1315→  1315→  return (
+  1316→  1316→    <div className="max-w-[1200px] mx-auto px-6">
+  1317→  1317→      {/* Title */}
+  1318→  1318→      <motion.div className="py-16 md:py-20" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+  1319→  1319→        <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-3">Research &amp; Reference</p>
+  1320→  1320→        <h1 className="font-['Georgia',_serif] text-3xl md:text-5xl font-bold text-foreground leading-[1.1] mb-4">
+  1321→  1321→          Documentation<br /><span className="text-primary">&amp; Research</span>
+  1322→  1322→        </h1>
+  1323→  1323→        <div className="editorial-pullquote">Visual research gallery, comprehensive PDF reports, skill reference registry, and AI portal routing table.</div>
+  1324→  1324→      </motion.div>
+  1325→  1325→
+  1326→  1326→      <hr className="editorial-rule-thick mb-12" />
+  1327→  1327→
+  1328→  1328→      {/* ── Enhancement 5: Search & Filter Bar ── */}
+  1329→  1329→      <div className="mb-8 p-4 border border-border rounded bg-muted/10">
+  1330→  1330→        <div className="flex flex-col sm:flex-row gap-3">
+  1331→  1331→          <div className="relative flex-1">
+  1332→  1332→            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+  1333→  1333→            <input
+  1334→  1334→              type="text"
+  1335→  1335→              placeholder="Search research images and PDF reports…"
+  1336→  1336→              value={docsSearch}
+  1337→  1337→              onChange={(e) => setDocsSearch(e.target.value)}
+  1338→  1338→              className="w-full min-h-[44px] pl-10 pr-4 py-2 text-sm bg-background border border-border rounded focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 transition-colors"
+  1339→  1339→              aria-label="Search documentation"
+  1340→  1340→            />
+  1341→  1341→          </div>
+  1342→  1342→          <div className="flex items-center gap-2 flex-wrap">
+  1343→  1343→            <Filter className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+  1344→  1344→            {docsCategories.map((cat) => (
+  1345→  1345→              <button
+  1346→  1346→                key={cat}
+  1347→  1347→                onClick={() => setDocsCategory(cat)}
+  1348→  1348→                className={`min-h-[36px] px-3 py-1.5 text-[10px] tracking-[0.12em] uppercase font-medium border rounded cursor-pointer transition-colors ${docsCategory === cat ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-foreground/20'}`}
+  1349→  1349→                aria-pressed={docsCategory === cat}
+  1350→  1350→              >
+  1351→  1351→                {cat}
+  1352→  1352→              </button>
+  1353→  1353→            ))}
+  1354→  1354→          </div>
+  1355→  1355→        </div>
+  1356→  1356→        {(docsSearch || docsCategory !== 'all') && (
+  1357→  1357→          <p className="text-[10px] text-muted-foreground mt-2">
+  1358→  1358→            Showing {filteredImages.length} image{filteredImages.length !== 1 ? 's' : ''} and {filteredReports.length} report{filteredReports.length !== 1 ? 's' : ''}
+  1359→  1359→            {docsSearch && <span> matching &ldquo;{docsSearch}&rdquo;</span>}
+  1360→  1360→            {docsCategory !== 'all' && <span> in <span className="text-primary">{docsCategory}</span></span>}
+  1361→  1361→          </p>
+  1362→  1362→        )}
+  1363→  1363→      </div>
+  1364→  1364→
+  1365→  1365→      {/* Visual Gallery */}
+  1366→  1366→      <section className="mb-16" aria-label="Visual gallery">
+  1367→  1367→        <ErrorBoundary section="Visual Gallery"><VisualGallery /></ErrorBoundary>
+  1368→  1368→      </section>
+  1369→  1369→
+  1370→  1370→      <EditorialDivider />
+  1371→  1371→
+  1372→  1372→      {/* Research Images List */}
+  1373→  1373→      <section className="mb-16 py-8" aria-label="Research images">
+  1374→  1374→        <SectionHeader num="RI" title="Research Images" subtitle="Generated analysis visuals from the architecture deep-dive." />
+  1375→  1375→        {filteredImages.length === 0 ? (
+  1376→  1376→          <div className="text-center py-10 border border-border rounded">
+  1377→  1377→            <Search className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+  1378→  1378→            <p className="text-sm text-muted-foreground">No images match your search criteria.</p>
+  1379→  1379→          </div>
+  1380→  1380→        ) : (
+  1381→  1381→          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" role="list">
+  1382→  1382→            {filteredImages.map((img) => (
+  1383→  1383→              <div key={img.file} className="border border-border rounded p-4 hover:border-foreground/20 transition-colors" role="listitem">
+  1384→  1384→                <div className="flex items-start gap-2 mb-2">
+  1385→  1385→                  <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+  1386→  1386→                  <h4 className="font-['Georgia',_serif] text-sm font-bold text-foreground">{img.name}</h4>
+  1387→  1387→                </div>
+  1388→  1388→                <p className="text-xs text-muted-foreground leading-relaxed">{img.desc}</p>
+  1389→  1389→                <div className="flex items-center justify-between mt-2">
+  1390→  1390→                  <span className="text-[10px] font-mono text-muted-foreground/60">{img.file}</span>
+  1391→  1391→                  <span className="text-[9px] tracking-[0.12em] uppercase font-medium px-1.5 py-0.5 bg-muted/40 rounded text-muted-foreground">{img.category}</span>
+  1392→  1392→                </div>
+  1393→  1393→              </div>
+  1394→  1394→            ))}
+  1395→  1395→          </div>
+  1396→  1396→        )}
+  1397→  1397→      </section>
+  1398→  1398→
+  1399→  1399→      <EditorialDivider />
+  1400→  1400→
+  1401→  1401→      {/* PDF Reports */}
+  1402→  1402→      <section className="mb-16 py-8" aria-label="PDF reports">
+  1403→  1403→        <SectionHeader num="PDF" title="PDF Reports" subtitle="Comprehensive analysis reports available for download." />
+  1404→  1404→        {filteredReports.length === 0 ? (
+  1405→  1405→          <div className="text-center py-10 border border-border rounded">
+  1406→  1406→            <Search className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+  1407→  1407→            <p className="text-sm text-muted-foreground">No reports match your search criteria.</p>
+  1408→  1408→          </div>
+  1409→  1409→        ) : (
+  1410→  1410→          <div className="space-y-2">
+  1411→  1411→            {filteredReports.map((report, i) => (
+  1412→  1412→              <motion.div key={i} className="flex items-center gap-4 p-4 border border-border rounded hover:border-foreground/20 hover:bg-muted/10 transition-colors group cursor-pointer" whileHover={shouldReduce ? undefined : { x: 2 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
+  1413→  1413→                <BookOpen className="w-5 h-5 text-primary shrink-0" />
+  1414→  1414→                <div className="flex-1 min-w-0">
+  1415→  1415→                  <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">{report.title}</h4>
+  1416→  1416→                  <p className="text-xs text-muted-foreground truncate">{report.desc}</p>
+  1417→  1417→                </div>
+  1418→  1418→                <span className="text-[9px] tracking-[0.12em] uppercase font-medium px-1.5 py-0.5 bg-muted/40 rounded text-muted-foreground shrink-0">{report.category}</span>
+  1419→  1419→                <span className="text-[10px] font-mono text-muted-foreground shrink-0">{report.size}</span>
+  1420→  1420→                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+  1421→  1421→              </motion.div>
+  1422→  1422→            ))}
+  1423→  1423→          </div>
+  1424→  1424→        )}
+  1425→  1425→      </section>
+  1426→  1426→
+  1427→  1427→      <EditorialDivider />
+  1428→  1428→
+  1429→  1429→      {/* Skill Reference */}
+  1430→  1430→      <section className="mb-16 py-8" aria-label="Skill reference">
+  1431→  1431→        <ErrorBoundary section="Skill Reference"><SkillReference /></ErrorBoundary>
+  1432→  1432→      </section>
+  1433→  1433→
+  1434→  1434→      <EditorialDivider />
+  1435→  1435→
+  1436→  1436→      {/* AI Portal Gateway */}
+  1437→  1437→      <section className="mb-16 py-8" aria-label="AI portal gateway">
+  1438→  1438→        <ErrorBoundary section="AI Portal Gateway"><AIPortalGateway /></ErrorBoundary>
+  1439→  1439→      </section>
+  1440→  1440→    </div>
+  1441→  1441→  );
+  1442→  1442→}
+  1443→  1443→
+  1444→  1444→// ═══════════════════════════════════════════════════════════
+  1445→  1445→// MAIN COMPONENT
+  1446→  1446→// ═══════════════════════════════════════════════════════════
+  1447→  1447→export default function SkillStackApp() {
+  1448→  1448→  const [activeTab, setActiveTab] = useState<Subpage>('home');
+  1449→  1449→  const [showBackToTop, setShowBackToTop] = useState(false);
+  1450→  1450→  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  1451→  1451→  const { setTheme } = useTheme();
+  1452→  1452→  const shouldReduce = useReducedMotion();
+  1453→  1453→
+  1454→  1454→  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  1455→  1455→
+  1456→  1456→  useEffect(() => {
+  1457→  1457→    const handleScroll = () => setShowBackToTop(window.scrollY > 500);
+  1458→  1458→    window.addEventListener('scroll', handleScroll, { passive: true });
+  1459→  1459→    return () => window.removeEventListener('scroll', handleScroll);
+  1460→  1460→  }, []);
+  1461→  1461→
+  1462→  1462→  useEffect(() => {
+  1463→  1463→    const handleKeyDown = (e: KeyboardEvent) => {
+  1464→  1464→      if (e.key === 'Escape' && mobileMenuOpen) setMobileMenuOpen(false);
+  1465→  1465→    };
+  1466→  1466→    window.addEventListener('keydown', handleKeyDown);
+  1467→  1467→    return () => window.removeEventListener('keydown', handleKeyDown);
+  1468→  1468→  }, [mobileMenuOpen]);
+  1469→  1469→
+  1470→  1470→  const scrollToTop = useCallback(() => window.scrollTo({ top: 0, behavior: 'smooth' }), []);
+  1471→  1471→
+  1472→  1472→  const navigateTo = useCallback((tab: Subpage) => {
+  1473→  1473→    setActiveTab(tab);
+  1474→  1474→    setMobileMenuOpen(false);
+  1475→  1475→    window.scrollTo({ top: 0, behavior: 'smooth' });
+  1476→  1476→  }, []);
+  1477→  1477→
+  1478→  1478→  const toggleTheme = useCallback(() => {
+  1479→  1479→    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  1480→  1480→    if (!prefersReduced) document.documentElement.classList.add('theme-transition');
+  1481→  1481→    const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  1482→  1482→    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  1483→  1483→    if (!prefersReduced) {
+  1484→  1484→      const cleanup = () => { document.documentElement.classList.remove('theme-transition'); document.documentElement.removeEventListener('transitionend', cleanup); };
+  1485→  1485→      document.documentElement.addEventListener('transitionend', cleanup);
+  1486→  1486→      setTimeout(cleanup, 400);
+  1487→  1487→    }
+  1488→  1488→  }, [setTheme]);
+  1489→  1489→
+  1490→  1490→  return (
+  1491→  1491→    <div className="min-h-screen flex flex-col bg-background text-foreground">
+  1492→  1492→      {/* Navigation Bar */}
+  1493→  1493→      <nav className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border" aria-label="Main navigation">
+  1494→  1494→        <div className="max-w-[1200px] mx-auto px-4 md:px-6 flex items-center justify-between h-12">
+  1495→  1495→          {/* Logo */}
+  1496→  1496→          <motion.button onClick={() => navigateTo('home')} className="flex items-center gap-3 cursor-pointer" whileHover={shouldReduce ? undefined : { scale: 1.02 }} whileTap={shouldReduce ? undefined : { scale: 0.98 }} aria-label="Go to home">
+  1497→  1497→            <div className="w-5 h-5 bg-primary flex items-center justify-center" aria-hidden="true"><span className="text-[8px] font-bold text-primary-foreground leading-none">SP</span></div>
+  1498→  1498→            <span className="text-xs font-medium tracking-[0.2em] uppercase text-foreground hidden sm:block">Skill Stack</span>
+  1499→  1499→          </motion.button>
+  1500→  1500→
+  1501→  1501→          {/* Desktop Tabs */}
+  1502→  1502→          <div className="hidden md:flex items-center gap-1" role="tablist" aria-label="Section tabs">
+  1503→  1503→            {tabs.map((tab) => (
+  1504→  1504→              <motion.button key={tab.id} onClick={() => navigateTo(tab.id)} role="tab" aria-selected={activeTab === tab.id} className={`min-h-[44px] px-3 flex items-center gap-1.5 text-[10px] tracking-[0.12em] uppercase font-medium cursor-pointer rounded-sm transition-colors relative ${activeTab === tab.id ? 'text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`} whileHover={shouldReduce ? undefined : hoverNavItem.whileHover} transition={hoverNavItem.transition}>
+  1505→  1505→                <span className="hidden lg:inline">{tab.icon}</span>
+  1506→  1506→                {tab.label}
+  1507→  1507→                {activeTab === tab.id && <motion.div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" layoutId="activeTab" transition={{ type: 'spring', stiffness: 400, damping: 30 }} />}
+  1508→  1508→              </motion.button>
+  1509→  1509→            ))}
+  1510→  1510→          </div>
+  1511→  1511→
+  1512→  1512→          <div className="flex items-center gap-2">
+  1513→  1513→            {/* Dark Mode Toggle */}
+  1514→  1514→            {mounted && (
+  1515→  1515→              <motion.button onClick={toggleTheme} className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md hover:bg-muted cursor-pointer" aria-label="Toggle dark mode" whileHover={shouldReduce ? undefined : { scale: 1.1 }} whileTap={shouldReduce ? undefined : { scale: 0.9 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
+  1516→  1516→                <Sun className="w-4 h-4 text-foreground hidden dark:block" />
+  1517→  1517→                <Moon className="w-4 h-4 text-foreground block dark:hidden" />
+  1518→  1518→              </motion.button>
+  1519→  1519→            )}
+  1520→  1520→
+  1521→  1521→            {/* Mobile Hamburger */}
+  1522→  1522→            <motion.button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer" aria-label={mobileMenuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileMenuOpen} whileHover={shouldReduce ? undefined : { scale: 1.05 }} whileTap={shouldReduce ? undefined : { scale: 0.95 }}>
+  1523→  1523→              {mobileMenuOpen ? <XCircle className="w-5 h-5" /> : <Wrench className="w-5 h-5" />}
+  1524→  1524→            </motion.button>
+  1525→  1525→          </div>
+  1526→  1526→        </div>
+  1527→  1527→
+  1528→  1528→        {/* Mobile Menu */}
+  1529→  1529→        <AnimatePresence>
+  1530→  1530→          {mobileMenuOpen && (
+  1531→  1531→            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="md:hidden border-t border-border bg-background overflow-hidden">
+  1532→  1532→              <div className="max-w-[1200px] mx-auto px-4 py-3 space-y-1">
+  1533→  1533→                {tabs.map((tab, i) => (
+  1534→  1534→                  <motion.button key={tab.id} onClick={() => navigateTo(tab.id)} className={`flex items-center gap-3 w-full text-left min-h-[44px] py-2 text-sm tracking-[0.1em] uppercase font-medium cursor-pointer transition-colors rounded ${activeTab === tab.id ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'}`} initial={shouldReduce ? false : { opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04, duration: 0.2 }}>
+  1535→  1535→                    {tab.icon}
+  1536→  1536→                    {tab.label}
+  1537→  1537→                  </motion.button>
+  1538→  1538→                ))}
+  1539→  1539→              </div>
+  1540→  1540→            </motion.div>
+  1541→  1541→          )}
+  1542→  1542→        </AnimatePresence>
+  1543→  1543→      </nav>
+  1544→  1544→
+  1545→  1545→      {/* Main Content */}
+  1546→  1546→      <main id="main-content" className="flex-1 section-below-fold">
+  1547→  1547→        <AnimatePresence mode="wait">
+  1548→  1548→          <motion.div key={activeTab} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}>
+  1549→  1549→            {activeTab === 'home' && <HomeSubpage onNavigate={navigateTo} />}
+  1550→  1550→            {activeTab === 'audit' && <AuditSubpage />}
+  1551→  1551→            {activeTab === 'frontend' && <FrontendSubpage mounted={mounted} />}
+  1552→  1552→            {activeTab === 'proxy' && <ProxySubpage />}
+  1553→  1553→            {activeTab === 'architecture' && <ArchitectureSubpage />}
+  1554→  1554→            {activeTab === 'marketplace' && <MarketplaceSubpage />}
+  1555→  1555→            {activeTab === 'docs' && <DocsSubpage />}
+  1556→  1556→          </motion.div>
+  1557→  1557→        </AnimatePresence>
+  1558→  1558→      </main>
+  1559→  1559→
+  1560→  1560→      {/* Footer */}
+  1561→  1561→      <footer className="border-t-2 border-foreground py-10 px-6 bg-background mt-auto" role="contentinfo">
+  1562→  1562→        <div className="max-w-[1200px] mx-auto">
+  1563→  1563→          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  1564→  1564→            <div>
+  1565→  1565→              <div className="flex items-center gap-2 mb-3">
+  1566→  1566→                <div className="w-5 h-5 bg-primary flex items-center justify-center" aria-hidden="true"><span className="text-[8px] font-bold text-primary-foreground leading-none">SP</span></div>
+  1567→  1567→                <span className="text-xs font-medium tracking-[0.2em] uppercase text-foreground">Skill Stack Architecture</span>
+  1568→  1568→              </div>
+  1569→  1569→              <p className="text-sm text-muted-foreground leading-relaxed">64 Skills &middot; 4 Tiers &middot; 5 Options &middot; SP-7 Dimensions &middot; 11 Categories</p>
+  1570→  1570→            </div>
+  1571→  1571→            <div>
+  1572→  1572→              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-medium mb-3">Stack Summary</p>
+  1573→  1573→              <div className="space-y-1 text-xs text-muted-foreground">
+  1574→  1574→                <p>T0 (8): Foundation — design, animation, components</p>
+  1575→  1575→                <p>T1 (15): Interactive — motion, diagrams, data</p>
+  1576→  1576→                <p>T2 (17): Visual Asset — images, testing, content</p>
+  1577→  1577→                <p>T3 (24): Portal — AI routing, strategy, agents</p>
+  1578→  1578→              </div>
+  1579→  1579→            </div>
+  1580→  1580→            <div>
+  1581→  1581→              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-medium mb-3">Install</p>
+  1582→  1582→              <p className="text-sm text-muted-foreground">Every item installable via <code className="text-primary font-mono text-xs bg-muted px-1.5 py-0.5">npx skills add</code></p>
+  1583→  1583→              <p className="text-xs text-muted-foreground mt-2">GitHub Staging Ready &middot; AI Portal Gateway Enabled</p>
+  1584→  1584→            </div>
+  1585→  1585→          </div>
+  1586→  1586→          <hr className="editorial-rule my-6" />
+  1587→  1587→          <p className="text-[11px] text-muted-foreground tracking-wider text-center">SKILL STACK ARCHITECTURE BLUEPRINT &mdash; EDITORIAL EDITION</p>
+  1588→  1588→        </div>
+  1589→  1589→      </footer>
+  1590→  1590→
+  1591→  1591→      {/* Back to Top */}
+  1592→  1592→      <AnimatePresence>
+  1593→  1593→        {showBackToTop && (
+  1594→  1594→          <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} onClick={scrollToTop} className="fixed bottom-6 right-6 z-50 min-w-[44px] min-h-[44px] bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg hover:bg-primary/90 cursor-pointer" aria-label="Scroll back to top" whileHover={shouldReduce ? undefined : { scale: 1.1 }} whileTap={shouldReduce ? undefined : { scale: 0.9 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
+  1595→  1595→            <ArrowUp className="w-5 h-5" />
+  1596→  1596→          </motion.button>
+  1597→  1597→        )}
+  1598→  1598→      </AnimatePresence>
+  1599→  1599→    </div>
+  1600→  1600→  );
+  1601→  1601→}
+  1602→  1602→

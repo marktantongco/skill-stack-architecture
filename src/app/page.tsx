@@ -3,6 +3,11 @@
 import { HeroSection } from '@/components/HeroSection';
 import { SkillMarketplace } from '@/components/SkillMarketplace';
 import { ProxyComparison } from '@/components/ProxyComparison';
+import { ProxyMatrix } from '@/components/ProxyMatrix';
+import { SP7Radar } from '@/components/SP7Radar';
+import { SkillPipeline } from '@/components/SkillPipeline';
+import { ArchitectureTree } from '@/components/ArchitectureTree';
+import { InfographicDashboard } from '@/components/InfographicMotion';
 import { DecisionTree } from '@/components/DecisionTree';
 import { VisualGallery } from '@/components/VisualGallery';
 import { ComparativeAnalysis } from '@/components/ComparativeAnalysis';
@@ -11,6 +16,14 @@ import { AIPortalGateway } from '@/components/AIPortalGateway';
 import { SkillReference } from '@/components/SkillReference';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { EditorialReveal } from '@/components/EditorialReveal';
+import { OptionsShowcase } from '@/components/OptionsShowcase';
+import { DesignAlgorithm } from '@/components/DesignAlgorithm';
+import { SectionMapping } from '@/components/SectionMapping';
+import { ImplementationBlueprint } from '@/components/ImplementationBlueprint';
+import { InteractiveHeatmap } from '@/components/InteractiveHeatmap';
+import { HeatmapViz } from '@/components/HeatmapViz';
+import { ClipboardHistory } from '@/components/ClipboardHistory';
+import { gsapMotionRules } from '@/lib/gsap-hybrid';
 import { options, dimensions } from '@/lib/skill-data';
 import { staggerContainer, fadeInUp, dividerVariant, hoverNavItem } from '@/lib/animation-variants';
 import { copyToClipboard } from '@/lib/clipboard';
@@ -789,6 +802,35 @@ function FrontendSubpage({ mounted }: { mounted: boolean }) {
       <section className="mb-16 py-8" aria-label="Comparative analysis">
         <ErrorBoundary section="Comparative Analysis"><ComparativeAnalysis /></ErrorBoundary>
       </section>
+
+      <EditorialDivider />
+
+      {/* Section 4 — Research Archive (wired-up orphan components) */}
+      <section className="mb-16 py-8" aria-label="Research archive">
+        <SectionHeader num="04" title="Research Archive · Original Visualizations" subtitle="Earlier visualization passes — Options Showcase, Design Algorithm, Section Mapping, Implementation Blueprint. Kept for reference and contrast with the new infographic system." />
+        <div className="space-y-8">
+          <ErrorBoundary section="Options Showcase">
+            <div className="border border-border rounded p-4 bg-card/20">
+              <OptionsShowcase />
+            </div>
+          </ErrorBoundary>
+          <ErrorBoundary section="Design Algorithm">
+            <div className="border border-border rounded p-4 bg-card/20">
+              <DesignAlgorithm />
+            </div>
+          </ErrorBoundary>
+          <ErrorBoundary section="Section Mapping">
+            <div className="border border-border rounded p-4 bg-card/20">
+              <SectionMapping />
+            </div>
+          </ErrorBoundary>
+          <ErrorBoundary section="Implementation Blueprint">
+            <div className="border border-border rounded p-4 bg-card/20">
+              <ImplementationBlueprint />
+            </div>
+          </ErrorBoundary>
+        </div>
+      </section>
     </div>
   );
 }
@@ -970,6 +1012,22 @@ function ProxySubpage() {
       <section className="mb-16 py-8" aria-label="Proxy strategy">
         <SectionHeader num="04" title="The Eagle Sees: Long-Term Strategy" subtitle="How proxies compose together in the architecture." />
         <ErrorBoundary section="Proxy Comparison"><ProxyComparison /></ErrorBoundary>
+      </section>
+
+      <EditorialDivider />
+
+      {/* Section 5 — Creative Proxy Matrix (dolphin-designed centerpiece) */}
+      <section className="mb-16 py-8" aria-label="Creative proxy comparison matrix">
+        <SectionHeader num="05" title="Creative Comparison Lab" subtitle="Five lenses on six proxy types — heatmap, signal/noise, traffic lights, gauges, and metaphor cards. Same data, different truths." />
+        <ErrorBoundary section="Proxy Matrix"><ProxyMatrix /></ErrorBoundary>
+      </section>
+
+      <EditorialDivider />
+
+      {/* Section 6 — Infographic Motion (proxy performance dashboard) */}
+      <section className="mb-16 py-8" aria-label="Infographic motion dashboard">
+        <SectionHeader num="06" title="Infographic Motion" subtitle="GSAP + Framer Motion hybrid — animated counters, progress arcs, bar meters, all scroll-triggered and reduced-motion aware." />
+        <ErrorBoundary section="Infographic Dashboard"><InfographicDashboard /></ErrorBoundary>
       </section>
     </div>
   );
@@ -1183,6 +1241,90 @@ function ArchitectureSubpage() {
           </div>
         </div>
       </section>
+
+      <EditorialDivider />
+
+      {/* ── SP-7 Dimensional Radar ── */}
+      <section className="mb-16 py-8" aria-label="SP-7 dimensional radar">
+        <SectionHeader num="R7" title="SP-7 Dimensional Radar" subtitle="Seven-axis evaluation of every design option — Visual Density, Interactivity, Data Complexity, Motion Need, Accessibility, AI Redirect, Component Reusability. Switch weight profiles to see how scoring shifts." />
+        <ErrorBoundary section="SP-7 Radar">
+          <div className="border border-border rounded p-6 bg-card/30">
+            <SP7Radar />
+          </div>
+        </ErrorBoundary>
+      </section>
+
+      <EditorialDivider />
+
+      {/* ── Skill Invocation Pipeline ── */}
+      <section className="mb-16 py-8" aria-label="Skill invocation pipeline">
+        <SectionHeader num="PL" title="Skill Invocation Pipeline" subtitle="The I/O piping pattern in action — each skill's JSON output is fed to the next. GSAP draws the connectors stroke-by-stroke on scroll; flowing dashes indicate live data." />
+        <ErrorBoundary section="Skill Pipeline">
+          <div className="border border-border rounded p-6 bg-card/30">
+            <SkillPipeline />
+          </div>
+        </ErrorBoundary>
+      </section>
+
+      <EditorialDivider />
+
+      {/* ── Architecture Tree ── */}
+      <section className="mb-16 py-8" aria-label="Architecture tree">
+        <SectionHeader num="AT" title="Minimal Flat Registry · Architecture Tree" subtitle="Radial tree of the 4-tier architecture. AI Portal at the center, T0-T3 tiers as concentric rings. Hover any node to see its install command; click a tier label to expand its description." />
+        <ErrorBoundary section="Architecture Tree">
+          <div className="border border-border rounded p-6 bg-card/30">
+            <ArchitectureTree />
+          </div>
+        </ErrorBoundary>
+      </section>
+
+      <EditorialDivider />
+
+      {/* ── Skill Utilization Heatmaps ── */}
+      <section className="mb-16 py-8" aria-label="Skill utilization heatmaps">
+        <SectionHeader num="HM" title="Skill Utilization Heatmaps" subtitle="Two visualization passes on the same data — which skills power which sections. Interactive heatmap on top, animated grid below." />
+        <div className="space-y-6">
+          <ErrorBoundary section="Interactive Heatmap">
+            <div className="border border-border rounded p-4 bg-card/30">
+              <InteractiveHeatmap />
+            </div>
+          </ErrorBoundary>
+          <ErrorBoundary section="Heatmap Viz">
+            <div className="border border-border rounded p-4 bg-card/30">
+              <HeatmapViz />
+            </div>
+          </ErrorBoundary>
+        </div>
+      </section>
+
+      <EditorialDivider />
+
+      {/* ── GSAP + Framer Motion Compatibility Rules ── */}
+      <section className="mb-16 py-8" aria-label="GSAP motion compatibility rules">
+        <SectionHeader num="GS" title="GSAP × Framer Motion · Compatibility Charter" subtitle="Six non-negotiable rules for using both libraries on the same page without conflict. Owl-observed, eagle-strategic, beaver-guardrailed, dolphin-creative." />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {gsapMotionRules.map((rule, i) => (
+            <motion.div
+              key={rule.rule}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: i * 0.05 }}
+              className="p-4 border border-border rounded bg-card/40 hover:bg-card/70 transition-colors"
+            >
+              <div className="flex items-start gap-3">
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary font-mono font-bold text-xs flex-shrink-0">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h4 className="font-['Georgia',_serif] text-sm font-bold text-foreground mb-1">{rule.rule}</h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{rule.detail}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
@@ -1201,6 +1343,16 @@ function MarketplaceSubpage() {
         <div className="editorial-pullquote">Browse, search, filter, and collect 64 production-ready agent skills. Every skill installable via npx skills add.</div>
       </motion.div>
       <ErrorBoundary section="Skill Marketplace"><SkillMarketplace /></ErrorBoundary>
+
+      {/* Clipboard History panel */}
+      <section className="max-w-[1200px] mx-auto px-6 py-12" aria-label="Clipboard history">
+        <SectionHeader num="CH" title="Clipboard History" subtitle="A live record of every copied skill command from the marketplace — restore, re-copy, or clear. Demonstrates the resilient clipboard pattern from the audit." />
+        <ErrorBoundary section="Clipboard History">
+          <div className="border border-border rounded p-4 bg-card/30">
+            <ClipboardHistory />
+          </div>
+        </ErrorBoundary>
+      </section>
     </div>
   );
 }
