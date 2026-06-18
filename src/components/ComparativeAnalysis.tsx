@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
 import { comparisonMatrix, options } from "@/lib/skill-data";
