@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "./layout";
 
+// Required for `output: 'export'` (GitHub Pages) — metadata routes must be static.
+export const dynamic = "force-static";
+
 // ─── Dynamic Sitemap ─────────────────────────────────────────────────────────
 // Next.js 16 will emit this at /sitemap.xml.  It lists every navigable subpage
 // and the deep-link anchors used by the SPA-style section router.

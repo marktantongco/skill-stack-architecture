@@ -1,5 +1,8 @@
 import { ImageResponse } from "next/og";
 
+// Required for `output: 'export'` (GitHub Pages) — image routes must be static.
+export const dynamic = "force-static";
+
 // ─── Twitter X Card Image ────────────────────────────────────────────────────
 // Route: /twitter-image  →  1200×600 for Twitter's summary_large_image card.
 // Satori (the OG image renderer) requires every multi-child container to have

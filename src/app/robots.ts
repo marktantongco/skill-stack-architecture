@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL, GITHUB_PAGES_URL, REPO_URL } from "./layout";
 
+// Required for `output: 'export'` (GitHub Pages) — metadata routes must be static.
+export const dynamic = "force-static";
+
 // ─── Robots.txt ──────────────────────────────────────────────────────────────
 // Encourages crawling by Googlebot, Bingbot, GPTBot, ClaudeBot, PerplexityBot,
 // AppleBot, and all major AI answer-engine crawlers.  Blocks /api/* internals.

@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
 
+// Required for `output: 'export'` (GitHub Pages) — metadata routes must be static.
+export const dynamic = "force-static";
+
 // ─── Web App Manifest ────────────────────────────────────────────────────────
 // PWA-installable + improves Lighthouse PWA score + gives Android Chrome
 // the metadata it needs for "Add to Home Screen".

@@ -1,5 +1,8 @@
 import { ImageResponse } from "next/og";
 
+// Required for `output: 'export'` (GitHub Pages) — image routes must be static.
+export const dynamic = "force-static";
+
 // ─── Dynamic OG Image Generator ──────────────────────────────────────────────
 // Route: /opengraph-image  →  generates a 1200×630 PNG at build time.
 // Used by Twitter, Facebook, LinkedIn, Slack, Discord, and AI answer engines
