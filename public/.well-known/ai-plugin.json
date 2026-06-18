@@ -1,0 +1,20 @@
+{
+  "schema_version": "v1",
+  "name": "Skill Stack Architecture",
+  "description": "A dependency-ordered registry of 45 production-ready AI agent skills organised into 4 tiers and mapped to application sections via the SP-7 scoring algorithm. Every skill is installable via `npx skills add`.",
+  "contact_email": "noreply@skill-stack-architecture.vercel.app",
+  "legal_info_url": "https://github.com/marktantongco/skill-stack-architecture#license",
+  "canonical_url": "https://skill-stack-architecture.vercel.app",
+  "capabilities": [
+    "design-guidance",
+    "skill-routing",
+    "intent-classification",
+    "sp7-scoring",
+    "tier-management",
+    "proxy-topology",
+    "animation-orchestration"
+  ],
+  "skills_endpoint": "https://skill-stack-architecture.vercel.app/api/skill-content",
+  "telemetry_endpoint": "https://skill-stack-architecture.vercel.app/api/telemetry",
+  "health_endpoint": "https://skill-stack-architecture.vercel.app/api/health"
+}

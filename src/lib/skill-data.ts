@@ -88,13 +88,45 @@ export interface SkillDependency {
 
 /** Telemetry event for skill execution observability. */
 export interface TelemetryEvent {
-  type: 'skill_invocation' | 'batch_invocation';
+  type: 'skill_invocation' | 'batch_invocation' | 'pipeline_stage' | 'pipeline_execution';
   skillId?: string;
   batchId?: string;
+  pipelineId?: string;
   status: string;
   durationMs?: number;
   errorMsg?: string;
   timestamp: number;
+}
+
+// ─── Pipeline types (used by pipeline-executor) ───
+export type PipelineStageStatus = 'pending' | 'running' | 'success' | 'failed' | 'skipped' | 'rolled-back';
+
+export interface PipelineStage {
+  id: string;
+  skillId: string;
+  status: PipelineStageStatus;
+  inputs?: Record<string, unknown>;
+  outputs?: Record<string, unknown>;
+  durationMs?: number;
+  errorMsg?: string;
+  startedAt?: number;
+  completedAt?: number;
+}
+
+export interface SkillPipeline {
+  id: string;
+  name: string;
+  stages: PipelineStage[];
+  status: 'pending' | 'running' | 'success' | 'failed' | 'partial';
+  successCount: number;
+  failureCount: number;
+  budget: {
+    maxDurationMs: number;
+    maxStages: number;
+  };
+  createdAt: number;
+  startedAt?: number;
+  completedAt?: number;
 }
 
 // ─── Design Options ───

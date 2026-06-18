@@ -52,3 +52,17 @@ prompt
 server.log
 # Skills directory
 /skills/
+
+# Tool results (runtime artifacts)
+/tool-results/
+
+# Audit screenshots (large, regenerated)
+/verify-*.png
+/audit-page.png
+/docs-page.png
+/frontend-page.png
+/home-page.png
+/proxy-page.png
+
+# Search result caches
+/search_*.json

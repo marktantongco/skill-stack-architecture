@@ -1,0 +1,80 @@
+# ─── GitHub Pages Deployment Workflow ─────────────────────────────────────────
+# Builds the Next.js app as a static export (with basePath) and deploys to
+# GitHub Pages.  Runs on every push to main and on manual dispatch.
+#
+# One-time setup:
+#   1. Push this repository to GitHub.
+#   2. GitHub → Settings → Pages → Source → "GitHub Actions".
+#   3. The next push to main will trigger this workflow.
+#
+# The site will be live at:
+#   https://<username>.github.io/<repo-name>/
+# e.g. https://marktantongco.github.io/skill-stack-architecture/
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+# Permissions required for GitHub Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build static export
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Bun (fallback)
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build for GitHub Pages
+        env:
+          DEPLOY_TARGET: gh-pages
+        run: bun run build
+
+      - name: Add .nojekyll
+        # Disable Jekyll processing so that _next/ assets are not stripped
+        run: touch out/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

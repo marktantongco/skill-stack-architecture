@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Skill Stack Architecture icon — 4 stacked tiers with vermillion accent -->
+  <rect width="64" height="64" rx="14" fill="#fbfaf7"/>
+  <!-- T3 (top, smallest) -->
+  <rect x="22" y="10" width="20" height="8" rx="2" fill="#1a1a1a"/>
+  <!-- T2 -->
+  <rect x="18" y="22" width="28" height="8" rx="2" fill="#1a1a1a" opacity="0.85"/>
+  <!-- T1 -->
+  <rect x="14" y="34" width="36" height="8" rx="2" fill="#1a1a1a" opacity="0.7"/>
+  <!-- T0 (base, widest) -->
+  <rect x="10" y="46" width="44" height="8" rx="2" fill="#c43939"/>
+  <!-- SP-7 dot accent -->
+  <circle cx="32" cy="50" r="2" fill="#fbfaf7"/>
+</svg>

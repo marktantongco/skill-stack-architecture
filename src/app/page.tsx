@@ -24,6 +24,7 @@ import { InteractiveHeatmap } from '@/components/InteractiveHeatmap';
 import { HeatmapViz } from '@/components/HeatmapViz';
 import { ClipboardHistory } from '@/components/ClipboardHistory';
 import { gsapMotionRules } from '@/lib/gsap-hybrid';
+import { SeoGeoContent } from '@/components/SeoGeoContent';
 import { options, dimensions } from '@/lib/skill-data';
 import { staggerContainer, fadeInUp, dividerVariant, hoverNavItem } from '@/lib/animation-variants';
 import { copyToClipboard } from '@/lib/clipboard';
@@ -1621,6 +1622,9 @@ export default function SkillStackApp() {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      {/* SEO/GEO content block — LLM-citable prose for AI answer engines */}
+      <SeoGeoContent />
 
       {/* Footer */}
       <footer className="border-t-2 border-foreground py-10 px-6 bg-background mt-auto" role="contentinfo">
