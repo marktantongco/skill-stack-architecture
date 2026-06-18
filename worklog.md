@@ -338,3 +338,48 @@ Stage Summary:
 - Telemetry dashboard shows simulated production metrics
 - Design deep-dive reveals full option details on demand
 - Docs search/filter makes research artifacts discoverable
+
+---
+Task ID: 6
+Agent: main
+Task: SEO/GEO optimization + comprehensive README + dual deployment (Vercel + GitHub Pages)
+
+Work Log:
+- Inspected project structure (Next.js 16, 45 skills, 7 subpages, Editorial design)
+- Rewrote src/app/layout.tsx with comprehensive metadata: title template, 35+ keywords, JSON-LD (WebApplication, FAQPage, HowTo, BreadcrumbList, WebSite), OpenGraph with dynamic image, Twitter card, robots config, ai:citable/ai:summary/ai:entities meta tags
+- Created src/app/sitemap.ts with section anchors (#home, #audit, etc.) and hreflang alternates
+- Created src/app/robots.ts explicitly allowing GPTBot, ClaudeBot, PerplexityBot, Google-Extended, AppleBot, CCBot, Amazonbot
+- Created src/app/manifest.ts (PWA installable with shortcuts to Architecture/Marketplace/SP-7/Proxy)
+- Created src/app/opengraph-image.tsx (1200x630 dynamic OG card via next/og + Satori)
+- Created src/app/twitter-image.tsx (1200x600 Twitter summary_large_image)
+- Created src/app/feed.xml/route.ts (RSS 2.0 feed for AI summarisers)
+- Created public/.well-known/ai-plugin.json (AI agent discovery manifest)
+- Created src/app/icon.svg + public/icon.svg (4-tier stack visual favicon)
+- Created src/components/SeoGeoContent.tsx (LLM-citable prose with FAQ, HowTo, SP-7 definitions using semantic <article>, <dl>, <details>)
+- Updated next.config.ts to be deployment-aware (DEPLOY_TARGET env var): Vercel=standalone+root, gh-pages=export+basePath+/skill-stack-architecture/
+- Created scripts/build-gh-pages.sh that temporarily moves src/app/api outside app dir (GitHub Pages can't serve API routes)
+- Created .github/workflows/deploy-github-pages.yml (Actions workflow with bun install, build-gh-pages.sh, upload-pages-artifact, deploy-pages)
+- Created vercel.json (framework=nextjs, build command, headers, regions=iad1)
+- Created LICENSE (MIT)
+- Rewrote README.md with full TOC, deployment instructions for both targets, SEO/GEO table, animation system docs, accessibility section, project structure
+- Added .gitignore entries for tool-results/, verify-*.png, search_*.json
+- Removed dead pipeline-executor.ts (broken types, never imported)
+- Extended TelemetryEvent type and added SkillPipeline/PipelineStage interfaces in skill-data.ts
+- Added force-static to manifest.ts, sitemap.ts, robots.ts, opengraph-image.tsx, twitter-image.tsx (required for output: 'export')
+
+Deployment:
+- Pushed to GitHub: 2 commits (SEO/GEO + fix)
+- Enabled GitHub Pages via API (POST /repos/.../pages with build_type=workflow)
+- Triggered GitHub Actions workflow_dispatch — completed SUCCESS
+- GitHub Pages live at https://marktantongco.github.io/skill-stack-architecture/
+- Vercel: linked project, renamed to skill-stack-architecture, set AI_GATEWAY_API_KEY + DEPLOY_TARGET env vars, deployed to prod
+- Disabled SSO protection on Vercel project (was blocking public access)
+- Aliased to https://skill-stack-architecture.vercel.app/
+
+Stage Summary:
+- ✅ SEO/GEO fully optimised: JSON-LD, dynamic OG images, sitemap, robots (AI-friendly), RSS, PWA manifest, ai-plugin.json, LLM-citable content
+- ✅ Comprehensive README with deployment instructions for both Vercel and GitHub Pages
+- ✅ GitHub Pages deployment: LIVE at https://marktantongco.github.io/skill-stack-architecture/
+- ✅ Vercel deployment: LIVE at https://skill-stack-architecture.vercel.app/
+- ✅ Both builds verified clean (TypeScript + ESLint + production build)
+- ⚠️  SECURITY: User exposed GitHub PAT and Vercel token in chat — must be rotated immediately
