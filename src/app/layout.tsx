@@ -137,10 +137,19 @@ export const metadata: Metadata = {
     // ─── Google Search Console ───────────────────────────────────────────────
     // Replace the placeholder with the token from Google Search Console:
     //   1. https://search.google.com/search-console → Add Property → URL prefix
+    //      → https://skill-stack-architecture.vercel.app
     //   2. Choose "Meta tag" verification method
     //   3. Copy the content value from: <meta name="google-site-verification" content="THIS_PART" />
-    //   4. Paste it below (or set GOOGLE_SITE_VERIFICATION env var)
+    //   4. Either:
+    //      a) Run: ./scripts/set-gsc-verification.sh <token>  (preferred — sets Vercel env var)
+    //      b) Replace "REPLACE_WITH_GSC_VERIFICATION_TOKEN" below with the actual token
     google: process.env.GOOGLE_SITE_VERIFICATION || "REPLACE_WITH_GSC_VERIFICATION_TOKEN",
+    // ─── Bing Webmaster Tools ────────────────────────────────────────────────
+    // Obtain from https://www.bing.com/webmasters → Add site → Meta tag verification.
+    // Either set BING_SITE_VERIFICATION env var or paste the token below.
+    other: {
+      "msvalidate.01": process.env.BING_SITE_VERIFICATION || "REPLACE_WITH_BING_VERIFICATION_TOKEN",
+    },
     // ─── Other verifications (uncomment when tokens are obtained) ─────────────
     // yandex: process.env.YANDEX_VERIFICATION,
     // me: ["https://mastodon.social/@yourhandle"],  // Mastodon rel="me"
@@ -172,6 +181,20 @@ export const viewport: Viewport = {
   ],
   colorScheme: "light dark",
 };
+
+// ─── Section Anchors ────────────────────────────────────────────────────────
+// Each anchor is treated as a distinct citable entity for AI answer engines.
+// We emit <link rel="alternate" hreflang="en" href="...#anchor"> per section
+// to multiply the citation surface area ~7× (one URL per section vs one URL total).
+export const SECTION_ANCHORS = [
+  { anchor: "home",          name: "Home",            topic: "Skill Stack Architecture overview" },
+  { anchor: "audit",         name: "Audit",           topic: "Error handling and resilience patterns" },
+  { anchor: "frontend",      name: "Frontend",        topic: "Design options and SP-7 scoring" },
+  { anchor: "proxy",         name: "Proxy",           topic: "Cross-domain proxy topology comparison" },
+  { anchor: "architecture",  name: "Architecture",    topic: "Decision tree and tier architecture" },
+  { anchor: "marketplace",   name: "Marketplace",     topic: "45-skill registry and installer" },
+  { anchor: "docs",          name: "Docs",            topic: "Visual gallery and research artifacts" },
+] as const;
 
 // ─── JSON-LD Structured Data ────────────────────────────────────────────────
 // Helps Google Rich Results, ChatGPT entity disambiguation, and Perplexity citations.
@@ -249,6 +272,7 @@ const jsonLd = {
     },
     {
       "@type": "BreadcrumbList",
+      "@id": `${SITE_URL}/#breadcrumb`,
       itemListElement: [
         {
           "@type": "ListItem",
@@ -341,6 +365,20 @@ const jsonLd = {
         },
       ],
     },
+    // ─── Per-section WebPage entities ──────────────────────────────────────────
+    // Each section anchor gets its own @type WebPage with @id, url, name, description.
+    // This multiplies the citation surface area for AI answer engines — each section
+    // becomes independently citable rather than being collapsed into one homepage.
+    ...SECTION_ANCHORS.map((s) => ({
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/#${s.anchor}`,
+      url: `${SITE_URL}/#${s.anchor}`,
+      name: `${s.name} — Skill Stack Architecture`,
+      description: s.topic,
+      isPartOf: { "@id": `${SITE_URL}/#website` },
+      inLanguage: "en-US",
+      breadcrumb: { "@id": `${SITE_URL}/#breadcrumb` },
+    })),
   ],
 };
 
@@ -364,6 +402,24 @@ export default function RootLayout({
         {/* Author identity */}
         <link rel="author" href={REPO_URL} />
         <link rel="publisher" href={REPO_URL} />
+        {/* ─── Per-section hreflang alternates ────────────────────────────────────
+            Each section anchor is its own citable URL. Emitting one hreflang link
+            per section tells Google and AI answer engines that these are distinct
+            entities, not just in-page anchors — multiplying the citation surface. */}
+        {SECTION_ANCHORS.map((s) => (
+          <link
+            key={`hreflang-${s.anchor}`}
+            rel="alternate"
+            hrefLang="en"
+            href={`${SITE_URL}/#${s.anchor}`}
+          />
+        ))}
+        {/* Cross-canonical: Vercel primary ↔ GitHub Pages mirror.
+            Tells search engines the Vercel URL is canonical; the Pages mirror
+            is a backup. Submit BOTH as separate properties in GSC.
+            (Canonical itself is emitted by metadata.alternates.canonical above.) */}
+        <link rel="alternate" hrefLang="en" href={SITE_URL} />
+        <link rel="alternate" hrefLang="en" href={GITHUB_PAGES_URL} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}

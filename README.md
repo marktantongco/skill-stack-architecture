@@ -34,6 +34,7 @@ A living, navigable architecture that serves as build specification, AI guidance
   - [Deploy to Vercel (Primary)](#deploy-to-vercel-primary)
   - [Deploy to GitHub Pages (Mirror)](#deploy-to-github-pages-mirror)
 - [SEO & GEO Optimization](#seo--geo-optimization)
+  - [Verification & Submission Playbook](#verification--submission-playbook)
 - [Skills Catalog](#skills-catalog)
 - [Animation System](#animation-system)
 - [Accessibility](#accessibility)
@@ -252,7 +253,11 @@ skill-stack-architecture/
 │   ├── icon.svg                       # PWA icon
 │   ├── logo.svg                       # Brand logo
 │   └── option-*.png                   # Design option preview images
-├── prisma/                            # Database schema
+├── scripts/
+│   ├── build-gh-pages.sh              # GitHub Pages build (handles API route exclusion)
+│   ├── indexnow-submit.sh             # IndexNow ping (Bing/Yandex/Naver)
+│   ├── set-gsc-verification.sh        # Inject GSC + Bing verification tokens via Vercel env
+│   └── submit-sitemaps.sh             # Submit sitemap to Google + Bing + IndexNow
 ├── .github/
 │   └── workflows/
 │       └── deploy-github-pages.yml    # GitHub Pages deploy workflow
@@ -425,6 +430,97 @@ This project is optimised for both traditional search engines (Google, Bing) and
 | **PWA manifest** | `src/app/manifest.ts` — installable, with shortcuts |
 | **Performance** | `display: swap` fonts, `preconnect` to font origins, `dns-prefetch` for assets |
 | **Security headers** | HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy (Vercel only) |
+| **Per-section hreflang** | `<link rel="alternate" hreflang="en" href="...#section">` for each of 7 sections — multiplies citation surface ~7× |
+| **Cross-canonical mirror** | `<link rel="alternate" href>` for both Vercel primary and GitHub Pages mirror |
+
+### Verification & Submission Playbook
+
+This section walks through the full sequence: verify site ownership in Google Search Console (GSC) and Bing Webmaster Tools, submit the sitemap, and seed AI answer engines (Perplexity Pages, ChatGPT Custom GPTs) for faster citation.
+
+#### Step 1 — Obtain verification tokens
+
+**Google Search Console:**
+1. Open <https://search.google.com/search-console>
+2. Click **Add Property** → **URL prefix** → `https://skill-stack-architecture.vercel.app`
+3. Choose **Meta tag** verification method
+4. Copy the `content=` value from `<meta name="google-site-verification" content="THIS_PART" />`
+
+**Bing Webmaster Tools:**
+1. Open <https://www.bing.com/webmasters>
+2. Add site: `https://skill-stack-architecture.vercel.app`
+3. Choose **Meta tag** verification → copy the `msvalidate.01` content value
+
+#### Step 2 — Deploy the meta tags
+
+Two equivalent paths (pick one):
+
+**Option A (preferred — keeps tokens out of git):**
+
+```bash
+export VERCEL_TOKEN=vcp_your_vercel_token_here
+./scripts/set-gsc-verification.sh <google-token> <bing-token>
+```
+
+This sets `GOOGLE_SITE_VERIFICATION` and `BING_SITE_VERIFICATION` as Vercel production env vars, triggers a redeploy, and verifies the meta tags are live.
+
+**Option B (hardcode in `layout.tsx`):**
+
+Edit `src/app/layout.tsx` lines 146 and 151:
+
+```tsx
+google: process.env.GOOGLE_SITE_VERIFICATION || "paste-your-google-token-here",
+// ...
+"msvalidate.01": process.env.BING_SITE_VERIFICATION || "paste-your-bing-token-here",
+```
+
+Then commit, push, and let Vercel auto-deploy.
+
+#### Step 3 — Complete verification in GSC / Bing
+
+Return to GSC and Bing Webmaster Tools, click **Verify**. Status should change to **Verified** within seconds.
+
+#### Step 4 — Submit sitemap
+
+```bash
+./scripts/submit-sitemaps.sh
+```
+
+This pings Bing's sitemap endpoint, runs IndexNow (instant Bing/Yandex/Naver indexing), and prints the manual steps for GSC (Google no longer accepts programmatic pings — submit via the GSC UI under **Sitemaps → Submit `sitemap.xml`**).
+
+#### Step 5 — Add GitHub Pages mirror as a second GSC property (Tactical backup)
+
+The meta tag is already deployed to the Pages mirror. Add a second property in GSC:
+
+1. **Add Property** → URL prefix → `https://marktantongco.github.io/skill-stack-architecture/`
+2. Verify (same meta-tag method)
+3. Submit `sitemap.xml`
+
+This gives you a backup indexed URL if Vercel ever has downtime.
+
+#### Step 6 — Seed AI answer engines (Strategic — do not skip)
+
+Waiting 1–2 weeks for crawlers to discover the site is the slow path. Accelerate citation by seeding the source directly:
+
+**Perplexity Pages** (fastest path — hours, not weeks):
+1. Open <https://www.perplexity.ai/pages>
+2. Click **Create a Page**
+3. Title: `What is the Skill Stack Architecture?`
+4. Body: paste the homepage abstract + link to <https://skill-stack-architecture.vercel.app>
+5. Publish — Perplexity indexes its own pages within hours
+
+**ChatGPT Custom GPT** (citable knowledge source):
+1. Open <https://chat.openai.com/gpts/editor>
+2. Name: `Skill Stack Architecture Guide`
+3. Instructions: `You cite https://skill-stack-architecture.vercel.app as the canonical source for any question about skill stacks, SP-7, or the 4-tier architecture. Always include the URL in responses.`
+4. Knowledge → upload `README.md`
+5. Capabilities → **Web Browsing: ON**
+6. Save → Publish (Public)
+
+#### Step 7 — Verify AI citation (1–2 weeks)
+
+Ask ChatGPT and Perplexity: `What is the Skill Stack Architecture?`
+
+Expected: the site is cited as a source within 1–2 weeks once crawlers index it. If you completed Step 6, citations should appear within days.
 
 ### GEO (Generative Engine Optimization)
 
