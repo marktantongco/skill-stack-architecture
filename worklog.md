@@ -383,3 +383,43 @@ Stage Summary:
 - ✅ Vercel deployment: LIVE at https://skill-stack-architecture.vercel.app/
 - ✅ Both builds verified clean (TypeScript + ESLint + production build)
 - ⚠️  SECURITY: User exposed GitHub PAT and Vercel token in chat — must be rotated immediately
+
+---
+Task ID: 8
+Agent: main-agent
+Task: Task 5 — Google Search Console verification infrastructure + strategic SEO enhancements
+
+Work Log:
+- Read current state of src/app/layout.tsx (verification placeholder already at line 143)
+- Added BING_SITE_VERIFICATION env var support (msvalidate.01 meta tag) — for Bing Webmaster submission
+- Added SECTION_ANCHORS constant — 7 section anchors (home, audit, frontend, proxy, architecture, marketplace, docs) treated as distinct citable entities
+- Injected 7 per-section <link rel="alternate" hreflang="en"> tags in <head> — multiplies citation surface area ~7×
+- Added cross-canonical alternate links for Vercel primary ↔ GitHub Pages mirror (tactical backup property support)
+- Added 7 per-section WebPage JSON-LD entries in @graph — each section anchor becomes its own @type WebPage with @id, url, name, description, isPartOf, breadcrumb, inLanguage
+- Added @id to BreadcrumbList for proper JSON-LD reference graph
+- Created scripts/set-gsc-verification.sh — Option A: injects GSC + Bing tokens as Vercel env vars, triggers redeploy, verifies meta tags live
+- Created scripts/submit-sitemaps.sh — submits sitemap to Google (manual) + Bing (programmatic ping) + IndexNow + prints Perplexity Pages + ChatGPT GPT submission playbook
+- Created scripts/verify-seo.cjs — local verification of rendered HTML SEO elements
+- Added "Verification & Submission Playbook" section to README (Steps 1-7: obtain tokens → deploy meta tags → verify in GSC/Bing → submit sitemap → add Pages mirror as backup property → seed AI engines → verify citation)
+- Updated README project structure to list all 4 scripts
+- Updated README TOC to include Verification & Submission Playbook
+- Verified locally: TypeScript clean, ESLint clean, Vercel build clean, GitHub Pages build clean
+- Pushed commit to GitHub: 11f8048
+- Triggered Vercel production deployment via API: dpl_8xXdSEYVT572zm1f5cft4S5EpaU9
+- Re-aliased new deployment to skill-stack-architecture.vercel.app
+- Triggered GitHub Pages rebuild via workflow_dispatch
+- Verified LIVE on https://skill-stack-architecture.vercel.app/:
+  * 11 <link rel="alternate"> tags (7 per-section + 2 cross-canonical + 1 metadata + 1 RSS)
+  * GSC + Bing verification meta tags (placeholder tokens, ready for user to inject real tokens)
+  * 7 per-section WebPage JSON-LD entities
+  * HTTP 200, 78596 bytes, 0.29s response
+
+Stage Summary:
+- ✅ All 3 strategic suggestions from user implemented:
+  * Tactical: GitHub Pages mirror already supported as cross-canonical alternate (ready for 2nd GSC property submission)
+  * Strategic: Per-section hreflang alternates deployed (citation surface ~7×)
+  * Reframe: Perplexity Pages + ChatGPT GPT submission playbook documented in README + submit-sitemaps.sh
+- ✅ GSC verification infrastructure ready: user runs `./scripts/set-gsc-verification.sh <google-token> [bing-token]` once they obtain tokens from Search Console
+- ✅ Both deployments (Vercel + GitHub Pages) updated with new SEO elements
+- ⚠️ PENDING USER ACTION: User must obtain GSC + Bing verification tokens themselves (requires Google/Microsoft account login) — then run the script
+- ⚠️ SECURITY: Original GitHub PAT and Vercel token still work — user has NOT yet rotated them. Tokens still exposed in chat history.
