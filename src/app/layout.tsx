@@ -134,9 +134,22 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "google-site-verification-token",
+    // ─── Google Search Console ───────────────────────────────────────────────
+    // Replace the placeholder with the token from Google Search Console:
+    //   1. https://search.google.com/search-console → Add Property → URL prefix
+    //   2. Choose "Meta tag" verification method
+    //   3. Copy the content value from: <meta name="google-site-verification" content="THIS_PART" />
+    //   4. Paste it below (or set GOOGLE_SITE_VERIFICATION env var)
+    google: process.env.GOOGLE_SITE_VERIFICATION || "REPLACE_WITH_GSC_VERIFICATION_TOKEN",
+    // ─── Other verifications (uncomment when tokens are obtained) ─────────────
+    // yandex: process.env.YANDEX_VERIFICATION,
+    // me: ["https://mastodon.social/@yourhandle"],  // Mastodon rel="me"
   },
   other: {
+    // ─── IndexNow key (Bing/Yandex/Naver instant indexing) ────────────────────
+    // Key file at /public/2c43e277e7a84bdf822191701758b5ad.txt must be deployed.
+    // Submit URLs via ./scripts/indexnow-submit.sh
+    "indexnow-key": "2c43e277e7a84bdf822191701758b5ad",
     // GEO signals — let AI answer engines (Perplexity, ChatGPT, Gemini, SGE) pick this up
     "ai:citable": "true",
     "ai:summary":
