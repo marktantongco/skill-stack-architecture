@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { gsap, useGSAP, ScrollTrigger, DrawSVGPlugin } from '@/lib/gsap-init';
+import { gsap, useGSAP, ScrollTrigger } from '@/lib/gsap-init';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -371,24 +371,24 @@ export default function PipelineFlow({ steps, title, subtitle }: PipelineFlowPro
           }
         );
 
-        // Draw connectors using DrawSVG
+        // Draw connectors using free strokeDashoffset technique (replaces paid DrawSVG)
         const connectors = svgRef.current!.querySelectorAll('.pipe-connector');
         connectors.forEach((connector, i) => {
-          gsap.fromTo(
-            connector,
-            { drawSVG: '0%' },
-            {
-              drawSVG: '100%',
-              duration: 0.8,
-              ease: 'power2.inOut',
-              delay: i * 0.12 + 0.2,
-              scrollTrigger: {
-                trigger: containerRef.current,
-                start: 'top 80%',
-                toggleActions: 'play none none reverse',
-              },
-            }
-          );
+          const path = connector as SVGPathElement;
+          const total = path.getTotalLength ? path.getTotalLength() : 1;
+          path.style.strokeDasharray = `${total}`;
+          path.style.strokeDashoffset = `${total}`;
+          gsap.to(path, {
+            strokeDashoffset: 0,
+            duration: 0.8,
+            ease: 'power2.inOut',
+            delay: i * 0.12 + 0.2,
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
+            },
+          });
         });
 
         // Running node pulse animation

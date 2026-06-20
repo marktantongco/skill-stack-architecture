@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { CursorFollower } from "@/components/motion/CursorFollower";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -430,12 +432,17 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange={false}
         >
-          {/* Skip Link — First Focusable Element */}
-          <a href="#main-content" className="skip-link">
-            Skip to main content
-          </a>
-          {children}
-          <Toaster />
+          {/* Smooth scroll (Lenis) — disabled when prefers-reduced-motion */}
+          <SmoothScrollProvider>
+            {/* Skip Link — First Focusable Element */}
+            <a href="#main-content" className="skip-link">
+              Skip to main content
+            </a>
+            {children}
+            {/* Custom cursor follower — desktop-only, reduced-motion-safe */}
+            <CursorFollower />
+            <Toaster />
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -271,7 +271,7 @@ function SectionHeader({ num, title, subtitle }: { num: string; title: string; s
       <div className="md:col-span-8">
         <div className="flex items-baseline gap-4 mb-3">
           <span className="font-['Georgia',_serif] text-5xl md:text-6xl font-bold text-border leading-none" aria-hidden="true">{num}</span>
-          <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight">{title}</h2>
+          <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground leading-tight animate-text-reveal">{title}</h2>
         </div>
         <div className="editorial-pullquote ml-0 md:ml-20">{subtitle}</div>
       </div>
@@ -337,7 +337,7 @@ function HomeSubpage({ onNavigate }: { onNavigate: (tab: Subpage) => void }) {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
             <div className="md:col-span-7">
               <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-4">Architecture Overview</p>
-              <h2 className="font-['Georgia',_serif] text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.15] mb-6">
+              <h2 className="font-['Georgia',_serif] text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.15] mb-6 animate-text-reveal">
                 A living, navigable architecture that serves as build specification, AI guidance portal, and publishable skill repository
               </h2>
               <div className="editorial-pullquote mb-6">Every component is also an installable skill. The architecture is the product, and the product is the architecture.</div>
@@ -376,7 +376,7 @@ function HomeSubpage({ onNavigate }: { onNavigate: (tab: Subpage) => void }) {
         <div className="max-w-[1200px] mx-auto">
           <EditorialReveal>
             <p className="text-xs tracking-[0.25em] uppercase text-primary font-medium mb-3">Explore the Blueprint</p>
-            <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground mb-10">Seven Dimensions of the Architecture</h2>
+            <h2 className="font-['Georgia',_serif] text-2xl md:text-3xl font-bold text-foreground mb-10 animate-text-reveal">Seven Dimensions of the Architecture</h2>
           </EditorialReveal>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
             {navCards.map((card) => (

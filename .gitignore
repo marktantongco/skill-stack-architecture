@@ -65,4 +65,12 @@ server.log
 /proxy-page.png
 
 # Search result caches
-/search_*.json
+/search_*.jsonskills-source/
+upload/
+
+# Cloned skill source repos (local reference only, do not commit)
+/skills-source/
+# Uploaded files (transient)
+/upload/
+# Persistent operating instructions (do commit)
+!SYSTEM_MASTER.md

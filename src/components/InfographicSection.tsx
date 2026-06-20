@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { gsap, useGSAP, ScrollTrigger, SplitText, DrawSVGPlugin } from '@/lib/gsap-init';
+import { gsap, useGSAP, ScrollTrigger, splitText, drawPath } from '@/lib/gsap-init';
 
 // ─── Types ───
 interface InfographicSectionProps {
@@ -38,25 +38,27 @@ export default function InfographicSection({
   useGSAP(() => {
     if (prefersReducedMotion) return;
 
-    // Animate title with SplitText
-    const splitTitle = new SplitText('.info-title', { type: 'chars,words' });
-    gsap.from(splitTitle.chars, {
-      y: 30,
-      opacity: 0,
-      rotationX: -60,
-      stagger: 0.02,
-      duration: 0.5,
-      ease: 'back.out(1.7)',
-      scrollTrigger: {
-        trigger: '.info-title',
-        start: 'top 85%',
-        toggleActions: 'play none none reverse',
-      },
-    });
+    // Animate title with free splitText utility (replaces paid SplitText plugin)
+    const titleEl = containerRef.current?.querySelector('.info-title') as HTMLElement | null;
+    if (titleEl) {
+      const { chars } = splitText(titleEl, 'chars');
+      gsap.from(chars, {
+        y: 30,
+        opacity: 0,
+        rotationX: -60,
+        stagger: 0.02,
+        duration: 0.5,
+        ease: 'back.out(1.7)',
+        scrollTrigger: {
+          trigger: '.info-title',
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
 
-    // Draw the SVG connector path on scroll
-    gsap.from('.info-svg-path', {
-      drawSVG: '0%',
+    // Draw the SVG connector path on scroll (free strokeDashoffset technique)
+    drawPath(gsap, '.info-svg-path', {
       duration: 1.5,
       ease: 'power2.inOut',
       scrollTrigger: {

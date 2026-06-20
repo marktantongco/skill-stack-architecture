@@ -12,25 +12,26 @@
  * - Never animate the same CSS property on the same element with both GSAP and Framer Motion
  * - Use `useGSAP()` from @gsap/react for automatic cleanup
  * - Call `revert()` not `kill()` for cleanup
+ *
+ * Phase 6 — Motion Redesign:
+ * - Removed paid GSAP Club plugins (DrawSVGPlugin, SplitText, MotionPathPlugin)
+ *   These plugins are not in the public npm `gsap` package and silently fail
+ *   or crash production builds. Replaced with free equivalents:
+ *     - DrawSVG  → strokeDashoffset technique (see drawPathRecipe in gsap-hybrid.ts)
+ *     - SplitText → manual <span> splitting in JSX + wordRevealRecipe
+ *     - MotionPath → CSS offset-path or GSAP timeline with x/y interpolation
  */
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
-import { SplitText } from 'gsap/SplitText';
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { useGSAP } from '@gsap/react';
 
-// Register all plugins once at module scope (idempotent)
-gsap.registerPlugin(
-  ScrollTrigger,
-  DrawSVGPlugin,
-  SplitText,
-  MotionPathPlugin,
-  useGSAP,
-);
+// Register free plugins once at module scope (idempotent)
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
-export { gsap, ScrollTrigger, DrawSVGPlugin, SplitText, MotionPathPlugin, useGSAP };
+export { gsap, ScrollTrigger, useGSAP };
 
 // ─── GSAP + Framer Motion Coexistence Rules ───
 //
@@ -41,8 +42,8 @@ export { gsap, ScrollTrigger, DrawSVGPlugin, SplitText, MotionPathPlugin, useGSA
 // | Hover/tap gestures          | ⚠️       | ✅ whileHover/Tap  |
 // | Timeline orchestration      | ✅        | ❌                |
 // | ScrollTrigger + pinning     | ✅        | ❌                |
-// | SVG path drawing            | ✅        | ❌                |
-// | Text splitting/animation    | ✅        | ❌                |
+// | SVG path drawing            | ✅ (free) | ❌                |
+// | Text splitting/animation    | ✅ (free) | ❌                |
 // | Path-following animation    | ✅        | ❌                |
 // | Scroll-driven narratives    | ✅        | ❌                |
 // | Simple mount/unmount fades  | ⚠️       | ✅                 |
@@ -100,3 +101,84 @@ export const staggerConfigs = {
   /** Radial stagger for skill trees */
   radial: { each: 0.06, from: 'center' },
 } as const;
+
+// ─── Free SVG path drawing utility (replaces DrawSVGPlugin) ───
+/**
+ * Animates strokeDashoffset from full length → 0 to "draw" an SVG path.
+ * Drop-in replacement for the paid DrawSVG plugin.
+ *
+ * Usage:
+ *   drawPath(gsap, '.info-svg-path', { scrollTrigger: {...} });
+ */
+export function drawPath(
+  gsapInstance: typeof gsap,
+  selector: string,
+  options: {
+    duration?: number;
+    ease?: string;
+    scrollTrigger?: object;
+  } = {},
+) {
+  const { duration = 1.5, ease = 'power2.inOut', scrollTrigger } = options;
+  const paths = gsapInstance.utils.toArray<SVGPathElement>(selector);
+  paths.forEach((path) => {
+    const total = path.getTotalLength ? path.getTotalLength() : 1;
+    path.style.strokeDasharray = `${total}`;
+    path.style.strokeDashoffset = `${total}`;
+  });
+  return gsapInstance.to(selector, {
+    strokeDashoffset: 0,
+    duration,
+    ease,
+    scrollTrigger,
+  });
+}
+
+// ─── Free text splitting utility (replaces SplitText) ───
+/**
+ * Splits text content into per-character <span> elements for staggered animation.
+ * Drop-in replacement for the paid SplitText plugin.
+ *
+ * Usage in JSX:
+ *   <h1 ref={titleRef}>Title</h1>
+ *   splitText(titleRef.current, 'chars');
+ *   gsap.from(`${titleRef.current} .split-char`, { y: 30, stagger: 0.02, ... });
+ */
+export function splitText(
+  element: HTMLElement | null,
+  type: 'chars' | 'words' = 'chars',
+): { chars: HTMLElement[]; words: HTMLElement[] } {
+  if (!element) return { chars: [], words: [] };
+
+  const text = element.textContent ?? '';
+  element.textContent = '';
+  element.setAttribute('aria-label', text);
+
+  const chars: HTMLElement[] = [];
+  const words: HTMLElement[] = [];
+
+  const wordsArray = text.split(/(\s+)/);
+  wordsArray.forEach((word) => {
+    if (/^\s+$/.test(word)) {
+      element.appendChild(document.createTextNode(word));
+      return;
+    }
+    const wordSpan = document.createElement('span');
+    wordSpan.className = 'split-word';
+    wordSpan.style.display = 'inline-block';
+    wordSpan.style.whiteSpace = 'nowrap';
+
+    for (const char of word) {
+      const charSpan = document.createElement('span');
+      charSpan.className = 'split-char';
+      charSpan.style.display = 'inline-block';
+      charSpan.textContent = char;
+      wordSpan.appendChild(charSpan);
+      chars.push(charSpan);
+    }
+    element.appendChild(wordSpan);
+    words.push(wordSpan);
+  });
+
+  return { chars, words };
+}

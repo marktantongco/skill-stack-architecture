@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { gsap, useGSAP, ScrollTrigger, DrawSVGPlugin } from '@/lib/gsap-init';
+import { gsap, useGSAP, ScrollTrigger, drawPath } from '@/lib/gsap-init';
 
 // ─── Types ───
 export interface SkillTreeNode {
@@ -63,10 +63,8 @@ export default function SkillTree({ nodes, title = 'Skill Dependency Tree' }: Sk
       });
     });
 
-    // Draw connector lines
-    gsap.from('.tree-connector', {
-      drawSVG: '0%',
-      stagger: 0.03,
+    // Draw connector lines (free strokeDashoffset technique replaces paid DrawSVG)
+    drawPath(gsap, '.tree-connector', {
       duration: 0.8,
       ease: 'power2.inOut',
       scrollTrigger: {

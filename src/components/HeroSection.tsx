@@ -2,6 +2,8 @@
 
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { staggerContainer, fadeInUp } from "@/lib/animation-variants";
+import { MagneticButton } from "@/components/motion/MagneticButton";
+import { TextScramble } from "@/components/motion/TextScramble";
 
 export function HeroSection() {
   const shouldReduce = useReducedMotion();
@@ -65,7 +67,20 @@ export function HeroSection() {
                 transition={{ duration: 0.6 }}
                 className="text-sm text-background/35 font-mono"
               >
-                <span className="text-primary/80">$</span> npx skills add
+                <MagneticButton
+                  href="#marketplace"
+                  strength={0.25}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 -mx-3 -my-1.5 rounded-sm border border-background/15 hover:border-primary/60 hover:bg-background/5 transition-colors font-mono text-sm"
+                  aria-label="Browse the skill marketplace"
+                >
+                  <span className="text-primary/80">$</span>
+                  <TextScramble
+                    text="npx skills add"
+                    trigger="hover"
+                    speed={28}
+                    className="text-background/70"
+                  />
+                </MagneticButton>
               </motion.p>
             </motion.div>
           </div>
